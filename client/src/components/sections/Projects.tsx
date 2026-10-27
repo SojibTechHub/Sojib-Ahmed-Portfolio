@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { ExternalLink, ArrowRight, Layers, Code, Server, Key } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa6';
-import { projects } from '../../data/projects';
+import { projects as defaultProjects } from '../../data/projects';
 
 type Category = 'all' | 'full-stack' | 'frontend' | 'backend';
 
@@ -22,13 +22,30 @@ const categoryLabels = {
 };
 
 export default function Projects() {
+  const [projectList, setProjectList] = useState(defaultProjects);
   const [activeFilter, setActiveFilter] = useState<Category>('all');
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
   const [ref, inView] = useInView({ threshold: 0.05, triggerOnce: true });
 
+  useEffect(() => {
+    const fetchLiveProjects = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+        const res = await fetch(`${apiUrl}/projects`);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          setProjectList(data.data);
+        }
+      } catch {
+        // Fallback to defaultProjects
+      }
+    };
+    fetchLiveProjects();
+  }, []);
+
   const filtered = activeFilter === 'all'
-    ? projects
-    : projects.filter(p => p.category === activeFilter);
+    ? projectList
+    : projectList.filter(p => p.category === activeFilter);
 
   return (
     <section id="projects" className="section-padding relative" ref={ref}>
@@ -87,7 +104,7 @@ export default function Projects() {
                 <span className={`text-[11px] px-2 py-0.5 rounded-full font-mono ${
                   isActive ? 'bg-white/20 text-white' : 'bg-white/5 text-[var(--color-text-secondary)]'
                 }`}>
-                  {cat === 'all' ? projects.length : projects.filter(p => p.category === cat).length}
+                  {cat === 'all' ? projectList.length : projectList.filter((p: any) => p.category === cat).length}
                 </span>
               </motion.button>
             );
@@ -114,7 +131,7 @@ export default function Projects() {
                 onHoverEnd={() => setHoveredProject(null)}
                 className="project-card card group relative overflow-hidden flex flex-col justify-between"
                 style={{
-                  '--project-color': project.color,
+                  '--project-color': project.color || '#06B6D4',
                 } as React.CSSProperties}
                 aria-label={`${project.title} - ${project.subtitle}`}
               >
@@ -122,16 +139,16 @@ export default function Projects() {
                 <div 
                   className="absolute top-0 left-0 right-0 h-[2px] transition-all duration-500 z-10"
                   style={{
-                    background: hoveredProject === project.id
-                      ? `linear-gradient(90deg, ${project.color}, ${project.accentColor})`
-                      : `linear-gradient(90deg, ${project.color}50, transparent)`,
+                    background: hoveredProject === (project.id || (project as any)._id)
+                      ? `linear-gradient(90deg, ${project.color || '#06B6D4'}, ${project.accentColor || '#7C3AED'})`
+                      : `linear-gradient(90deg, ${project.color || '#06B6D4'}50, transparent)`,
                   }}
                 />
 
                 <div>
                   <div className="project-card-image w-full h-52 sm:h-64 relative overflow-hidden bg-[#0a0f1d]">
                     <img 
-                      src={project.image} 
+                      src={project.image || '/images/hero.jpg'} 
                       alt={project.title} 
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       loading="lazy"
@@ -166,16 +183,22 @@ export default function Projects() {
                     </div>
 
                     {/* Problem / Solution */}
-                    <div className="mb-4 space-y-2 text-xs leading-relaxed">
-                      <div className="flex items-start gap-2 text-[var(--color-text-secondary)]">
-                        <span className="text-[#EC4899] font-bold flex-shrink-0">Problem:</span>
-                        <span>{project.problem}</span>
+                    {(project.problem || project.solution) && (
+                      <div className="mb-4 space-y-2 text-xs leading-relaxed">
+                        {project.problem && (
+                          <div className="flex items-start gap-2 text-[var(--color-text-secondary)]">
+                            <span className="text-[#EC4899] font-bold flex-shrink-0">Problem:</span>
+                            <span>{project.problem}</span>
+                          </div>
+                        )}
+                        {project.solution && (
+                          <div className="flex items-start gap-2 text-[var(--color-text-primary)]">
+                            <span className="text-[#10B981] font-bold flex-shrink-0">Solution:</span>
+                            <span>{project.solution}</span>
+                          </div>
+                        )}
                       </div>
-                      <div className="flex items-start gap-2 text-[var(--color-text-primary)]">
-                        <span className="text-[#10B981] font-bold flex-shrink-0">Solution:</span>
-                        <span>{project.solution}</span>
-                      </div>
-                    </div>
+                    )}
 
                     {/* Demo Credentials if applicable */}
                     {(project as any).credentials && (
@@ -192,18 +215,20 @@ export default function Projects() {
                     )}
 
                     {/* Key Features bullet points */}
-                    <div className="space-y-1.5 mb-5">
-                      {project.features.map((feat, idx) => (
-                        <div key={idx} className="flex items-start gap-2 text-xs text-[var(--color-text-secondary)]">
-                          <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: project.color }} />
-                          <span className="leading-snug">{feat}</span>
-                        </div>
-                      ))}
-                    </div>
+                    {Array.isArray(project.features) && project.features.length > 0 && (
+                      <div className="space-y-1.5 mb-5">
+                        {project.features.map((feat, idx) => (
+                          <div key={idx} className="flex items-start gap-2 text-xs text-[var(--color-text-secondary)]">
+                            <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: project.color || '#06B6D4' }} />
+                            <span className="leading-snug">{feat}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
                     {/* Tech Stack tags */}
                     <div className="flex flex-wrap gap-1.5 mb-6">
-                      {project.techStack.map((tech) => (
+                      {(project.techStack || []).map((tech) => (
                         <span key={tech} className="tech-badge text-[10px]">
                           {tech}
                         </span>
@@ -215,7 +240,7 @@ export default function Projects() {
                 {/* Footer with Clear Labeled Action Buttons and Real Logos */}
                 <div className="px-6 md:px-8 pb-6 pt-0 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)]/50 pt-4 mt-auto">
                   <span className="text-[11px] text-[var(--color-text-secondary)]">
-                    Role: <span className="text-[var(--color-text-primary)] font-medium">{project.role}</span>
+                    Role: <span className="text-[var(--color-text-primary)] font-medium">{project.role || 'Full Stack Developer'}</span>
                   </span>
 
                   <div className="flex flex-wrap items-center gap-2.5">

@@ -102,11 +102,38 @@ router.post('/', chatRateLimiter, async (req, res) => {
 
     // Fallback response
     const reply = getFallback(message);
+    try {
+      const ChatLog = require('../models/ChatLog');
+      await ChatLog.create({ message, reply, ip: req.ip });
+    } catch {}
+
     res.json({ success: true, reply });
     
   } catch (error) {
     console.error('Chat route error:', error);
     res.json({ success: true, reply: getFallback(req.body?.message) });
+  }
+});
+
+// GET /api/chat/logs (Admin only)
+router.get('/logs', require('../middleware/auth'), async (req, res) => {
+  try {
+    const ChatLog = require('../models/ChatLog');
+    const logs = await ChatLog.find().sort({ createdAt: -1 }).limit(100);
+    res.json({ success: true, data: logs, total: logs.length });
+  } catch (err) {
+    res.json({ success: true, data: [], total: 0 });
+  }
+});
+
+// DELETE /api/chat/logs/:id (Admin only)
+router.delete('/logs/:id', require('../middleware/auth'), async (req, res) => {
+  try {
+    const ChatLog = require('../models/ChatLog');
+    await ChatLog.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'Chat log deleted' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 

@@ -1,18 +1,18 @@
-import Hero from '../components/sections/Hero';
+import WorkstationHero from '../components/workstation3d/WorkstationHero';
+import TrustBar from '../components/sections/TrustBar';
 import About from '../components/sections/About';
 import Skills from '../components/sections/Skills';
 import Projects from '../components/sections/Projects';
 import Services from '../components/sections/Services';
-import Certificates from '../components/sections/Certificates';
 import Process from '../components/sections/Process';
+import Certificates from '../components/sections/Certificates';
 import Contact from '../components/sections/Contact';
 import FinalCTA from '../components/sections/FinalCTA';
-import TrustBar from '../components/sections/TrustBar';
 
 export default function Home() {
   return (
     <>
-      <Hero />
+      <WorkstationHero />
       <TrustBar />
       <About />
       <Skills />
