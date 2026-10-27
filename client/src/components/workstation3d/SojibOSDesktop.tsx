@@ -4,7 +4,7 @@ import {
   FolderGit2, Terminal, User, Mail, Award, Settings, 
   ExternalLink, X, Minus, 
   ArrowLeft, Volume2, VolumeX, CheckCircle2, ShieldCheck, 
-  Search
+  Search, Cpu, Wrench, Bot, Send
 } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
@@ -14,12 +14,14 @@ interface SojibOSProps {
   onScrollToClassic: () => void;
 }
 
+type AppId = 'projects' | 'terminal' | 'about' | 'skills' | 'services' | 'certificates' | 'contact' | 'aichat';
+
 export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOSProps) {
-  const [activeApp, setActiveApp] = useState<'projects' | 'terminal' | 'about' | 'contact' | 'certificates' | null>('projects');
+  const [activeApp, setActiveApp] = useState<AppId | null>('projects');
   const [time, setTime] = useState<string>('');
   const [soundEnabled, setSoundEnabled] = useState(true);
 
-  // Live time ticker
+  // Live clock
   useEffect(() => {
     const update = () => {
       const now = new Date();
@@ -37,7 +39,7 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(600, ctx.currentTime);
+      osc.frequency.setValueAtTime(640, ctx.currentTime);
       gain.gain.setValueAtTime(0.04, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
       osc.connect(gain);
@@ -47,13 +49,13 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
     } catch {}
   };
 
-  const openApp = (app: 'projects' | 'terminal' | 'about' | 'contact' | 'certificates') => {
+  const openApp = (app: AppId) => {
     playBeep();
     setActiveApp(app);
   };
 
   return (
-    <div className="relative w-full h-full min-h-[620px] max-h-[85vh] bg-[#030712] rounded-2xl overflow-hidden border-2 border-[#06B6D4]/30 shadow-2xl flex flex-col font-sans select-none">
+    <div className="relative w-full h-full min-h-[640px] max-h-[88vh] bg-[#030712] rounded-3xl overflow-hidden border-2 border-[#06B6D4]/30 shadow-2xl flex flex-col font-sans select-none">
       
       {/* OS Top Navigation Bar */}
       <div className="h-10 bg-[#0B1120] border-b border-[rgba(255,255,255,0.08)] px-4 flex items-center justify-between text-xs text-gray-300 z-30">
@@ -61,7 +63,7 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" />
             <span className="font-extrabold text-[#06B6D4] tracking-wider uppercase text-[11px]">
-              Sojib OS <span className="text-gray-500 font-normal">v2.6</span>
+              Sojib OS <span className="text-gray-500 font-normal">v2.6 Enterprise</span>
             </span>
           </div>
 
@@ -99,11 +101,11 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
             href="/admin"
             target="_blank"
             rel="noreferrer"
-            className="px-2 py-0.5 rounded bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 text-[10px] font-bold flex items-center gap-1 transition-all"
+            className="px-2.5 py-1 rounded-md bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 text-[10px] font-bold flex items-center gap-1 transition-all"
             title="Open Admin CMS"
           >
             <Settings size={11} />
-            <span>CMS</span>
+            <span>CMS Admin</span>
           </a>
 
           <span className="font-mono text-[11px] text-gray-400 font-semibold">{time}</span>
@@ -125,30 +127,33 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
         </div>
 
         {/* Desktop App Icons (Left Column) */}
-        <div className="relative z-10 grid grid-cols-1 gap-4 w-28">
+        <div className="relative z-10 grid grid-cols-1 gap-2.5 w-28 overflow-y-auto max-h-[75vh] pr-1">
           {[
             { id: 'projects', label: 'Projects.exe', icon: FolderGit2, color: '#06B6D4' },
             { id: 'terminal', label: 'Terminal.sh', icon: Terminal, color: '#10B981' },
             { id: 'about', label: 'AboutMe.app', icon: User, color: '#8B5CF6' },
+            { id: 'skills', label: 'Skills.exe', icon: Cpu, color: '#38BDF8' },
+            { id: 'services', label: 'Services.app', icon: Wrench, color: '#F43F5E' },
             { id: 'certificates', label: 'OfferLetter.pdf', icon: Award, color: '#F59E0B' },
+            { id: 'aichat', label: 'SojibAI.exe', icon: Bot, color: '#A855F7' },
             { id: 'contact', label: 'Contact.mail', icon: Mail, color: '#EC4899' },
           ].map(({ id, label, icon: Icon, color }) => (
             <button
               key={id}
-              onClick={() => openApp(id as any)}
-              className={`flex flex-col items-center gap-1.5 p-2 rounded-xl text-center group cursor-pointer transition-all ${
+              onClick={() => openApp(id as AppId)}
+              className={`flex flex-col items-center gap-1 p-2 rounded-xl text-center group cursor-pointer transition-all ${
                 activeApp === id 
                   ? 'bg-white/15 border border-white/20 shadow-lg' 
                   : 'hover:bg-white/5 border border-transparent'
               }`}
             >
               <div 
-                className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200"
+                className="w-11 h-11 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200"
                 style={{ background: `linear-gradient(135deg, ${color}25, ${color}10)`, border: `1px solid ${color}50` }}
               >
-                <Icon size={24} style={{ color }} />
+                <Icon size={22} style={{ color }} />
               </div>
-              <span className="text-[11px] font-bold text-gray-200 group-hover:text-white drop-shadow">
+              <span className="text-[10px] font-bold text-gray-200 group-hover:text-white drop-shadow">
                 {label}
               </span>
             </button>
@@ -170,10 +175,13 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[#06B6D4]" />
                   <span className="text-xs font-bold uppercase tracking-wider text-white">
-                    {activeApp === 'projects' && '🚀 Projects Explorer — Production & Flagship'}
+                    {activeApp === 'projects' && '🚀 Projects Explorer — 10 Flagship & Production Builds'}
                     {activeApp === 'terminal' && '💻 Sojib Bash Terminal — Interactive CLI'}
-                    {activeApp === 'about' && '👨‍💻 About Sojib Ahmed — Background & Skills'}
-                    {activeApp === 'certificates' && '📜 Datheon Internship Offer Letter & Credentials'}
+                    {activeApp === 'about' && '👨‍💻 About Sojib Ahmed — Background & Bio'}
+                    {activeApp === 'skills' && '⚡ Technical Stack & Architecture Breakdown'}
+                    {activeApp === 'services' && '🛠️ Services & Production Engineering Workflow'}
+                    {activeApp === 'certificates' && '📜 Datheon Internship Offer Letter & Verification'}
+                    {activeApp === 'aichat' && '🤖 Sojib AI Assistant — Gemini Powered'}
                     {activeApp === 'contact' && '📬 Contact Mailer — Send Direct Message'}
                   </span>
                 </div>
@@ -181,14 +189,14 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
                 <div className="flex items-center gap-1.5">
                   <button 
                     onClick={() => setActiveApp(null)}
-                    className="w-6 h-6 rounded-md hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center"
+                    className="w-6 h-6 rounded-md hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center cursor-pointer"
                     title="Minimize"
                   >
                     <Minus size={12} />
                   </button>
                   <button 
                     onClick={() => setActiveApp(null)}
-                    className="w-6 h-6 rounded-md hover:bg-red-500/80 hover:text-white text-gray-400 flex items-center justify-center transition-colors"
+                    className="w-6 h-6 rounded-md hover:bg-red-500/80 hover:text-white text-gray-400 flex items-center justify-center transition-colors cursor-pointer"
                     title="Close"
                   >
                     <X size={13} />
@@ -201,7 +209,10 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
                 {activeApp === 'projects' && <OSProjectsApp />}
                 {activeApp === 'terminal' && <OSTerminalApp />}
                 {activeApp === 'about' && <OSAboutApp />}
+                {activeApp === 'skills' && <OSSkillsApp />}
+                {activeApp === 'services' && <OSServicesApp />}
                 {activeApp === 'certificates' && <OSCertificatesApp />}
+                {activeApp === 'aichat' && <OSAIChatApp />}
                 {activeApp === 'contact' && <OSContactApp />}
               </div>
             </motion.div>
@@ -250,12 +261,11 @@ function OSProjectsApp() {
   const rawProjects = [
     {
       title: 'ShopX BD Enterprise',
-      subtitle: 'Hyperlocal Multi-Vendor E-Commerce & DEX Logistics',
+      subtitle: 'Hyperlocal Multi-Vendor E-Commerce & DEX Logistics Platform',
       category: 'full-stack',
-      tech: ['React 19', 'TypeScript', 'Node.js', 'Express', 'MongoDB Atlas', 'Redis'],
-      live: 'https://shopx-bd-enterprise-jpqg.vercel.app',
+      tech: ['React 19', 'TypeScript', 'Node.js', 'Express', 'MongoDB Atlas', 'Upstash Redis'],
+      live: 'https://shopx-bd-enterprise.vercel.app/',
       github: 'https://github.com/sojibahmedshorif25-ai/Shopx-BD-Enterprise',
-      image: '/images/hero.jpg'
     },
     {
       title: 'FoodFlow (Team Project)',
@@ -264,16 +274,14 @@ function OSProjectsApp() {
       tech: ['Next.js 15', 'React 19', 'TypeScript', 'Node.js', 'Socket.IO', 'Gemini AI'],
       live: 'https://fooddeliveryplatform.vercel.app',
       github: 'https://github.com/khalid66527/food_flow-client',
-      image: '/images/hero.jpg'
     },
     {
       title: 'SkillForge',
       subtitle: 'AI Learning, Code Sandbox & Career Recruitment Platform',
       category: 'full-stack',
       tech: ['Next.js 16', 'React 19', 'Express.js', 'Better Auth', 'Docker', 'React Query'],
-      live: 'https://job-student-task.vercel.app',
-      github: 'https://github.com/sojibahmedshorif25-ai/JOB-STUDENT-TASK',
-      image: '/images/skillforge.png'
+      live: 'https://job-student-task.vercel.app/',
+      github: 'https://github.com/sojibahmedshorif25-ai/JOB-STUDENT-TASK.git',
     },
     {
       title: 'StartupForge',
@@ -281,35 +289,55 @@ function OSProjectsApp() {
       category: 'full-stack',
       tech: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Socket.IO', 'WebRTC', 'Stripe'],
       live: 'https://startupforge-ruby.vercel.app/',
-      github: 'https://github.com/sojibahmedshorif25-ai/startupforge',
-      image: '/images/hero.jpg'
+      github: 'https://github.com/sojibahmedshorif25-ai/startupforge.git',
     },
     {
-      title: 'Keen Keeper',
-      subtitle: 'Modern Web Application with Futuristic Design',
+      title: 'TypeMarket',
+      subtitle: 'Type-Safe Multi-Role E-Commerce & Storefront Engine',
       category: 'frontend',
-      tech: ['React.js', 'Tailwind CSS', 'Framer Motion'],
-      live: 'https://b13-a7-keen-keeper-liard.vercel.app/',
-      github: 'https://github.com/sojibahmedshorif25-ai/keenkeper-website',
-      image: '/images/keenkeeper.png'
+      tech: ['TypeScript', 'React.js', 'Tailwind CSS', 'TanStack Query', 'Lucide React'],
+      live: 'https://type-script-project-nine.vercel.app',
+      github: 'https://github.com/sojibahmedshorif25-ai/TypeScript-Project',
+    },
+    {
+      title: 'InvestProp AI',
+      subtitle: 'AI Real Estate Investment Analytics & Property Valuation Portal',
+      category: 'frontend',
+      tech: ['React.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Recharts'],
+      live: 'https://investprop-ai.vercel.app',
+      github: 'https://github.com/sojibahmedshorif25-ai/Investprop-Ai.git',
     },
     {
       title: 'GitHub Issue Tracker',
       subtitle: 'Real-time Issue Management Dashboard with GitHub API',
       category: 'frontend',
-      tech: ['React.js', 'Tailwind CSS', 'GitHub API'],
+      tech: ['React.js', 'Tailwind CSS', 'GitHub API', 'Lucide React'],
       live: 'https://fabulous-profiterole-d6e817.netlify.app/',
-      github: 'https://github.com/sojibahmedshorif25-ai/github-issue-tracker',
-      image: '/images/issuetracker.png'
+      github: 'https://github.com/sojibahmedshorif25-ai/github-issue-tracker.git',
     },
     {
-      title: 'Pet Adoption Server',
-      subtitle: 'Express + MongoDB API with Google OAuth & JWT RBAC',
+      title: 'Pet Adoption REST Engine',
+      subtitle: 'Scalable Microservice API & Shelter Management Gateway',
       category: 'backend',
-      tech: ['Node.js', 'Express.js', 'MongoDB', 'Google OAuth', 'JWT'],
-      live: '',
+      tech: ['Node.js', 'Express.js', 'MongoDB Atlas', 'JWT', 'Nodemailer'],
+      live: 'https://pet-adoption-client-rho-jet.vercel.app',
       github: 'https://github.com/sojibahmedshorif25-ai/Pet-Adoption-Server',
-      image: '/images/petadoption.png'
+    },
+    {
+      title: 'Job Finder API Gateway',
+      subtitle: 'High-Concurrency Recruitment & Application Service',
+      category: 'backend',
+      tech: ['Node.js', 'Express.js', 'MongoDB Atlas', 'JWT', 'Cloudinary'],
+      live: 'https://job-finder-client.vercel.app',
+      github: 'https://github.com/sojibahmedshorif25-ai/Job-Finder',
+    },
+    {
+      title: 'Books Platform REST API',
+      subtitle: 'Digital Library & Review Engine Backend',
+      category: 'backend',
+      tech: ['Node.js', 'Express.js', 'MongoDB Atlas', 'Express Validator'],
+      live: 'https://books-platfrom-48rm.vercel.app/',
+      github: 'https://github.com/sojibahmedshorif25-ai/Books-Platfrom.git',
     },
   ];
 
@@ -329,13 +357,13 @@ function OSProjectsApp() {
             <button
               key={cat}
               onClick={() => setFilter(cat)}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold capitalize transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-semibold capitalize transition-all cursor-pointer ${
                 filter === cat
                   ? 'bg-[#06B6D4] text-black shadow-sm'
                   : 'text-gray-400 hover:text-white'
               }`}
             >
-              {cat === 'all' ? 'All Projects' : cat}
+              {cat === 'all' ? 'All (10)' : cat}
             </button>
           ))}
         </div>
@@ -416,7 +444,7 @@ function OSProjectsApp() {
 // -------------------------------------------------------------
 function OSTerminalApp() {
   const [history, setHistory] = useState<Array<{ cmd: string; output: string }>>([
-    { cmd: 'whoami', output: 'Sojib Ahmed — Full Stack Developer (React 19, Node.js, Express, MongoDB Atlas)' },
+    { cmd: 'whoami', output: 'Sojib Ahmed — Full Stack Developer (React 19, TypeScript, Node.js, Express, MongoDB Atlas)' },
     { cmd: 'status', output: 'Available for full-time & high-impact remote engineering roles ✅' },
   ]);
   const [input, setInput] = useState('');
@@ -445,7 +473,7 @@ function OSTerminalApp() {
     } else if (lower === 'contact') {
       output = `Email:    sojibahmedshorif998@gmail.com\nPhone:    +880 1942791004\nWhatsApp: +880 1942791004\nGitHub:   https://github.com/sojibahmedshorif25-ai`;
     } else if (lower === 'sudo hire') {
-      output = `Access granted! 🎉 Redirecting to email client...`;
+      output = `Access granted! 🎉 Opening email composer...`;
       window.open('mailto:sojibahmedshorif998@gmail.com?subject=Job%20Opportunity', '_blank');
     } else if (lower === 'clear') {
       setHistory([]);
@@ -495,7 +523,7 @@ function OSTerminalApp() {
 }
 
 // -------------------------------------------------------------
-// APP 3: ABOUT ME & SKILLS RADAR
+// APP 3: ABOUT ME
 // -------------------------------------------------------------
 function OSAboutApp() {
   return (
@@ -519,17 +547,51 @@ function OSAboutApp() {
         </div>
       </div>
 
-      {/* Tech Skills Grid */}
+      <div className="grid sm:grid-cols-3 gap-3 text-center">
+        <div className="p-4 rounded-xl bg-[#030712] border border-white/5">
+          <div className="text-2xl font-black text-[#06B6D4]">2+</div>
+          <div className="text-xs text-gray-400 mt-0.5 font-medium">Years Experience</div>
+        </div>
+        <div className="p-4 rounded-xl bg-[#030712] border border-white/5">
+          <div className="text-2xl font-black text-[#10B981]">15+</div>
+          <div className="text-xs text-gray-400 mt-0.5 font-medium">Projects Built</div>
+        </div>
+        <div className="p-4 rounded-xl bg-[#030712] border border-white/5">
+          <div className="text-2xl font-black text-[#8B5CF6]">100%</div>
+          <div className="text-xs text-gray-400 mt-0.5 font-medium">Commitment</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// -------------------------------------------------------------
+// APP 4: TECHNICAL SKILLS BREAKDOWN
+// -------------------------------------------------------------
+function OSSkillsApp() {
+  const skillCategories = [
+    { name: 'Frontend', items: ['React 19', 'Next.js 16', 'TypeScript', 'Tailwind CSS v4', 'Framer Motion', 'GSAP', 'HTML5/CSS3'] },
+    { name: 'Backend', items: ['Node.js', 'Express.js', 'RESTful API', 'Socket.IO', 'WebRTC', 'Nodemailer', 'Upstash Redis'] },
+    { name: 'Database & Cloud', items: ['MongoDB Atlas', 'Mongoose', 'Firebase Auth', 'PostgreSQL', 'Docker', 'Cloudinary'] },
+    { name: 'AI & Automation', items: ['Google Gemini API', 'OpenAI SDK', 'RAG Chatbot Pipelines', 'Prompt Architecture'] },
+  ];
+
+  return (
+    <div className="space-y-4 max-w-3xl">
       <div className="grid sm:grid-cols-2 gap-4">
-        {[
-          { title: 'Frontend Architecture', skills: 'React 19, Next.js 16, TypeScript, Tailwind CSS, Framer Motion, GSAP' },
-          { title: 'Backend & APIs', skills: 'Node.js, Express.js, REST API, Socket.IO, WebRTC, Nodemailer, Upstash Redis' },
-          { title: 'Database & Cloud', skills: 'MongoDB Atlas, Mongoose, Firebase, Cloudinary, Docker' },
-          { title: 'AI & Automation', skills: 'Gemini AI API, OpenAI Integration, RAG Chatbots, Intelligent Automation' },
-        ].map((item, i) => (
-          <div key={i} className="p-4 rounded-xl bg-[#030712] border border-white/5 space-y-1.5">
-            <div className="text-xs font-bold text-[#06B6D4] uppercase tracking-wider">{item.title}</div>
-            <div className="text-xs text-gray-300 leading-relaxed">{item.skills}</div>
+        {skillCategories.map((cat, i) => (
+          <div key={i} className="p-4 rounded-xl bg-[#030712] border border-white/5 space-y-3">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#06B6D4] flex items-center gap-2">
+              <Cpu size={14} />
+              {cat.name}
+            </h4>
+            <div className="flex flex-wrap gap-1.5">
+              {cat.items.map((skill, idx) => (
+                <span key={idx} className="px-2 py-1 rounded-lg text-xs bg-white/5 border border-white/5 text-gray-200 font-medium">
+                  {skill}
+                </span>
+              ))}
+            </div>
           </div>
         ))}
       </div>
@@ -538,7 +600,35 @@ function OSAboutApp() {
 }
 
 // -------------------------------------------------------------
-// APP 4: DATHEON CERTIFICATE & OFFER LETTER VIEWER
+// APP 5: SERVICES & WORKFLOW
+// -------------------------------------------------------------
+function OSServicesApp() {
+  const services = [
+    { title: 'Full Stack Web Applications', desc: 'End-to-end MERN & Next.js systems with database design, authentication, and secure payment workflows.' },
+    { title: 'Frontend UI/UX Engineering', desc: 'Blazing fast, responsive, and interactive interfaces built with React 19, TypeScript, and modern 3D/motion aesthetics.' },
+    { title: 'Backend APIs & Microservices', desc: 'High-throughput Node/Express APIs, caching layers with Redis, and real-time Socket.IO communications.' },
+    { title: 'AI Assistant & Automation', desc: 'Custom Gemini AI and OpenAI conversational bots, semantic recommendation engines, and automation tools.' },
+  ];
+
+  return (
+    <div className="space-y-4 max-w-3xl">
+      <div className="grid sm:grid-cols-2 gap-4">
+        {services.map((s, i) => (
+          <div key={i} className="p-4 rounded-xl bg-[#030712] border border-white/5 space-y-2">
+            <h4 className="text-sm font-bold text-white flex items-center gap-2">
+              <Wrench size={15} className="text-[#F43F5E]" />
+              {s.title}
+            </h4>
+            <p className="text-xs text-gray-400 leading-relaxed">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// -------------------------------------------------------------
+// APP 6: CERTIFICATES & OFFER LETTER
 // -------------------------------------------------------------
 function OSCertificatesApp() {
   return (
@@ -586,7 +676,77 @@ function OSCertificatesApp() {
 }
 
 // -------------------------------------------------------------
-// APP 5: DIRECT CONTACT MAILER
+// APP 7: AI CHAT ASSISTANT
+// -------------------------------------------------------------
+function OSAIChatApp() {
+  const [messages, setMessages] = useState<Array<{ sender: 'user' | 'ai'; text: string }>>([
+    { sender: 'ai', text: "Hi! I am Sojib's AI Assistant. Ask me about his full-stack projects, skills, experience, or hire availability! 🚀" }
+  ]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || loading) return;
+
+    const userMsg = input.trim();
+    setMessages(prev => [...prev, { sender: 'user', text: userMsg }]);
+    setInput('');
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userMsg }),
+      });
+      const data = await res.json();
+      if (data.reply) {
+        setMessages(prev => [...prev, { sender: 'ai', text: data.reply }]);
+      }
+    } catch {
+      setMessages(prev => [...prev, { sender: 'ai', text: "Sojib is a dedicated Full Stack Developer specializing in React 19, Node.js, Express, and MongoDB Atlas. Contact him at sojibahmedshorif998@gmail.com!" }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="h-full min-h-[380px] flex flex-col justify-between bg-[#030712] p-4 rounded-xl border border-white/5 space-y-3">
+      <div className="space-y-3 overflow-y-auto max-h-[280px]">
+        {messages.map((m, i) => (
+          <div key={i} className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`p-3 rounded-xl text-xs max-w-[80%] whitespace-pre-line leading-relaxed ${
+              m.sender === 'user' ? 'bg-[#7C3AED] text-white' : 'bg-white/10 text-gray-200'
+            }`}>
+              {m.text}
+            </div>
+          </div>
+        ))}
+        {loading && <div className="text-xs text-gray-400 italic">Sojib AI is typing...</div>}
+      </div>
+
+      <form onSubmit={handleSend} className="flex gap-2 pt-2 border-t border-white/10">
+        <input
+          type="text"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          placeholder="Ask anything about Sojib..."
+          className="flex-1 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white outline-none focus:border-[#06B6D4]"
+        />
+        <button
+          type="submit"
+          className="px-4 py-2 rounded-xl bg-[#06B6D4] text-black font-bold text-xs hover:opacity-90 flex items-center gap-1 cursor-pointer"
+        >
+          <Send size={13} />
+        </button>
+      </form>
+    </div>
+  );
+}
+
+// -------------------------------------------------------------
+// APP 8: CONTACT MAILER
 // -------------------------------------------------------------
 function OSContactApp() {
   const [name, setName] = useState('');
