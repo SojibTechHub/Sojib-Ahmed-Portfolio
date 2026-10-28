@@ -4,7 +4,8 @@ import {
   FolderGit2, Terminal, User, Mail, Award, Settings, 
   ExternalLink, X, Minus, 
   ArrowLeft, Volume2, VolumeX, CheckCircle2, ShieldCheck, 
-  Search, Cpu, Wrench, Bot, Send
+  Search, Cpu, Wrench, Bot, Send, Layers, Code, Server,
+  Download, FileText, Sparkles, ChevronRight, Briefcase, MapPin, GraduationCap
 } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
@@ -136,7 +137,7 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
             { id: 'about', label: 'AboutMe.app', icon: User, color: '#8B5CF6' },
             { id: 'skills', label: 'Skills.exe', icon: Cpu, color: '#38BDF8' },
             { id: 'services', label: 'Services.app', icon: Wrench, color: '#F43F5E' },
-            { id: 'certificates', label: 'OfferLetter.pdf', icon: Award, color: '#F59E0B' },
+            { id: 'certificates', label: 'FlyRank.pdf', icon: Award, color: '#06B6D4' },
             { id: 'aichat', label: 'SojibAI.exe', icon: Bot, color: '#A855F7' },
             { id: 'contact', label: 'Contact.mail', icon: Mail, color: '#EC4899' },
           ].map(({ id, label, icon: Icon, color }) => (
@@ -202,7 +203,7 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
                     {activeApp === 'about' && '👨‍💻 About Sojib Ahmed — Background & Bio'}
                     {activeApp === 'skills' && '⚡ Technical Stack & Architecture Breakdown'}
                     {activeApp === 'services' && '🛠️ Services & Production Engineering Workflow'}
-                    {activeApp === 'certificates' && '📜 Datheon Internship Offer Letter & Verification'}
+                    {activeApp === 'certificates' && '📜 FlyRank Official Internship & Engineering Offer Letter'}
                     {activeApp === 'aichat' && '🤖 Sojib AI Assistant — Gemini Powered'}
                     {activeApp === 'contact' && '📬 Contact Mailer — Send Direct Message'}
                   </span>
@@ -230,10 +231,10 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
               <div className="flex-1 overflow-y-auto p-5 text-gray-200">
                 {activeApp === 'projects' && <OSProjectsApp />}
                 {activeApp === 'terminal' && <OSTerminalApp />}
-                {activeApp === 'about' && <OSAboutApp />}
+                {activeApp === 'about' && <OSAboutApp onNavigate={openApp} />}
                 {activeApp === 'skills' && <OSSkillsApp />}
-                {activeApp === 'services' && <OSServicesApp />}
-                {activeApp === 'certificates' && <OSCertificatesApp />}
+                {activeApp === 'services' && <OSServicesApp onNavigate={openApp} />}
+                {activeApp === 'certificates' && <OSCertificatesApp onNavigate={openApp} />}
                 {activeApp === 'aichat' && <OSAIChatApp />}
                 {activeApp === 'contact' && <OSContactApp />}
               </div>
@@ -276,6 +277,29 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
 // -------------------------------------------------------------
 // APP 1: PROJECTS EXPLORER
 // -------------------------------------------------------------
+const osProjectImageMap: Record<string, string> = {
+  'shopx': '/images/shopx.png',
+  'foodflow': '/images/foodflow.png',
+  'skillforge': '/images/skillforge.png',
+  'startupforge': '/images/startupforge.png',
+  'typemarket': '/images/typemarket.png',
+  'investprop': '/images/investprop.png',
+  'issue': '/images/issuetracker.png',
+  'pet': '/images/petadoption.png',
+  'job': '/images/jobfinder.png',
+  'book': '/images/digitools.png',
+  'digitools': '/images/digitools.png',
+};
+
+function resolveOSProjectImage(title?: string, img?: string) {
+  if (img && !img.includes('hero.jpg')) return img;
+  const key = (title || '').toLowerCase();
+  for (const [k, v] of Object.entries(osProjectImageMap)) {
+    if (key.includes(k)) return v;
+  }
+  return '/images/shopx.png';
+}
+
 function OSProjectsApp() {
   const [filter, setFilter] = useState<'all' | 'full-stack' | 'frontend' | 'backend'>('all');
   const [search, setSearch] = useState('');
@@ -382,16 +406,21 @@ function OSProjectsApp() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          const mapped = parsed.map((p: any) => ({
-            title: p.title,
-            subtitle: p.subtitle || p.description,
-            category: p.category || 'full-stack',
-            tech: Array.isArray(p.techStack) ? p.techStack : ['React', 'Node.js'],
-            live: p.liveUrl || p.live || '',
-            github: p.githubUrl || p.github || '',
-            image: p.image || '/images/hero.jpg',
-          }));
-          setProjectList(mapped);
+          const hasStaleHero = parsed.some((p: any) => p.image && p.image.includes('hero.jpg'));
+          if (hasStaleHero) {
+            localStorage.removeItem('sojib_custom_projects');
+          } else {
+            const mapped = parsed.map((p: any) => ({
+              title: p.title,
+              subtitle: p.subtitle || p.description,
+              category: p.category || 'full-stack',
+              tech: Array.isArray(p.techStack) ? p.techStack : ['React', 'Node.js'],
+              live: p.liveUrl || p.live || '',
+              github: p.githubUrl || p.github || '',
+              image: resolveOSProjectImage(p.title, p.image),
+            }));
+            setProjectList(mapped);
+          }
         }
       }
     } catch {}
@@ -409,7 +438,7 @@ function OSProjectsApp() {
             tech: Array.isArray(p.techStack) ? p.techStack : ['React', 'Node.js'],
             live: p.liveUrl || p.live || '',
             github: p.githubUrl || p.github || '',
-            image: p.image || '/images/hero.jpg',
+            image: resolveOSProjectImage(p.title, p.image),
           }));
           setProjectList(mapped);
         }
@@ -468,12 +497,12 @@ function OSProjectsApp() {
               {/* Project Picture Banner */}
               <div className="relative w-full h-36 rounded-lg overflow-hidden bg-black/60 mb-3 border border-white/5">
                 <img 
-                  src={proj.image || '/images/hero.jpg'} 
+                  src={resolveOSProjectImage(proj.title, proj.image)} 
                   alt={proj.title} 
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                   onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = '/images/hero.jpg';
+                    (e.currentTarget as HTMLImageElement).src = '/images/shopx.png';
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-transparent to-transparent opacity-80" />
@@ -614,12 +643,13 @@ function OSTerminalApp() {
 }
 
 // -------------------------------------------------------------
-// APP 3: ABOUT ME
+// APP 3: ABOUT ME (Engineering Specialization & Proven Background)
 // -------------------------------------------------------------
-function OSAboutApp() {
+function OSAboutApp({ onNavigate }: { onNavigate?: (app: AppId) => void }) {
   return (
-    <div className="space-y-6 max-w-3xl">
-      <div className="flex flex-col sm:flex-row items-center gap-5 p-5 rounded-2xl bg-[#030712] border border-white/5">
+    <div className="space-y-5 max-w-3xl pb-4">
+      {/* Bio Header */}
+      <div className="flex flex-col sm:flex-row items-center gap-5 p-5 rounded-2xl bg-[#030712] border border-white/10 shadow-lg">
         <div className="w-20 h-20 rounded-2xl overflow-hidden p-1 bg-gradient-to-tr from-[#7C3AED] to-[#06B6D4] flex-shrink-0 shadow-lg">
           <img
             src="/images/hero.jpg"
@@ -627,30 +657,138 @@ function OSAboutApp() {
             className="w-full h-full object-cover rounded-xl"
           />
         </div>
-        <div>
-          <div className="flex items-center gap-2">
+        <div className="space-y-1.5 text-center sm:text-left">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
             <h3 className="text-lg font-black text-white uppercase tracking-tight">Sojib Ahmed</h3>
-            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#06B6D4]/20 text-[#06B6D4]">Full Stack</span>
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30">
+              Full Stack Developer
+            </span>
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              Available for Hire
+            </span>
           </div>
-          <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-            Passionate Full Stack Developer from Rangpur, Bangladesh. Specialized in architecting scalable MERN & Next.js applications with futuristic design aesthetics and clean code principles.
+          <p className="text-xs text-gray-300 leading-relaxed">
+            Full-Stack Web Developer from Rangpur, Bangladesh. Specialized in building high-concurrency MERN & Next.js systems, real-time Socket.IO backends, and cutting-edge 3D interactive user interfaces.
           </p>
         </div>
       </div>
 
-      <div className="grid sm:grid-cols-3 gap-3 text-center">
-        <div className="p-4 rounded-xl bg-[#030712] border border-white/5">
-          <div className="text-2xl font-black text-[#06B6D4]">2+</div>
-          <div className="text-xs text-gray-400 mt-0.5 font-medium">Years Experience</div>
+      {/* Core Engineering Competencies (Replaces generic stat boxes) */}
+      <div className="space-y-2">
+        <div className="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center gap-1.5">
+          <Sparkles size={13} className="text-[#06B6D4]" />
+          <span>Core Engineering Focus</span>
         </div>
-        <div className="p-4 rounded-xl bg-[#030712] border border-white/5">
-          <div className="text-2xl font-black text-[#10B981]">15+</div>
-          <div className="text-xs text-gray-400 mt-0.5 font-medium">Projects Built</div>
+        
+        <div className="grid sm:grid-cols-3 gap-3">
+          <div className="p-4 rounded-xl bg-[#030712] border border-white/5 hover:border-[#7C3AED]/40 transition-all space-y-2 group shadow-sm">
+            <div className="w-8 h-8 rounded-lg bg-[#7C3AED]/15 text-[#A78BFA] flex items-center justify-center">
+              <Layers size={17} />
+            </div>
+            <h4 className="font-bold text-xs text-white group-hover:text-[#A78BFA] transition-colors">
+              Full-Stack Architecture
+            </h4>
+            <p className="text-[11px] text-gray-400 leading-relaxed">
+              React 19, Next.js 16, TypeScript, Node.js, Express, and scalable MongoDB Atlas / PostgreSQL schemas.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-[#030712] border border-white/5 hover:border-[#06B6D4]/40 transition-all space-y-2 group shadow-sm">
+            <div className="w-8 h-8 rounded-lg bg-[#06B6D4]/15 text-[#06B6D4] flex items-center justify-center">
+              <ShieldCheck size={17} />
+            </div>
+            <h4 className="font-bold text-xs text-white group-hover:text-[#06B6D4] transition-colors">
+              Security & DevOps
+            </h4>
+            <p className="text-[11px] text-gray-400 leading-relaxed">
+              Docker containers, automated GitHub Actions CI/CD, Upstash Redis caching, and strict RBAC authorization.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-[#030712] border border-white/5 hover:border-[#10B981]/40 transition-all space-y-2 group shadow-sm">
+            <div className="w-8 h-8 rounded-lg bg-[#10B981]/15 text-[#10B981] flex items-center justify-center">
+              <Bot size={17} />
+            </div>
+            <h4 className="font-bold text-xs text-white group-hover:text-[#10B981] transition-colors">
+              Real-Time & AI Systems
+            </h4>
+            <p className="text-[11px] text-gray-400 leading-relaxed">
+              Bidirectional Socket.IO telemetry, WebRTC video/audio, and custom Google Gemini AI chatbot integrations.
+            </p>
+          </div>
         </div>
-        <div className="p-4 rounded-xl bg-[#030712] border border-white/5">
-          <div className="text-2xl font-black text-[#8B5CF6]">100%</div>
-          <div className="text-xs text-gray-400 mt-0.5 font-medium">Commitment</div>
+      </div>
+
+      {/* Verified Background & Quick Facts */}
+      <div className="p-4 rounded-xl bg-[#030712] border border-white/5 space-y-2.5">
+        <div className="text-xs font-bold uppercase tracking-wider text-gray-400 flex items-center gap-1.5">
+          <Briefcase size={13} className="text-[#F59E0B]" />
+          <span>Professional Background & Verified Credentials</span>
         </div>
+
+        <div className="grid sm:grid-cols-2 gap-2.5 text-xs text-gray-300">
+          <div className="p-2.5 rounded-lg bg-white/5 border border-white/5 flex items-center gap-2">
+            <MapPin size={15} className="text-[#06B6D4] flex-shrink-0" />
+            <div>
+              <span className="text-gray-400 block text-[10px]">Location:</span>
+              <span className="font-semibold text-white">Rangpur, Bangladesh (Remote Worldwide)</span>
+            </div>
+          </div>
+
+          <div className="p-2.5 rounded-lg bg-white/5 border border-white/5 flex items-center gap-2">
+            <GraduationCap size={15} className="text-[#8B5CF6] flex-shrink-0" />
+            <div>
+              <span className="text-gray-400 block text-[10px]">Education & Training:</span>
+              <span className="font-semibold text-white">Programming Hero Full-Stack (Batch 13)</span>
+            </div>
+          </div>
+
+          <div className="p-2.5 rounded-lg bg-white/5 border border-white/5 flex items-center gap-2">
+            <Award size={15} className="text-[#F59E0B] flex-shrink-0" />
+            <div>
+              <span className="text-gray-400 block text-[10px]">Official Appointment:</span>
+              <span className="font-semibold text-white">FlyRank Offer of Appointment Verified</span>
+            </div>
+          </div>
+
+          <div className="p-2.5 rounded-lg bg-white/5 border border-white/5 flex items-center gap-2">
+            <CheckCircle2 size={15} className="text-[#10B981] flex-shrink-0" />
+            <div>
+              <span className="text-gray-400 block text-[10px]">Availability:</span>
+              <span className="font-semibold text-white">Full-Time / Contract / Remote Engineering</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Action Navigation */}
+      <div className="flex flex-wrap gap-2 pt-1">
+        {onNavigate && (
+          <>
+            <button
+              onClick={() => onNavigate('certificates')}
+              className="px-4 py-2 rounded-xl bg-[#06B6D4]/20 hover:bg-[#06B6D4]/30 border border-[#06B6D4]/40 text-[#06B6D4] text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+            >
+              <FileText size={13} />
+              <span>View FlyRank Offer Letter 📜</span>
+            </button>
+            <button
+              onClick={() => onNavigate('projects')}
+              className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+            >
+              <FolderGit2 size={13} className="text-[#A78BFA]" />
+              <span>Explore 10 Projects 🚀</span>
+            </button>
+            <button
+              onClick={() => onNavigate('contact')}
+              className="px-4 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-400 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+            >
+              <Mail size={13} />
+              <span>Contact Sojib 📬</span>
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
@@ -781,77 +919,257 @@ function OSSkillsApp() {
 }
 
 // -------------------------------------------------------------
-// APP 5: SERVICES & WORKFLOW
+// APP 5: SERVICES & PRODUCTION WORKFLOW
 // -------------------------------------------------------------
-function OSServicesApp() {
-  const services = [
-    { title: 'Full Stack Web Applications', desc: 'End-to-end MERN & Next.js systems with database design, authentication, and secure payment workflows.' },
-    { title: 'Frontend UI/UX Engineering', desc: 'Blazing fast, responsive, and interactive interfaces built with React 19, TypeScript, and modern 3D/motion aesthetics.' },
-    { title: 'Backend APIs & Microservices', desc: 'High-throughput Node/Express APIs, caching layers with Redis, and real-time Socket.IO communications.' },
-    { title: 'AI Assistant & Automation', desc: 'Custom Gemini AI and OpenAI conversational bots, semantic recommendation engines, and automation tools.' },
+function OSServicesApp({ onNavigate }: { onNavigate?: (app: AppId) => void }) {
+  const serviceList = [
+    {
+      title: 'Full Stack Web Applications',
+      subtitle: 'Enterprise MERN & Next.js Systems',
+      icon: Layers,
+      color: '#7C3AED',
+      tech: ['Next.js 16', 'React 19', 'TypeScript', 'Node.js', 'Express', 'MongoDB Atlas'],
+      deliverables: [
+        'Multi-Role Portals (Admin, Vendor, Customer) with secure JWT / OAuth RBAC',
+        'Unified Checkout Engines with Stripe & SSLCommerz automated webhooks',
+        'Upstash Redis in-memory caching reducing latency to sub-50ms',
+        'End-to-end atomic database transactions and data integrity guarantees',
+      ],
+    },
+    {
+      title: 'Frontend UI/UX & Interactive 3D',
+      subtitle: 'High-Performance Pixel-Perfect Interfaces',
+      icon: Code,
+      color: '#06B6D4',
+      tech: ['React 19', 'TypeScript', 'Tailwind CSS v4', 'Three.js', 'Framer Motion', 'GSAP'],
+      deliverables: [
+        'Interactive 3D WebGL scenes, virtual desktops & custom shaders',
+        'Sub-second 95+ Lighthouse performance with code-splitting & tree-shaking',
+        'Responsive mobile-first layouts with smooth spring physics transitions',
+        'Design-system compliance with dark/light themes and ARIA accessibility',
+      ],
+    },
+    {
+      title: 'Backend APIs & Microservices',
+      subtitle: 'High-Throughput Distributed Gateways',
+      icon: Server,
+      color: '#10B981',
+      tech: ['Node.js', 'Express.js', 'Socket.IO', 'WebRTC', 'Docker', 'Redis'],
+      deliverables: [
+        'Bidirectional Socket.IO telemetry for live tracking and instant chat',
+        'WebRTC video/audio calling mesh with peer connection management',
+        'Automated transactional emails with Nodemailer and queue workers',
+        'Dockerized microservice architecture ready for automated CI/CD deployment',
+      ],
+    },
+    {
+      title: 'AI Assistant & Automation Systems',
+      subtitle: 'Custom Conversational & Cognitive Engines',
+      icon: Bot,
+      color: '#EC4899',
+      tech: ['Google Gemini AI', 'OpenAI SDK', 'Prompt Engineering', 'Semantic Search', 'RAG'],
+      deliverables: [
+        'Domain-specific AI chatbots trained on custom portfolio & enterprise docs',
+        'Real-time resume ATS keyword analyzers and candidate qualification scoring',
+        'Semantic recommendation pipelines for e-commerce and food delivery',
+        'Automated document parsing and structured JSON extraction pipelines',
+      ],
+    },
   ];
 
   return (
-    <div className="space-y-4 max-w-3xl">
-      <div className="grid sm:grid-cols-2 gap-4">
-        {services.map((s, i) => (
-          <div key={i} className="p-4 rounded-xl bg-[#030712] border border-white/5 space-y-2">
-            <h4 className="text-sm font-bold text-white flex items-center gap-2">
-              <Wrench size={15} className="text-[#F43F5E]" />
-              {s.title}
-            </h4>
-            <p className="text-xs text-gray-400 leading-relaxed">{s.desc}</p>
-          </div>
-        ))}
+    <div className="space-y-4 max-w-4xl pb-4">
+      {/* Services Grid */}
+      <div className="grid sm:grid-cols-2 gap-3.5">
+        {serviceList.map((s, i) => {
+          const Icon = s.icon;
+          return (
+            <div
+              key={i}
+              className="p-4 rounded-xl bg-[#030712] border border-white/10 hover:border-[#06B6D4]/40 transition-all flex flex-col justify-between group shadow-sm hover:shadow-md"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-110 transition-transform"
+                    style={{ background: `${s.color}20`, border: `1px solid ${s.color}40` }}
+                  >
+                    <Icon size={20} style={{ color: s.color }} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-white group-hover:text-[#06B6D4] transition-colors leading-tight">
+                      {s.title}
+                    </h4>
+                    <p className="text-[11px] text-gray-400 mt-0.5">{s.subtitle}</p>
+                  </div>
+                </div>
+
+                {/* Tech Badges */}
+                <div className="flex flex-wrap gap-1">
+                  {s.tech.map((t, idx) => (
+                    <span
+                      key={idx}
+                      className="px-1.5 py-0.5 rounded text-[10px] bg-white/5 border border-white/5 text-gray-300 font-mono"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Deliverables Checklist */}
+                <div className="space-y-1.5 pt-1 border-t border-white/5">
+                  {s.deliverables.map((item, idx) => (
+                    <div key={idx} className="flex items-start gap-1.5 text-xs text-gray-400">
+                      <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: s.color }} />
+                      <span className="leading-snug">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {onNavigate && (
+                <div className="pt-3 mt-3 border-t border-white/5">
+                  <button
+                    onClick={() => onNavigate('contact')}
+                    className="w-full py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold text-gray-300 hover:text-white border border-white/10 flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                  >
+                    <span>Request / Inquire Service</span>
+                    <ChevronRight size={13} className="text-[#06B6D4]" />
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
 // -------------------------------------------------------------
-// APP 6: CERTIFICATES & OFFER LETTER
+// APP 6: CERTIFICATES & FLYRANK OFFER LETTER
 // -------------------------------------------------------------
-function OSCertificatesApp() {
+function OSCertificatesApp({ onNavigate }: { onNavigate?: (app: AppId) => void }) {
+  const flyRankDriveLink = 'https://drive.google.com/file/d/10ONRQsFH14NB1RvG7aJIltzSm6YGXqcy/view?usp=sharing';
+  const flyRankEmbedLink = 'https://drive.google.com/file/d/10ONRQsFH14NB1RvG7aJIltzSm6YGXqcy/preview';
+  const flyRankDownloadLink = 'https://drive.google.com/uc?export=download&id=10ONRQsFH14NB1RvG7aJIltzSm6YGXqcy';
+
   return (
-    <div className="space-y-5 max-w-2xl">
-      <div className="p-5 rounded-2xl bg-[#030712] border border-[#06B6D4]/30 space-y-3">
-        <div className="flex items-center justify-between">
+    <div className="space-y-4 max-w-4xl pb-4">
+      {/* Featured FlyRank Official Offer Letter Card */}
+      <div className="p-4 sm:p-5 rounded-2xl bg-[#030712] border border-[#06B6D4]/40 space-y-4 shadow-xl">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-[#06B6D4]/30 to-[#7C3AED]/20 border border-[#06B6D4]/50 flex items-center justify-center text-[#06B6D4] shadow-md">
+              <Award size={24} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h4 className="font-bold text-sm text-white uppercase tracking-tight">
+                  FlyRank — Offer of Appointment
+                </h4>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Verified Record
+                </span>
+              </div>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Official Engineering Appointment Letter · Position: <strong className="text-white">Full Stack Web Development Intern</strong>
+              </p>
+            </div>
+          </div>
+
           <div className="flex items-center gap-2">
-            <ShieldCheck size={20} className="text-[#06B6D4]" />
-            <h4 className="font-bold text-sm text-white">Datheon AI Systems & Automation Studio</h4>
-          </div>
-          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400">
-            Verified Record
-          </span>
-        </div>
-
-        <p className="text-xs text-gray-300 leading-relaxed">
-          Official Offer of Internship for the position of <strong className="text-white">Full Stack Web Development Intern</strong> (2026 Engineering Cohort).
-        </p>
-
-        <div className="p-3.5 rounded-xl bg-white/5 border border-white/5 space-y-1.5 text-xs">
-          <div className="flex justify-between text-gray-400">
-            <span>Candidate:</span> <span className="text-white font-semibold">Sojib Ahmed</span>
-          </div>
-          <div className="flex justify-between text-gray-400">
-            <span>Credential ID:</span> <span className="font-mono text-[#06B6D4] font-bold">DT-2026-33B1M</span>
-          </div>
-          <div className="flex justify-between text-gray-400">
-            <span>Track:</span> <span className="text-white">Full Stack Web Development</span>
-          </div>
-          <div className="flex justify-between text-gray-400">
-            <span>Verification Link:</span>
             <a
-              href="https://datheon.in/verify?id=DT-2026-33B1M"
+              href={flyRankDriveLink}
               target="_blank"
               rel="noreferrer"
-              className="text-[#06B6D4] hover:underline"
+              className="px-3 py-1.5 rounded-lg bg-[#06B6D4]/20 hover:bg-[#06B6D4]/30 border border-[#06B6D4]/40 text-[#06B6D4] text-xs font-semibold flex items-center gap-1.5 transition-all"
             >
-              Verify on Portal →
+              <ExternalLink size={12} />
+              <span>Drive Viewer</span>
+            </a>
+            <a
+              href={flyRankDownloadLink}
+              target="_blank"
+              rel="noreferrer"
+              className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white text-xs font-semibold border border-white/10 flex items-center gap-1.5 transition-all"
+            >
+              <Download size={12} />
+              <span>Download PDF</span>
             </a>
           </div>
         </div>
+
+        {/* Embedded Interactive PDF Document Viewer */}
+        <div className="relative w-full h-[360px] rounded-xl overflow-hidden border border-white/10 bg-black/60 shadow-inner">
+          <iframe
+            src={flyRankEmbedLink}
+            title="FlyRank Offer Letter"
+            className="w-full h-full border-0"
+            allow="autoplay"
+          />
+        </div>
+
+        {/* Credential Details Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+          <div className="p-2.5 rounded-lg bg-white/5 border border-white/5">
+            <span className="text-gray-400 block text-[10px]">Candidate:</span>
+            <span className="font-semibold text-white">Sojib Ahmed</span>
+          </div>
+          <div className="p-2.5 rounded-lg bg-white/5 border border-white/5">
+            <span className="text-gray-400 block text-[10px]">Organization:</span>
+            <span className="font-semibold text-[#06B6D4]">FlyRank</span>
+          </div>
+          <div className="p-2.5 rounded-lg bg-white/5 border border-white/5">
+            <span className="text-gray-400 block text-[10px]">Role:</span>
+            <span className="font-semibold text-white">Full Stack Web Developer</span>
+          </div>
+          <div className="p-2.5 rounded-lg bg-white/5 border border-white/5">
+            <span className="text-gray-400 block text-[10px]">Credential ID:</span>
+            <span className="font-mono text-[#10B981] font-bold">FLYRANK-2026-ENG</span>
+          </div>
+        </div>
       </div>
+
+      {/* Secondary Credential Card: Programming Hero Full-Stack Web Development */}
+      <div className="p-4 rounded-xl bg-[#030712] border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#7C3AED]/20 border border-[#7C3AED]/40 flex items-center justify-center text-[#A78BFA] flex-shrink-0">
+            <GraduationCap size={20} />
+          </div>
+          <div>
+            <h5 className="font-bold text-xs text-white">
+              Complete Web Development Course — Programming Hero
+            </h5>
+            <p className="text-[11px] text-gray-400">
+              8-Month Intensive Training (MERN Stack, Next.js, TypeScript, REST APIs) · Batch 13
+            </p>
+          </div>
+        </div>
+
+        <a
+          href="https://drive.google.com/file/d/1xthcbztqypL5RCzst-gNL4bg4eMNFWyK/view?usp=sharing"
+          target="_blank"
+          rel="noreferrer"
+          className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-gray-300 hover:text-white flex items-center gap-1.5 transition-all flex-shrink-0"
+        >
+          <ExternalLink size={12} />
+          <span>Verify Certificate</span>
+        </a>
+      </div>
+
+      {onNavigate && (
+        <div className="flex justify-end pt-1">
+          <button
+            onClick={() => onNavigate('contact')}
+            className="px-3.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold text-gray-300 hover:text-white border border-white/10 flex items-center gap-1.5 transition-all cursor-pointer"
+          >
+            <Mail size={12} className="text-[#EC4899]" />
+            <span>Contact for Employment or Reference Verification</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }

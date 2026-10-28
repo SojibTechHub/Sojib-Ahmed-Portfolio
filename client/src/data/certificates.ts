@@ -1,5 +1,5 @@
 // ============================
-// CERTIFICATES DATA
+// CERTIFICATES & CREDENTIALS DATA
 // ============================
 
 export interface Certificate {
@@ -18,6 +18,19 @@ export interface Certificate {
 
 export const certificates: Certificate[] = [
   {
+    id: 'flyrank-offer-letter',
+    title: 'Full Stack Web Development Appointment',
+    issuer: 'FlyRank',
+    issuerLogo: '🚀',
+    date: '2026 Cohort',
+    duration: 'Official Engineering Offer Letter',
+    skills: ['Full Stack MERN', 'Next.js', 'REST APIs', 'System Architecture', 'Production Deployment'],
+    verifyUrl: 'https://drive.google.com/file/d/10ONRQsFH14NB1RvG7aJIltzSm6YGXqcy/view?usp=sharing',
+    credentialId: 'FLYRANK-2026-ENG-SOJIB',
+    color: '#06B6D4',
+    featured: true,
+  },
+  {
     id: 'ph-complete-web-dev',
     title: 'Complete Web Development Course',
     issuer: 'Programming Hero',
@@ -28,7 +41,7 @@ export const certificates: Certificate[] = [
     verifyUrl: 'https://drive.google.com/file/d/1xthcbztqypL5RCzst-gNL4bg4eMNFWyK/view?usp=sharing',
     credentialId: 'PH-2026-MERN-SOJIB',
     color: '#7C3AED',
-    featured: true,
+    featured: false,
   },
   {
     id: 'mongodb-associate',

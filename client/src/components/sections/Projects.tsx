@@ -21,6 +21,29 @@ const categoryLabels = {
   'backend': 'Backend',
 };
 
+const projectImageMap: Record<string, string> = {
+  'shopx': '/images/shopx.png',
+  'foodflow': '/images/foodflow.png',
+  'skillforge': '/images/skillforge.png',
+  'startupforge': '/images/startupforge.png',
+  'typemarket': '/images/typemarket.png',
+  'investprop': '/images/investprop.png',
+  'issue': '/images/issuetracker.png',
+  'pet': '/images/petadoption.png',
+  'job': '/images/jobfinder.png',
+  'book': '/images/digitools.png',
+  'digitools': '/images/digitools.png',
+};
+
+const getProjectImage = (title?: string, id?: string, img?: string) => {
+  if (img && !img.includes('hero.jpg')) return img;
+  const key = `${id || ''} ${title || ''}`.toLowerCase();
+  for (const [k, v] of Object.entries(projectImageMap)) {
+    if (key.includes(k)) return v;
+  }
+  return '/images/shopx.png';
+};
+
 export default function Projects() {
   const [projectList, setProjectList] = useState(defaultProjects);
   const [activeFilter, setActiveFilter] = useState<Category>('all');
@@ -162,12 +185,12 @@ export default function Projects() {
                 <div>
                   <div className="project-card-image w-full h-52 sm:h-64 relative overflow-hidden bg-[#0a0f1d]">
                     <img 
-                      src={project.image || '/images/hero.jpg'} 
+                      src={getProjectImage(project.title, project.id, project.image)} 
                       alt={project.title} 
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       loading="lazy"
                       onError={(e) => {
-                        (e.currentTarget as HTMLImageElement).src = '/images/hero.jpg';
+                        (e.currentTarget as HTMLImageElement).src = '/images/shopx.png';
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-surface)] via-transparent to-transparent opacity-90 pointer-events-none" />
