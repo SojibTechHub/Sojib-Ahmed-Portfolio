@@ -1,15 +1,15 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { Award, ExternalLink, Download, CheckCircle2 } from 'lucide-react';
+import { ExternalLink, Download } from 'lucide-react';
 import { certificates } from '../../data/certificates';
 
 export default function Certificates() {
   const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
-  const featuredCert = certificates.find(c => c.featured) || certificates[0];
 
   return (
-    <section id="certificates" className="section-padding relative" ref={ref}>
+    <section id="certificates" className="section-padding relative overflow-hidden" ref={ref}>
       <div className="absolute top-1/2 left-1/2 w-96 h-96 orb orb-violet opacity-10 -translate-x-1/2 -translate-y-1/2 pointer-events-none blur-3xl" aria-hidden="true" />
+      <div className="absolute top-1/4 right-10 w-72 h-72 orb orb-cyan opacity-10 pointer-events-none blur-3xl" aria-hidden="true" />
 
       <div className="container-custom relative z-10">
         {/* Header */}
@@ -22,128 +22,178 @@ export default function Certificates() {
           <div className="section-badge mx-auto w-fit mb-3">
             <span>🏆</span> Verified Credentials
           </div>
-          <h2 className="section-heading">Certifications & Achievements</h2>
+          <h2 className="section-heading">Certifications & Official Appointments</h2>
           <p className="section-subheading mx-auto text-center max-w-xl">
-            Officially verified credentials and full-stack engineering specializations.
+            Officially verified credentials, engineering offer letter, and full-stack industry records.
           </p>
         </motion.div>
 
-        {/* Featured Certificate */}
+        {/* 3 Compact Credentials Grid */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          <motion.div
-            whileHover={{ y: -3 }}
-            className="card p-6 sm:p-8 relative overflow-hidden bg-[var(--color-surface)]/80 backdrop-blur-md border border-[rgba(124,58,237,0.3)] shadow-[0_10px_30px_rgba(124,58,237,0.1)] rounded-3xl"
-          >
-            {/* Featured top gradient line */}
-            <div 
-              className="absolute top-0 left-0 right-0 h-[2px]"
-              style={{ background: 'linear-gradient(90deg, transparent, #7C3AED, #06B6D4, transparent)' }} 
-            />
-            
-            <div className="grid md:grid-cols-3 gap-8 md:gap-10 items-center">
-              {/* Certificate visual */}
-              <div className="md:col-span-1">
-                <a
-                  href={featuredCert.verifyUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group block aspect-[4/3] rounded-2xl relative overflow-hidden border border-[rgba(124,58,237,0.25)] shadow-md hover:border-primary transition-all duration-300 bg-gradient-to-br from-[#111827] to-[#0b1120]"
-                >
-                  <img 
-                    src="/certificates/certificate.png" 
-                    alt="Certificate of Completion" 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                    onError={(e) => {
-                      // Fallback if image not found
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="px-3 py-1.5 rounded-full bg-black/80 text-white text-xs font-semibold backdrop-blur-sm flex items-center gap-1.5 border border-white/20">
-                      <ExternalLink size={13} /> View Certificate
-                    </span>
-                  </div>
-                </a>
-              </div>
+          {certificates.map((cert) => {
+            const isFlyRank = cert.id === 'flyrank-offer-letter';
+            const isPH = cert.id === 'ph-complete-web-dev';
 
-              {/* Details */}
-              <div className="md:col-span-2">
-                <div className="flex items-start gap-3.5 mb-4">
-                  <div 
-                    className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-inner"
-                    style={{ background: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.3)' }}
-                  >
-                    <Award size={22} className="text-[#8B5CF6]" />
+            return (
+              <motion.div
+                key={cert.id}
+                whileHover={{ y: -4 }}
+                transition={{ duration: 0.2 }}
+                className="card flex flex-col justify-between overflow-hidden bg-[var(--color-surface)]/80 backdrop-blur-md border border-white/10 hover:border-[#06B6D4]/50 shadow-lg rounded-2xl p-5 group"
+              >
+                <div>
+                  {/* Visual Document / Certificate Thumbnail */}
+                  <div className="relative w-full h-44 rounded-xl overflow-hidden bg-black/60 mb-4 border border-white/10 group-hover:border-white/20 transition-all">
+                    {isPH ? (
+                      <div className="relative w-full h-full bg-[#0b1120]">
+                        <img
+                          src="/certificates/certificate.png"
+                          alt={cert.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                      </div>
+                    ) : isFlyRank ? (
+                      <div className="w-full h-full p-4 bg-gradient-to-br from-[#0c192c] via-[#08101d] to-[#040810] flex flex-col justify-between text-left relative overflow-hidden">
+                        <div className="absolute -right-8 -bottom-8 w-32 h-32 rounded-full bg-[#06B6D4]/10 blur-xl pointer-events-none" />
+                        <div className="flex items-center justify-between z-10">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xl">🚀</span>
+                            <span className="font-black text-sm tracking-widest text-[#06B6D4] uppercase">FlyRank</span>
+                          </div>
+                          <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30">
+                            OFFICIAL
+                          </span>
+                        </div>
+                        <div className="z-10 my-auto">
+                          <div className="text-[11px] font-mono text-gray-400 uppercase tracking-wider">Offer of Appointment</div>
+                          <div className="text-sm font-black text-white leading-tight mt-0.5">
+                            Full Stack Web Development Intern
+                          </div>
+                          <div className="text-[10px] text-gray-300 mt-1 font-mono">
+                            Candidate: <span className="text-[#06B6D4] font-bold">Sojib Ahmed</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between text-[9px] font-mono text-gray-400 border-t border-white/10 pt-1.5 z-10">
+                          <span>Ref: FLYRANK-2026-ENG</span>
+                          <span className="text-emerald-400 font-bold">✓ Signed & Verified</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="w-full h-full p-4 bg-gradient-to-br from-[#06241a] via-[#061510] to-[#020a06] flex flex-col justify-between text-left relative overflow-hidden">
+                        <div className="absolute -right-8 -bottom-8 w-32 h-32 rounded-full bg-[#10B981]/10 blur-xl pointer-events-none" />
+                        <div className="flex items-center justify-between z-10">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xl">⚡</span>
+                            <span className="font-black text-sm tracking-widest text-[#10B981] uppercase">Datheon AI</span>
+                          </div>
+                          <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
+                            INTERNSHIP
+                          </span>
+                        </div>
+                        <div className="z-10 my-auto">
+                          <div className="text-[11px] font-mono text-gray-400 uppercase tracking-wider">Verified Experience Record</div>
+                          <div className="text-sm font-black text-white leading-tight mt-0.5">
+                            Full Stack Systems & Engineering
+                          </div>
+                          <div className="text-[10px] text-gray-300 mt-1 font-mono">
+                            Verification: <span className="text-[#10B981] font-bold">DT-2026-33B1M</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between text-[9px] font-mono text-gray-400 border-t border-white/10 pt-1.5 z-10">
+                          <span>datheon.in/verify</span>
+                          <span className="text-[#10B981] font-bold">✓ Verified Record</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Hover Overlay preview hint */}
+                    <a
+                      href={cert.verifyUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]"
+                      title="Open document"
+                    >
+                      <span className="px-3 py-1.5 rounded-full bg-black/80 text-white text-xs font-semibold backdrop-blur-sm flex items-center gap-1.5 border border-white/20 shadow-lg">
+                        <ExternalLink size={13} /> View Document
+                      </span>
+                    </a>
                   </div>
-                  <div>
-                    <h3 className="text-xl sm:text-2xl font-black text-[var(--color-text-primary)]">
-                      {featuredCert.title}
+
+                  {/* Title & Organization */}
+                  <div className="space-y-1.5 mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse flex-shrink-0" />
+                      <span className="text-[11px] font-bold tracking-wide uppercase text-gray-300 font-mono">
+                        {cert.badgeText}
+                      </span>
+                    </div>
+
+                    <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-[#06B6D4] transition-colors leading-snug">
+                      {cert.title}
                     </h3>
-                    <p className="text-sm font-semibold text-[#06B6D4] mt-0.5">
-                      {featuredCert.issuer}
-                    </p>
+
+                    <div className="flex items-center justify-between text-xs pt-0.5">
+                      <span className="font-semibold text-[#06B6D4]">{cert.issuer}</span>
+                      <span className="text-gray-400 font-mono text-[11px]">{cert.date}</span>
+                    </div>
+                  </div>
+
+                  {/* Credential ID Chip */}
+                  <div className="p-2 rounded-lg bg-black/40 border border-white/5 mb-3 flex items-center justify-between text-[11px]">
+                    <span className="text-gray-400">Credential ID:</span>
+                    <span className="font-mono font-bold text-purple-300">{cert.credentialId}</span>
+                  </div>
+
+                  {/* Skills Pills */}
+                  <div className="flex flex-wrap gap-1 mb-4">
+                    {cert.skills.slice(0, 4).map((skill) => (
+                      <span
+                        key={skill}
+                        className="text-[10px] font-medium py-0.5 px-2 rounded-md bg-white/5 border border-white/5 text-gray-300"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                    {cert.skills.length > 4 && (
+                      <span className="text-[10px] font-mono py-0.5 px-1.5 rounded-md bg-white/5 text-gray-400">
+                        +{cert.skills.length - 4}
+                      </span>
+                    )}
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-5 text-sm">
-                  <div className="p-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)]">
-                    <span className="text-xs text-[var(--color-text-secondary)] block mb-0.5">Period</span>
-                    <span className="text-[var(--color-text-primary)] font-semibold text-xs sm:text-sm">{featuredCert.date}</span>
-                  </div>
-                  <div className="p-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)]">
-                    <span className="text-xs text-[var(--color-text-secondary)] block mb-0.5">Duration</span>
-                    <span className="text-[var(--color-text-primary)] font-semibold text-xs sm:text-sm">{featuredCert.duration}</span>
-                  </div>
-                  <div className="p-3 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] col-span-2 sm:col-span-1">
-                    <span className="text-xs text-[var(--color-text-secondary)] block mb-0.5">Credential ID</span>
-                    <span className="text-[#8B5CF6] font-mono text-xs font-bold">{featuredCert.credentialId}</span>
-                  </div>
-                </div>
-
-                {/* Skills */}
-                <div className="flex flex-wrap gap-1.5 mb-6">
-                  {featuredCert.skills.map(skill => (
-                    <span key={skill} className="tech-badge text-[11px] font-medium py-1 px-2.5 bg-[#7C3AED]/10 border-[#7C3AED]/30 text-[#D8B4FE]">
-                      <CheckCircle2 size={11} className="text-[#10B981]" />
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Actions */}
-                <div className="flex flex-wrap gap-3">
-                  <motion.a
-                    href={featuredCert.verifyUrl}
+                {/* Direct Action Links */}
+                <div className="flex gap-2 pt-3 border-t border-white/5">
+                  <a
+                    href={cert.verifyUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="btn-primary flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm shadow-[0_0_20px_rgba(124,58,237,0.4)]"
-                    id="cert-verify-button"
+                    className="flex-1 py-2 px-3 rounded-xl bg-[#06B6D4]/15 hover:bg-[#06B6D4]/25 border border-[#06B6D4]/40 text-[#06B6D4] text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-sm"
                   >
-                    <ExternalLink size={16} />
-                    Verify Certificate
-                  </motion.a>
-                  <motion.a
-                    href={featuredCert.verifyUrl}
+                    <ExternalLink size={13} />
+                    <span>Verify Credential</span>
+                  </a>
+                  <a
+                    href={cert.downloadUrl || cert.verifyUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="btn-secondary flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm"
-                    id="cert-download-button"
+                    className="py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 hover:text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
+                    title="View Document"
                   >
-                    <Download size={16} />
-                    View / Download PDF
-                  </motion.a>
+                    <Download size={13} />
+                    <span>PDF</span>
+                  </a>
                 </div>
-              </div>
-            </div>
-          </motion.div>
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
     </section>

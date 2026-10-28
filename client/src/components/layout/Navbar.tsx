@@ -81,7 +81,7 @@ export default function Navbar() {
                   <span className="w-2 h-2 rounded-full bg-[#10B981] inline-block shadow-[0_0_8px_#10B981] animate-pulse" />
                 </div>
                 <div className="text-[11px] font-medium text-[var(--color-text-secondary)] tracking-wide mt-0.5">
-                  Full-Stack Developer
+                  Full Stack Developer
                 </div>
               </div>
             </motion.a>

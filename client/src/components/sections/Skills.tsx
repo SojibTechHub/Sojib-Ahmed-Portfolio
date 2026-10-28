@@ -96,7 +96,7 @@ export function getSkillRealIcon(name: string, size = 26) {
 }
 
 export default function Skills() {
-  const [activeTab, setActiveTab] = useState('all');
+  const [activeTab, setActiveTab] = useState('frontend');
   const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
 
   const activeCategory = skillCategories.find(c => c.id === activeTab) || skillCategories[0];

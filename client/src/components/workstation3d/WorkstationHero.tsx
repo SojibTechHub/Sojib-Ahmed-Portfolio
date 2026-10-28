@@ -11,80 +11,43 @@ interface WorkstationHeroProps {
 export default function WorkstationHero({ onSwitchToClassic }: WorkstationHeroProps) {
   const [viewMode, setViewMode] = useState<'3d-room' | 'screen-os'>('3d-room');
   const [isPlayingLofi, setIsPlayingLofi] = useState(false);
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const timerRef = useRef<any>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Synthesized Cozy Lofi Chord Generator (Zero external audio file needed, 100% reliable)
-  const toggleLofiMusic = () => {
-    if (isPlayingLofi) {
-      if (audioCtxRef.current) {
-        audioCtxRef.current.close().catch(() => {});
-        audioCtxRef.current = null;
-      }
-      clearInterval(timerRef.current);
-      setIsPlayingLofi(false);
-      return;
-    }
-
-    try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      audioCtxRef.current = ctx;
-
-      // Chord frequencies: Fmaj7 -> Em7 -> Dm7 -> Cmaj7
-      const chords = [
-        [174.61, 220.00, 261.63, 329.63], // Fmaj7
-        [164.81, 196.00, 246.94, 293.66], // Em7
-        [146.83, 174.61, 220.00, 261.63], // Dm7
-        [130.81, 164.81, 196.00, 246.94], // Cmaj7
-      ];
-
-      let chordIdx = 0;
-
-      const playChord = () => {
-        if (!audioCtxRef.current || audioCtxRef.current.state === 'closed') return;
-        const currentChord = chords[chordIdx % chords.length];
-        chordIdx++;
-
-        currentChord.forEach(freq => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          const filter = ctx.createBiquadFilter();
-
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(freq, ctx.currentTime);
-
-          filter.type = 'lowpass';
-          filter.frequency.setValueAtTime(450, ctx.currentTime);
-
-          gain.gain.setValueAtTime(0.001, ctx.currentTime);
-          gain.gain.linearRampToValueAtTime(0.025, ctx.currentTime + 0.8);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 3.6);
-
-          osc.connect(filter);
-          filter.connect(gain);
-          gain.connect(ctx.destination);
-
-          osc.start();
-          osc.stop(ctx.currentTime + 3.8);
-        });
-      };
-
-      playChord();
-      timerRef.current = setInterval(playChord, 3800);
-      setIsPlayingLofi(true);
-    } catch {
-      setIsPlayingLofi(false);
-    }
-  };
-
+  // Real Lofi Chill Audio Track Player
   useEffect(() => {
+    const audio = new Audio('/audio/lofi-song.mp3');
+    audio.loop = true;
+    audio.volume = 0.45;
+    audioRef.current = audio;
+
+    audio.onended = () => {
+      // Loop backup
+      audio.currentTime = 0;
+      audio.play().catch(() => {});
+    };
+
     return () => {
-      if (audioCtxRef.current) {
-        audioCtxRef.current.close().catch(() => {});
-      }
-      clearInterval(timerRef.current);
+      audio.pause();
+      audio.src = '';
+      audioRef.current = null;
     };
   }, []);
+
+  const toggleLofiMusic = () => {
+    if (!audioRef.current) return;
+
+    if (isPlayingLofi) {
+      audioRef.current.pause();
+      setIsPlayingLofi(false);
+    } else {
+      audioRef.current.play().then(() => {
+        setIsPlayingLofi(true);
+      }).catch((err) => {
+        console.warn('Audio play blocked by browser policy:', err);
+        setIsPlayingLofi(false);
+      });
+    }
+  };
 
   const scrollToClassic = () => {
     if (onSwitchToClassic) {

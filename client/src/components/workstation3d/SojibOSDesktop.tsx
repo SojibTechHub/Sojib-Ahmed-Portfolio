@@ -58,57 +58,57 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
   };
 
   return (
-    <div className="relative w-full h-full min-h-[640px] max-h-[88vh] bg-[#030712] rounded-3xl overflow-hidden border-2 border-[#06B6D4]/30 shadow-2xl flex flex-col font-sans select-none">
+    <div className="relative w-full h-full min-h-[580px] sm:min-h-[640px] max-h-[88vh] bg-[#030712] rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-[#06B6D4]/30 shadow-2xl flex flex-col font-sans select-none">
       
       {/* OS Top Navigation Bar */}
-      <div className="h-10 bg-[#0B1120] border-b border-[rgba(255,255,255,0.08)] px-4 flex items-center justify-between text-xs text-gray-300 z-30">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" />
-            <span className="font-extrabold text-[#06B6D4] tracking-wider uppercase text-[11px]">
-              Sojib OS <span className="text-gray-500 font-normal">v2.6 Enterprise</span>
+      <div className="h-10 bg-[#0B1120] border-b border-[rgba(255,255,255,0.08)] px-3 sm:px-4 flex items-center justify-between text-xs text-gray-300 z-30">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse flex-shrink-0" />
+            <span className="font-extrabold text-[#06B6D4] tracking-wider uppercase text-[11px] whitespace-nowrap">
+              Sojib OS <span className="hidden sm:inline text-gray-500 font-normal">v2.6 Enterprise</span>
             </span>
           </div>
 
-          <span className="text-gray-600">|</span>
+          <span className="text-gray-600 hidden sm:inline">|</span>
 
           {/* Quick Jump Buttons */}
           <button
             onClick={() => { playBeep(); onZoomOut(); }}
-            className="px-2.5 py-1 rounded-md bg-white/5 hover:bg-[#06B6D4]/20 hover:text-[#06B6D4] border border-white/10 transition-all flex items-center gap-1.5 text-[11px] font-semibold cursor-pointer"
+            className="px-2 py-1 rounded-md bg-white/5 hover:bg-[#06B6D4]/20 hover:text-[#06B6D4] border border-white/10 transition-all flex items-center gap-1 text-[11px] font-semibold cursor-pointer whitespace-nowrap"
             title="Step back to 3D Room"
           >
             <ArrowLeft size={12} />
-            <span>3D Room View</span>
+            <span className="hidden xs:inline">3D Room</span>
           </button>
 
           <button
             onClick={() => { playBeep(); onScrollToClassic(); }}
-            className="hidden sm:flex px-2.5 py-1 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 transition-all items-center gap-1.5 text-[11px] font-semibold cursor-pointer"
+            className="hidden md:flex px-2.5 py-1 rounded-md bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 transition-all items-center gap-1.5 text-[11px] font-semibold cursor-pointer whitespace-nowrap"
           >
-            <span>Classic Portfolio View ↓</span>
+            <span>Classic View ↓</span>
           </button>
         </div>
 
         {/* System Tray (Clock, Sound, Admin shortcut) */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           <button
             onClick={() => setSoundEnabled(!soundEnabled)}
-            className="p-1.5 rounded text-gray-400 hover:text-white transition-colors"
+            className="p-1 rounded text-gray-400 hover:text-white transition-colors cursor-pointer"
             title={soundEnabled ? 'Mute OS Sounds' : 'Enable OS Sounds'}
           >
-            {soundEnabled ? <Volume2 size={14} className="text-[#06B6D4]" /> : <VolumeX size={14} />}
+            {soundEnabled ? <Volume2 size={13} className="text-[#06B6D4]" /> : <VolumeX size={13} />}
           </button>
 
           <a
             href="/admin"
             target="_blank"
             rel="noreferrer"
-            className="px-2.5 py-1 rounded-md bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 text-[10px] font-bold flex items-center gap-1 transition-all"
+            className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 text-[10px] font-bold flex items-center gap-1 transition-all whitespace-nowrap"
             title="Open Admin CMS"
           >
             <Settings size={11} />
-            <span>CMS Admin</span>
+            <span>Admin</span>
           </a>
 
           <span className="font-mono text-[11px] text-gray-400 font-semibold">{time}</span>
@@ -116,7 +116,7 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
       </div>
 
       {/* Main Desktop Screen Area */}
-      <div className="flex-1 relative p-6 overflow-hidden bg-radial from-[#09152E]/60 via-[#050B17] to-[#02050D]">
+      <div className="flex-1 relative p-2 sm:p-4 md:p-6 overflow-hidden bg-radial from-[#09152E]/60 via-[#050B17] to-[#02050D]">
         
         {/* Subtle Cyber Grid Background & Watermark */}
         <div className="absolute inset-0 grid-pattern opacity-20 pointer-events-none" />
@@ -129,15 +129,17 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
           </div>
         </div>
 
-        {/* Desktop App Icons (Left Column) */}
-        <div className="relative z-10 grid grid-cols-1 gap-2.5 w-28 overflow-y-auto max-h-[75vh] pr-1">
+        {/* Desktop App Icons: Grid on Mobile when no app open, column on desktop */}
+        <div className={`relative z-10 ${
+          activeApp ? 'hidden md:grid md:grid-cols-1 md:w-28' : 'grid grid-cols-3 sm:grid-cols-4 md:grid-cols-1 w-full md:w-28'
+        } gap-2.5 overflow-y-auto max-h-[75vh] pr-1`}>
           {[
             { id: 'projects', label: 'Projects.exe', icon: FolderGit2, color: '#06B6D4' },
             { id: 'terminal', label: 'Terminal.sh', icon: Terminal, color: '#10B981' },
             { id: 'about', label: 'AboutMe.app', icon: User, color: '#8B5CF6' },
             { id: 'skills', label: 'Skills.exe', icon: Cpu, color: '#38BDF8' },
             { id: 'services', label: 'Services.app', icon: Wrench, color: '#F43F5E' },
-            { id: 'certificates', label: 'FlyRank.pdf', icon: Award, color: '#06B6D4' },
+            { id: 'certificates', label: 'Credentials.pdf', icon: Award, color: '#06B6D4' },
             { id: 'aichat', label: 'SojibAI.exe', icon: Bot, color: '#A855F7' },
             { id: 'contact', label: 'Contact.mail', icon: Mail, color: '#EC4899' },
           ].map(({ id, label, icon: Icon, color }) => (
@@ -156,7 +158,7 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
               >
                 <Icon size={22} style={{ color }} />
               </div>
-              <span className="text-[10px] font-bold text-gray-200 group-hover:text-white drop-shadow">
+              <span className="text-[10px] font-bold text-gray-200 group-hover:text-white drop-shadow truncate w-full">
                 {label}
               </span>
             </button>
@@ -177,7 +179,7 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
             >
               <ShieldCheck size={22} className="text-[#F43F5E]" />
             </div>
-            <span className="text-[10px] font-bold text-gray-200 group-hover:text-[#F43F5E] drop-shadow">
+            <span className="text-[10px] font-bold text-gray-200 group-hover:text-[#F43F5E] drop-shadow truncate w-full">
               Admin.lnk
             </span>
           </a>
@@ -187,29 +189,48 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
         <AnimatePresence>
           {activeApp && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.92, y: 15 }}
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.92, y: 15 }}
-              transition={{ duration: 0.22, ease: 'easeOut' }}
-              className="absolute top-4 left-36 right-4 bottom-14 bg-[#090D1A]/95 backdrop-blur-xl border border-[rgba(255,255,255,0.12)] rounded-2xl shadow-2xl flex flex-col overflow-hidden z-20"
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="absolute top-1 sm:top-2 left-1 sm:left-2 right-1 sm:right-2 bottom-12 md:top-4 md:left-36 md:right-4 md:bottom-14 bg-[#090D1A]/95 backdrop-blur-xl border border-[rgba(255,255,255,0.12)] rounded-xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden z-20"
             >
               {/* Window Title Bar */}
-              <div className="h-9 bg-[#0B1120] border-b border-white/10 px-4 flex items-center justify-between select-none">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#06B6D4]" />
-                  <span className="text-xs font-bold uppercase tracking-wider text-white">
-                    {activeApp === 'projects' && '🚀 Projects Explorer — Flagship & Production Builds'}
-                    {activeApp === 'terminal' && '💻 Sojib Bash Terminal — Interactive CLI'}
-                    {activeApp === 'about' && '👨‍💻 About Sojib Ahmed — Background & Bio'}
-                    {activeApp === 'skills' && '⚡ Technical Stack & Architecture Breakdown'}
-                    {activeApp === 'services' && '🛠️ Services & Production Engineering Workflow'}
-                    {activeApp === 'certificates' && '📜 FlyRank Official Internship & Engineering Offer Letter'}
-                    {activeApp === 'aichat' && '🤖 Sojib AI Assistant — Gemini Powered'}
-                    {activeApp === 'contact' && '📬 Contact Mailer — Send Direct Message'}
+              <div className="h-9 bg-[#0B1120] border-b border-white/10 px-3 sm:px-4 flex items-center justify-between select-none gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  {/* Mobile Back Button to Apps Launcher */}
+                  <button
+                    onClick={() => { playBeep(); setActiveApp(null); }}
+                    className="md:hidden flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#06B6D4]/20 hover:bg-[#06B6D4]/30 border border-[#06B6D4]/40 text-[#06B6D4] text-[11px] font-bold transition-all flex-shrink-0 cursor-pointer"
+                    title="Back to Apps"
+                  >
+                    <ArrowLeft size={12} />
+                    <span>Apps</span>
+                  </button>
+
+                  <span className="w-2 h-2 rounded-full bg-[#06B6D4] flex-shrink-0" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-white truncate">
+                    {activeApp === 'projects' && 'Projects Explorer'}
+                    {activeApp === 'terminal' && 'Bash Terminal'}
+                    {activeApp === 'about' && 'About Sojib'}
+                    {activeApp === 'skills' && 'Technical Stack'}
+                    {activeApp === 'services' && 'Services Workflow'}
+                    {activeApp === 'certificates' && 'Official Credentials'}
+                    {activeApp === 'aichat' && 'Sojib AI'}
+                    {activeApp === 'contact' && 'Contact Mailer'}
+                  </span>
+                  <span className="hidden lg:inline text-xs text-gray-400 font-normal truncate">
+                    {activeApp === 'projects' && '— 10 Production Builds'}
+                    {activeApp === 'terminal' && '— Interactive CLI'}
+                    {activeApp === 'about' && '— Background & Bio'}
+                    {activeApp === 'skills' && '— Real-World Stack'}
+                    {activeApp === 'services' && '— Production Workflow'}
+                    {activeApp === 'certificates' && '— FlyRank, PH & Datheon'}
+                    {activeApp === 'aichat' && '— Gemini Powered'}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 flex-shrink-0">
                   <button 
                     onClick={() => setActiveApp(null)}
                     className="w-6 h-6 rounded-md hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center cursor-pointer"
@@ -228,7 +249,7 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
               </div>
 
               {/* Window Content */}
-              <div className="flex-1 overflow-y-auto p-5 text-gray-200">
+              <div className="flex-1 overflow-y-auto p-3 sm:p-5 text-gray-200">
                 {activeApp === 'projects' && <OSProjectsApp />}
                 {activeApp === 'terminal' && <OSTerminalApp />}
                 {activeApp === 'about' && <OSAboutApp onNavigate={openApp} />}
@@ -457,19 +478,19 @@ function OSProjectsApp() {
   return (
     <div className="space-y-4">
       {/* Controls */}
-      <div className="flex flex-col sm:flex-row gap-3 items-center justify-between pb-3 border-b border-white/10">
-        <div className="flex gap-1.5 p-1 rounded-xl bg-[#030712] border border-white/5">
+      <div className="flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center justify-between pb-3 border-b border-white/10">
+        <div className="flex flex-wrap sm:flex-nowrap gap-1 p-1 rounded-xl bg-[#030712] border border-white/5 w-full sm:w-auto">
           {(['all', 'full-stack', 'frontend', 'backend'] as const).map(cat => (
             <button
               key={cat}
               onClick={() => setFilter(cat)}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold capitalize transition-all cursor-pointer ${
+              className={`flex-1 sm:flex-initial px-2.5 py-1 rounded-lg text-xs font-semibold capitalize transition-all cursor-pointer text-center whitespace-nowrap ${
                 filter === cat
                   ? 'bg-[#06B6D4] text-black shadow-sm'
                   : 'text-gray-400 hover:text-white'
               }`}
             >
-              {cat === 'all' ? `All (${projectList.length})` : cat}
+              {cat === 'all' ? `All (${projectList.length})` : cat === 'full-stack' ? 'Full Stack' : cat}
             </button>
           ))}
         </div>
@@ -798,11 +819,11 @@ function OSAboutApp({ onNavigate }: { onNavigate?: (app: AppId) => void }) {
 // APP 4: TECHNICAL SKILLS BREAKDOWN (All Repositories & Real Brand Icons)
 // -------------------------------------------------------------
 function OSSkillsApp() {
-  const [selectedCat, setSelectedCat] = useState<string>('all');
+  const [selectedCat, setSelectedCat] = useState<string>('frontend');
   const [filterSearch, setFilterSearch] = useState<string>('');
 
   const filteredSkills = allSkillsList.filter((s) => {
-    const matchesCat = selectedCat === 'all' || s.category === selectedCat;
+    const matchesCat = s.category === selectedCat;
     const matchesQuery =
       s.name.toLowerCase().includes(filterSearch.toLowerCase()) ||
       s.description.toLowerCase().includes(filterSearch.toLowerCase()) ||
@@ -818,11 +839,11 @@ function OSSkillsApp() {
           <div className="flex items-center gap-2">
             <Cpu size={16} className="text-[#06B6D4]" />
             <h3 className="font-bold text-sm text-white uppercase tracking-wider">
-              Technical Arsenal & Repository Provenance
+              Technical Arsenal & Stack Breakdown
             </h3>
           </div>
           <p className="text-xs text-gray-400 mt-0.5">
-            {allSkillsList.length} verified technologies across production & client projects.
+            Production-grade technologies verified across live repositories.
           </p>
         </div>
 
@@ -841,16 +862,6 @@ function OSSkillsApp() {
 
       {/* Category Pills */}
       <div className="flex flex-wrap gap-1.5">
-        <button
-          onClick={() => setSelectedCat('all')}
-          className={`px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
-            selectedCat === 'all'
-              ? 'bg-[#06B6D4] text-black shadow-lg shadow-[#06B6D4]/30'
-              : 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white border border-white/5'
-          }`}
-        >
-          All Tech ({allSkillsList.length})
-        </button>
         {skillCategories.map((cat) => (
           <button
             key={cat.id}
@@ -1047,20 +1058,21 @@ function OSServicesApp({ onNavigate }: { onNavigate?: (app: AppId) => void }) {
 }
 
 // -------------------------------------------------------------
-// APP 6: CERTIFICATES & FLYRANK OFFER LETTER
+// APP 6: CERTIFICATES & OFFICIAL CREDENTIALS
 // -------------------------------------------------------------
 function OSCertificatesApp({ onNavigate }: { onNavigate?: (app: AppId) => void }) {
   const flyRankDriveLink = 'https://drive.google.com/file/d/10ONRQsFH14NB1RvG7aJIltzSm6YGXqcy/view?usp=sharing';
   const flyRankEmbedLink = 'https://drive.google.com/file/d/10ONRQsFH14NB1RvG7aJIltzSm6YGXqcy/preview';
-  const flyRankDownloadLink = 'https://drive.google.com/uc?export=download&id=10ONRQsFH14NB1RvG7aJIltzSm6YGXqcy';
+  const phCertLink = 'https://drive.google.com/file/d/1xthcbztqypL5RCzst-gNL4bg4eMNFWyK/view?usp=sharing';
+  const datheonVerifyLink = 'https://datheon.in/verify?id=DT-2026-33B1M';
 
   return (
     <div className="space-y-4 max-w-4xl pb-4">
-      {/* Featured FlyRank Official Offer Letter Card */}
+      {/* 1. Featured FlyRank Official Offer Letter Card */}
       <div className="p-4 sm:p-5 rounded-2xl bg-[#030712] border border-[#06B6D4]/40 space-y-4 shadow-xl">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-[#06B6D4]/30 to-[#7C3AED]/20 border border-[#06B6D4]/50 flex items-center justify-center text-[#06B6D4] shadow-md">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-[#06B6D4]/30 to-[#7C3AED]/20 border border-[#06B6D4]/50 flex items-center justify-center text-[#06B6D4] shadow-md flex-shrink-0">
               <Award size={24} />
             </div>
             <div>
@@ -1090,19 +1102,19 @@ function OSCertificatesApp({ onNavigate }: { onNavigate?: (app: AppId) => void }
               <span>Drive Viewer</span>
             </a>
             <a
-              href={flyRankDownloadLink}
+              href={flyRankDriveLink}
               target="_blank"
               rel="noreferrer"
               className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white text-xs font-semibold border border-white/10 flex items-center gap-1.5 transition-all"
             >
               <Download size={12} />
-              <span>Download PDF</span>
+              <span>PDF</span>
             </a>
           </div>
         </div>
 
         {/* Embedded Interactive PDF Document Viewer */}
-        <div className="relative w-full h-[360px] rounded-xl overflow-hidden border border-white/10 bg-black/60 shadow-inner">
+        <div className="relative w-full h-[320px] rounded-xl overflow-hidden border border-white/10 bg-black/60 shadow-inner">
           <iframe
             src={flyRankEmbedLink}
             title="FlyRank Offer Letter"
@@ -1127,35 +1139,72 @@ function OSCertificatesApp({ onNavigate }: { onNavigate?: (app: AppId) => void }
           </div>
           <div className="p-2.5 rounded-lg bg-white/5 border border-white/5">
             <span className="text-gray-400 block text-[10px]">Credential ID:</span>
-            <span className="font-mono text-[#10B981] font-bold">FLYRANK-2026-ENG</span>
+            <span className="font-mono text-[#10B981] font-bold">FLYRANK-2026-ENG-SOJIB</span>
           </div>
         </div>
       </div>
 
-      {/* Secondary Credential Card: Programming Hero Full-Stack Web Development */}
-      <div className="p-4 rounded-xl bg-[#030712] border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+      {/* 2. Programming Hero Full-Stack Web Development Course */}
+      <div className="p-4 rounded-xl bg-[#030712] border border-[#7C3AED]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md hover:border-[#7C3AED]/60 transition-all">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[#7C3AED]/20 border border-[#7C3AED]/40 flex items-center justify-center text-[#A78BFA] flex-shrink-0">
             <GraduationCap size={20} />
           </div>
           <div>
-            <h5 className="font-bold text-xs text-white">
-              Complete Web Development Course — Programming Hero
-            </h5>
-            <p className="text-[11px] text-gray-400">
-              8-Month Intensive Training (MERN Stack, Next.js, TypeScript, REST APIs) · Batch 13
+            <div className="flex items-center gap-2">
+              <h5 className="font-bold text-xs text-white">
+                Complete Web Development Course — Programming Hero
+              </h5>
+              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                Batch 13
+              </span>
+            </div>
+            <p className="text-[11px] text-gray-400 mt-0.5">
+              Full-Stack Engineering Specialization (MERN Stack, React 19, Node.js, Express, MongoDB Atlas, TypeScript) · ID: <span className="font-mono text-purple-300 font-bold">PH-BATCH13-2026-SOJIB</span>
             </p>
           </div>
         </div>
 
         <a
-          href="https://drive.google.com/file/d/1xthcbztqypL5RCzst-gNL4bg4eMNFWyK/view?usp=sharing"
+          href={phCertLink}
           target="_blank"
           rel="noreferrer"
-          className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-gray-300 hover:text-white flex items-center gap-1.5 transition-all flex-shrink-0"
+          className="px-3 py-1.5 rounded-lg bg-[#7C3AED]/20 hover:bg-[#7C3AED]/30 border border-[#7C3AED]/40 text-purple-300 text-xs font-semibold flex items-center gap-1.5 transition-all flex-shrink-0"
         >
           <ExternalLink size={12} />
           <span>Verify Certificate</span>
+        </a>
+      </div>
+
+      {/* 3. Datheon AI Systems Full Stack Engineering Internship */}
+      <div className="p-4 rounded-xl bg-[#030712] border border-[#10B981]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md hover:border-[#10B981]/60 transition-all">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#10B981]/20 border border-[#10B981]/40 flex items-center justify-center text-[#34D399] flex-shrink-0">
+            <Award size={20} />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h5 className="font-bold text-xs text-white">
+                Full Stack Engineering Internship — Datheon AI Systems
+              </h5>
+              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                Verified Record
+              </span>
+            </div>
+            <p className="text-[11px] text-gray-400 mt-0.5">
+              Production Full-Stack Architecture, REST APIs & Distributed Databases · ID: <span className="font-mono text-emerald-400 font-bold">DT-2026-33B1M</span>
+            </p>
+          </div>
+        </div>
+
+        <a
+          href={datheonVerifyLink}
+          target="_blank"
+          rel="noreferrer"
+          className="px-3 py-1.5 rounded-lg bg-[#10B981]/20 hover:bg-[#10B981]/30 border border-[#10B981]/40 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition-all flex-shrink-0"
+        >
+          <ExternalLink size={12} />
+          <span>Verify Record</span>
         </a>
       </div>
 

@@ -319,11 +319,6 @@ export const allSkillsList: Skill[] = [
 
 export const skillCategories: SkillCategory[] = [
   {
-    id: 'all',
-    label: 'All Skills',
-    skills: allSkillsList,
-  },
-  {
     id: 'frontend',
     label: 'Frontend',
     skills: allSkillsList.filter(s => s.category === 'frontend'),

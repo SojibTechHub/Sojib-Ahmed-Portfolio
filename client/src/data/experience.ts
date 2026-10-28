@@ -37,7 +37,7 @@ export const timeline: TimelineItem[] = [
     date: 'Jan 2026 – Aug 2026',
     title: 'Complete Web Development Course',
     subtitle: 'Programming Hero | Full-Stack Engineering Program',
-    description: 'Completed an intensive 8-month full-stack web development program covering the complete MERN stack ecosystem from fundamentals to production-grade applications.',
+    description: 'Completed an intensive full-stack web development program covering the complete MERN stack ecosystem from fundamentals to production-grade applications.',
     type: 'certification',
     skills: ['MERN Stack', 'JavaScript', 'React', 'Node.js', 'MongoDB', 'Express.js'],
     highlight: true,

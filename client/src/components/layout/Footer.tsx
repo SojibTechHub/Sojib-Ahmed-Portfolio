@@ -52,13 +52,13 @@ export default function Footer() {
                   SOJIB AHMED<span className="text-[#06B6D4]">.</span>
                 </div>
                 <div className="text-xs font-semibold text-[#06B6D4] tracking-wide mt-1.5">
-                  Full-Stack Developer
+                  Full Stack Developer
                 </div>
               </div>
             </div>
 
             <p className="text-xs sm:text-sm text-[#9CA3AF] leading-relaxed max-w-sm pt-1">
-              Full-Stack Developer focused on building scalable, high-performance, and user-focused web applications with modern technologies.
+              Full Stack Developer focused on building scalable, high-performance, and user-focused web applications with modern technologies.
             </p>
           </div>
 
@@ -168,7 +168,7 @@ export default function Footer() {
         {/* Bottom bar with Back to Top button & Admin link */}
         <div className="mt-12 pt-6 border-t border-[rgba(255,255,255,0.08)] flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-[#6B7280]">
-            © {new Date().getFullYear()} Sojib Ahmed. All rights reserved.
+            Â© {new Date().getFullYear()} Sojib Ahmed. All rights reserved.
           </p>
 
           <div className="flex items-center gap-4">

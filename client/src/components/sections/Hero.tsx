@@ -6,9 +6,9 @@ import { FaGithub, FaLinkedinIn, FaEnvelope } from 'react-icons/fa6';
 const terminalLines = [
   { prompt: '$', command: 'whoami', output: 'Sojib Ahmed', delay: 500 },
   { prompt: '$', command: 'role', output: 'Full Stack Developer', delay: 1200 },
-  { prompt: '$', command: 'location', output: 'Rangpur, Bangladesh 🌏', delay: 2000 },
-  { prompt: '$', command: 'status', output: 'Building something awesome... 🚀', delay: 2800 },
-  { prompt: '$', command: 'available', output: 'true // Full-time | Freelance | Remote ✅', delay: 3600 },
+  { prompt: '$', command: 'location', output: 'Rangpur, Bangladesh ðŸŒ', delay: 2000 },
+  { prompt: '$', command: 'status', output: 'Building something awesome... ðŸš€', delay: 2800 },
+  { prompt: '$', command: 'available', output: 'true // Full-time | Freelance | Remote âœ…', delay: 3600 },
 ];
 
 function TerminalWindow() {
@@ -227,7 +227,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <p className="text-base sm:text-lg text-[var(--color-text-secondary)] mb-2 font-medium">
-                Hey, I'm 👋
+                Hey, I'm ðŸ‘‹
               </p>
               <h1 className="text-[clamp(36px,6.5vw,84px)] font-black leading-none tracking-tight text-[var(--color-text-primary)] mb-4 sm:mb-6">
                 Sojib Ahmed
@@ -254,7 +254,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="text-sm sm:text-base text-[var(--color-text-secondary)] leading-relaxed max-w-2xl mb-6 sm:mb-8"
             >
-              Full-Stack Developer specializing in React, Next.js, TypeScript, Node.js, and modern web technologies. I build fast, secure, scalable, and user-focused web applications.</motion.p>
+              Full Stack Developer specializing in React, Next.js, TypeScript, Node.js, and modern web technologies. I build fast, secure, scalable, and user-focused web applications.</motion.p>
 
             {/* Social proof stats */}
             <motion.div
@@ -264,7 +264,7 @@ export default function Hero() {
               className="flex flex-wrap items-center gap-4 sm:gap-6 mb-6 sm:mb-8"
             >
               {[
-                { value: 'Full-Stack', label: 'MERN & Next.js' },
+                { value: 'Full Stack', label: 'MERN & Next.js' },
                 { value: 'Production', label: 'Cloud Architecture' },
                 { value: '35+', label: 'Technologies' },
                 { value: '100%', label: 'Commitment' },
