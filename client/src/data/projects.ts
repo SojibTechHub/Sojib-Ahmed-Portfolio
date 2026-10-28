@@ -220,7 +220,7 @@ export const projects: Project[] = [
     docsUrl: 'https://github.com/sojibahmedshorif25-ai/Pet-Adoption-Client',
     color: '#10B981',
     accentColor: '#7C3AED',
-    image: '/images/petadoption_server.png',
+    image: '/images/petadoption.png',
   },
   {
     id: 'job-finder-server',
@@ -244,7 +244,7 @@ export const projects: Project[] = [
     docsUrl: 'https://github.com/sojibahmedshorif25-ai/Job-Finder-Client',
     color: '#06B6D4',
     accentColor: '#3B82F6',
-    image: '/images/petadoption_server.png',
+    image: '/images/jobfinder.png',
   },
   {
     id: 'books-platform-server',
@@ -267,6 +267,6 @@ export const projects: Project[] = [
     githubUrl: 'https://github.com/sojibahmedshorif25-ai/Books-Platfrom.git',
     color: '#F59E0B',
     accentColor: '#10B981',
-    image: '/images/petadoption_server.png',
+    image: '/images/digitools.png',
   },
 ];

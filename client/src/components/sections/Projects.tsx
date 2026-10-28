@@ -28,6 +28,17 @@ export default function Projects() {
   const [ref, inView] = useInView({ threshold: 0.05, triggerOnce: true });
 
   useEffect(() => {
+    // Check localStorage first for instant updates made in Admin CMS
+    try {
+      const saved = localStorage.getItem('sojib_custom_projects');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setProjectList(parsed);
+        }
+      }
+    } catch {}
+
     const fetchLiveProjects = async () => {
       try {
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -35,9 +46,12 @@ export default function Projects() {
         const data = await res.json();
         if (data.success && Array.isArray(data.data) && data.data.length > 0) {
           setProjectList(data.data);
+          try {
+            localStorage.setItem('sojib_custom_projects', JSON.stringify(data.data));
+          } catch {}
         }
       } catch {
-        // Fallback to defaultProjects
+        // Fallback to defaultProjects or cached
       }
     };
     fetchLiveProjects();
@@ -152,6 +166,9 @@ export default function Projects() {
                       alt={project.title} 
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       loading="lazy"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = '/images/hero.jpg';
+                      }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-surface)] via-transparent to-transparent opacity-90 pointer-events-none" />
                   </div>

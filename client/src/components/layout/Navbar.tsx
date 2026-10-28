@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Download, FileText, ArrowUpRight } from 'lucide-react';
+import { Menu, X, Download, FileText, ArrowUpRight, Shield } from 'lucide-react';
 
 const navLinks = [
   { label: 'Home', href: '#home' },
@@ -116,7 +116,19 @@ export default function Navbar() {
             </div>
 
             {/* Right: Actions */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
+              {/* Admin CMS Direct Access */}
+              <motion.a
+                href="/admin"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-gray-300 hover:text-white bg-[#0B1120] border border-white/10 hover:border-purple-500/40 hover:bg-purple-500/10 transition-all cursor-pointer shadow-sm"
+                title="Admin Control Panel"
+              >
+                <Shield size={13} className="text-purple-400" />
+                <span>Admin</span>
+              </motion.a>
+
               {/* View Resume CTA */}
               <motion.a
                 href="https://drive.google.com/file/d/1I_yOQ82k2LqFINo5RuR_tXVEzzwAZkGx/view?usp=sharing"
@@ -157,7 +169,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-16 z-[8999] bg-[#030712]/98 backdrop-blur-2xl border-b border-[rgba(255,255,255,0.1)] p-6 shadow-2xl lg:hidden flex flex-col gap-4"
+            className="fixed inset-x-0 top-16 z-[8999] bg-[#030712]/98 backdrop-blur-2xl border-b border-[rgba(255,255,255,0.1)] p-6 shadow-2xl lg:hidden flex flex-col gap-3"
           >
             <nav className="flex flex-col gap-2" role="list">
               {navLinks.map((link) => {
@@ -180,7 +192,16 @@ export default function Navbar() {
               })}
             </nav>
 
-            <div className="pt-3 border-t border-[rgba(255,255,255,0.08)]">
+            <div className="pt-3 border-t border-[rgba(255,255,255,0.08)] flex flex-col gap-2">
+              <a
+                href="/admin"
+                className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-bold hover:bg-purple-500/25 transition-all cursor-pointer"
+                onClick={() => setMenuOpen(false)}
+              >
+                <Shield size={14} />
+                <span>Admin CMS Panel</span>
+              </a>
+
               <a
                 href="https://drive.google.com/file/d/1I_yOQ82k2LqFINo5RuR_tXVEzzwAZkGx/view?usp=sharing"
                 target="_blank"

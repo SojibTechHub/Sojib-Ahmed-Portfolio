@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowUp, ChevronRight } from 'lucide-react';
+import { ArrowUp, ChevronRight, Shield } from 'lucide-react';
 import { FaGithub, FaLinkedinIn, FaWhatsapp, FaFacebookF, FaEnvelope } from 'react-icons/fa6';
 
 const quickLinks = [
@@ -165,21 +165,32 @@ export default function Footer() {
 
         </div>
 
-        {/* Bottom bar with Back to Top button */}
+        {/* Bottom bar with Back to Top button & Admin link */}
         <div className="mt-12 pt-6 border-t border-[rgba(255,255,255,0.08)] flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-[#6B7280]">
             © {new Date().getFullYear()} Sojib Ahmed. All rights reserved.
           </p>
 
-          <motion.button
-            whileHover={{ scale: 1.05, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={scrollToTop}
-            className="px-4 py-2 rounded-full bg-[#0B1120] border border-[rgba(255,255,255,0.12)] text-xs font-semibold text-[#9CA3AF] hover:text-white hover:border-[#06B6D4] transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
-          >
-            <span>Back to Top</span>
-            <ArrowUp size={12} className="text-[#06B6D4]" />
-          </motion.button>
+          <div className="flex items-center gap-4">
+            <a
+              href="/admin"
+              className="text-xs text-gray-500 hover:text-[#06B6D4] transition-colors flex items-center gap-1.5"
+              title="Admin Control Panel"
+            >
+              <Shield size={12} className="text-purple-400" />
+              <span>Admin CMS</span>
+            </a>
+
+            <motion.button
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={scrollToTop}
+              className="px-4 py-2 rounded-full bg-[#0B1120] border border-[rgba(255,255,255,0.12)] text-xs font-semibold text-[#9CA3AF] hover:text-white hover:border-[#06B6D4] transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+            >
+              <span>Back to Top</span>
+              <ArrowUp size={12} className="text-[#06B6D4]" />
+            </motion.button>
+          </div>
         </div>
       </div>
     </footer>

@@ -223,7 +223,7 @@ module.exports = [
     docsUrl: 'https://github.com/sojibahmedshorif25-ai/Job-Finder-Client',
     color: '#06B6D4',
     accentColor: '#3B82F6',
-    image: '/images/petadoption.png',
+    image: '/images/jobfinder.png',
   },
   {
     id: 'books-platform-server',

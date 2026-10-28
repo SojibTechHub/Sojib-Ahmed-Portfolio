@@ -158,6 +158,26 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
               </span>
             </button>
           ))}
+
+          {/* Admin shortcut */}
+          <a
+            href="/admin"
+            target="_blank"
+            rel="noreferrer"
+            onClick={playBeep}
+            className="flex flex-col items-center gap-1 p-2 rounded-xl text-center group cursor-pointer hover:bg-white/5 border border-transparent transition-all"
+            title="Open Admin CMS"
+          >
+            <div 
+              className="w-11 h-11 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200"
+              style={{ background: 'linear-gradient(135deg, rgba(244,63,94,0.25), rgba(244,63,94,0.1))', border: '1px solid rgba(244,63,94,0.5)' }}
+            >
+              <ShieldCheck size={22} className="text-[#F43F5E]" />
+            </div>
+            <span className="text-[10px] font-bold text-gray-200 group-hover:text-[#F43F5E] drop-shadow">
+              Admin.lnk
+            </span>
+          </a>
         </div>
 
         {/* Floating Active Application Window */}
@@ -258,7 +278,7 @@ function OSProjectsApp() {
   const [filter, setFilter] = useState<'all' | 'full-stack' | 'frontend' | 'backend'>('all');
   const [search, setSearch] = useState('');
 
-  const rawProjects = [
+  const defaultOSProjects = [
     {
       title: 'ShopX BD Enterprise',
       subtitle: 'Hyperlocal Multi-Vendor E-Commerce & DEX Logistics Platform',
@@ -266,6 +286,7 @@ function OSProjectsApp() {
       tech: ['React 19', 'TypeScript', 'Node.js', 'Express', 'MongoDB Atlas', 'Upstash Redis'],
       live: 'https://shopx-bd-enterprise.vercel.app/',
       github: 'https://github.com/sojibahmedshorif25-ai/Shopx-BD-Enterprise',
+      image: '/images/shopx.png',
     },
     {
       title: 'FoodFlow (Team Project)',
@@ -274,6 +295,7 @@ function OSProjectsApp() {
       tech: ['Next.js 15', 'React 19', 'TypeScript', 'Node.js', 'Socket.IO', 'Gemini AI'],
       live: 'https://fooddeliveryplatform.vercel.app',
       github: 'https://github.com/khalid66527/food_flow-client',
+      image: '/images/foodflow.png',
     },
     {
       title: 'SkillForge',
@@ -282,6 +304,7 @@ function OSProjectsApp() {
       tech: ['Next.js 16', 'React 19', 'Express.js', 'Better Auth', 'Docker', 'React Query'],
       live: 'https://job-student-task.vercel.app/',
       github: 'https://github.com/sojibahmedshorif25-ai/JOB-STUDENT-TASK.git',
+      image: '/images/skillforge.png',
     },
     {
       title: 'StartupForge',
@@ -290,6 +313,7 @@ function OSProjectsApp() {
       tech: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Socket.IO', 'WebRTC', 'Stripe'],
       live: 'https://startupforge-ruby.vercel.app/',
       github: 'https://github.com/sojibahmedshorif25-ai/startupforge.git',
+      image: '/images/startupforge.png',
     },
     {
       title: 'TypeMarket',
@@ -298,6 +322,7 @@ function OSProjectsApp() {
       tech: ['TypeScript', 'React.js', 'Tailwind CSS', 'TanStack Query', 'Lucide React'],
       live: 'https://type-script-project-nine.vercel.app',
       github: 'https://github.com/sojibahmedshorif25-ai/TypeScript-Project',
+      image: '/images/typemarket.png',
     },
     {
       title: 'InvestProp AI',
@@ -306,6 +331,7 @@ function OSProjectsApp() {
       tech: ['React.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Recharts'],
       live: 'https://investprop-ai.vercel.app',
       github: 'https://github.com/sojibahmedshorif25-ai/Investprop-Ai.git',
+      image: '/images/investprop.png',
     },
     {
       title: 'GitHub Issue Tracker',
@@ -314,6 +340,7 @@ function OSProjectsApp() {
       tech: ['React.js', 'Tailwind CSS', 'GitHub API', 'Lucide React'],
       live: 'https://fabulous-profiterole-d6e817.netlify.app/',
       github: 'https://github.com/sojibahmedshorif25-ai/github-issue-tracker.git',
+      image: '/images/issuetracker.png',
     },
     {
       title: 'Pet Adoption REST Engine',
@@ -322,6 +349,7 @@ function OSProjectsApp() {
       tech: ['Node.js', 'Express.js', 'MongoDB Atlas', 'JWT', 'Nodemailer'],
       live: 'https://pet-adoption-client-rho-jet.vercel.app',
       github: 'https://github.com/sojibahmedshorif25-ai/Pet-Adoption-Server',
+      image: '/images/petadoption.png',
     },
     {
       title: 'Job Finder API Gateway',
@@ -330,6 +358,7 @@ function OSProjectsApp() {
       tech: ['Node.js', 'Express.js', 'MongoDB Atlas', 'JWT', 'Cloudinary'],
       live: 'https://job-finder-client.vercel.app',
       github: 'https://github.com/sojibahmedshorif25-ai/Job-Finder',
+      image: '/images/jobfinder.png',
     },
     {
       title: 'Books Platform REST API',
@@ -338,10 +367,56 @@ function OSProjectsApp() {
       tech: ['Node.js', 'Express.js', 'MongoDB Atlas', 'Express Validator'],
       live: 'https://books-platfrom-48rm.vercel.app/',
       github: 'https://github.com/sojibahmedshorif25-ai/Books-Platfrom.git',
+      image: '/images/digitools.png',
     },
   ];
 
-  const filtered = rawProjects.filter(p => {
+  const [projectList, setProjectList] = useState(defaultOSProjects);
+
+  // Sync with Admin CMS updates
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('sojib_custom_projects');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const mapped = parsed.map((p: any) => ({
+            title: p.title,
+            subtitle: p.subtitle || p.description,
+            category: p.category || 'full-stack',
+            tech: Array.isArray(p.techStack) ? p.techStack : ['React', 'Node.js'],
+            live: p.liveUrl || p.live || '',
+            github: p.githubUrl || p.github || '',
+            image: p.image || '/images/hero.jpg',
+          }));
+          setProjectList(mapped);
+        }
+      }
+    } catch {}
+
+    const fetchLive = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+        const res = await fetch(`${apiUrl}/projects`);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          const mapped = data.data.map((p: any) => ({
+            title: p.title,
+            subtitle: p.subtitle || p.description,
+            category: p.category || 'full-stack',
+            tech: Array.isArray(p.techStack) ? p.techStack : ['React', 'Node.js'],
+            live: p.liveUrl || p.live || '',
+            github: p.githubUrl || p.github || '',
+            image: p.image || '/images/hero.jpg',
+          }));
+          setProjectList(mapped);
+        }
+      } catch {}
+    };
+    fetchLive();
+  }, []);
+
+  const filtered = projectList.filter(p => {
     const matchCat = filter === 'all' || p.category === filter;
     const matchSearch = p.title.toLowerCase().includes(search.toLowerCase()) || 
                         p.subtitle.toLowerCase().includes(search.toLowerCase());
@@ -363,7 +438,7 @@ function OSProjectsApp() {
                   : 'text-gray-400 hover:text-white'
               }`}
             >
-              {cat === 'all' ? 'All (10)' : cat}
+              {cat === 'all' ? `All (${projectList.length})` : cat}
             </button>
           ))}
         </div>
@@ -380,41 +455,55 @@ function OSProjectsApp() {
         </div>
       </div>
 
-      {/* Projects Grid */}
+      {/* Projects Grid with Pictures */}
       <div className="grid md:grid-cols-2 gap-4">
         {filtered.map((proj, i) => (
           <div
             key={i}
-            className="p-4 rounded-xl bg-[#030712]/70 border border-white/5 hover:border-[#06B6D4]/40 transition-all flex flex-col justify-between group"
+            className="p-3.5 rounded-xl bg-[#030712]/80 border border-white/10 hover:border-[#06B6D4]/50 transition-all flex flex-col justify-between group shadow-lg"
           >
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <h4 className="font-bold text-sm text-white group-hover:text-[#06B6D4] transition-colors">
-                  {proj.title}
-                </h4>
-                <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase bg-white/5 text-[#06B6D4] border border-[#06B6D4]/20">
+            <div>
+              {/* Project Picture Banner */}
+              <div className="relative w-full h-36 rounded-lg overflow-hidden bg-black/60 mb-3 border border-white/5">
+                <img 
+                  src={proj.image || '/images/hero.jpg'} 
+                  alt={proj.title} 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = '/images/hero.jpg';
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-transparent to-transparent opacity-80" />
+                <span className="absolute top-2 right-2 px-2 py-0.5 rounded text-[9px] font-bold uppercase bg-black/80 text-[#06B6D4] border border-[#06B6D4]/30 backdrop-blur-md">
                   {proj.category}
                 </span>
               </div>
-              <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">
-                {proj.subtitle}
-              </p>
-              <div className="flex flex-wrap gap-1 pt-1">
-                {proj.tech.map((t, idx) => (
-                  <span key={idx} className="px-1.5 py-0.5 rounded text-[10px] bg-white/5 text-gray-300 font-medium">
-                    {t}
-                  </span>
-                ))}
+
+              <div className="space-y-1.5">
+                <h4 className="font-bold text-sm text-white group-hover:text-[#06B6D4] transition-colors leading-snug">
+                  {proj.title}
+                </h4>
+                <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">
+                  {proj.subtitle}
+                </p>
+                <div className="flex flex-wrap gap-1 pt-1">
+                  {proj.tech.map((t, idx) => (
+                    <span key={idx} className="px-1.5 py-0.5 rounded text-[10px] bg-white/5 text-gray-300 font-medium border border-white/5">
+                      {t}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
 
-            <div className="flex gap-2 pt-4 border-t border-white/5 mt-3">
+            <div className="flex gap-2 pt-3 border-t border-white/5 mt-3">
               {proj.live && (
                 <a
                   href={proj.live}
                   target="_blank"
                   rel="noreferrer"
-                  className="px-3 py-1.5 rounded-lg bg-[#06B6D4]/20 hover:bg-[#06B6D4]/30 border border-[#06B6D4]/40 text-[#06B6D4] text-xs font-semibold flex items-center gap-1.5 transition-all"
+                  className="flex-1 py-1.5 rounded-lg bg-[#06B6D4]/20 hover:bg-[#06B6D4]/30 border border-[#06B6D4]/40 text-[#06B6D4] text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
                 >
                   <ExternalLink size={12} />
                   <span>Live Demo</span>
@@ -425,7 +514,7 @@ function OSProjectsApp() {
                   href={proj.github}
                   target="_blank"
                   rel="noreferrer"
-                  className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 text-xs font-semibold flex items-center gap-1.5 transition-all"
+                  className="flex-1 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
                 >
                   <FaGithub size={12} />
                   <span>GitHub</span>
