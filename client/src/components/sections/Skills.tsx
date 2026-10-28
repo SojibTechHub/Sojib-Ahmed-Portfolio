@@ -1,48 +1,98 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { skillCategories } from '../../data/skills';
+import { skillCategories, type Skill } from '../../data/skills';
+import { 
+  SiReact, SiNextdotjs, SiTypescript, SiJavascript, SiTailwindcss, 
+  SiReactquery, SiFramer, SiGreensock, SiRedux, SiHtml5, SiVite, 
+  SiNodedotjs, SiExpress, SiSocketdotio, SiWebrtc, SiRedis, 
+  SiCloudinary, SiMongodb, SiPostgresql, SiJsonwebtokens, 
+  SiFirebase, SiDocker, SiGithub, SiGithubactions, 
+  SiVercel, SiRender, SiPostman, SiLinux, SiGooglegemini, 
+  SiStripe, SiLeaflet 
+} from 'react-icons/si';
+import { 
+  FaGoogle, FaEnvelope, FaCreditCard, 
+  FaShieldHalved, FaChartLine 
+} from 'react-icons/fa6';
 
-function SkillIcon({ name, color }: { name: string; color: string }) {
-  const iconMap: Record<string, string> = {
-    'React.js': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg',
-    'Next.js': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg',
-    'TypeScript': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg',
-    'JavaScript (ES6+)': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg',
-    'Tailwind CSS': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg',
-    'Framer Motion': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/framermotion/framermotion-original.svg',
-    'HTML5 & CSS3': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg',
-    'Vite & PWA': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vitejs/vitejs-original.svg',
-    'TanStack Query': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg',
-    'Node.js': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg',
-    'Express.js': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/express/express-original.svg',
-    'Socket.IO': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/socketio/socketio-original.svg',
-    'WebRTC': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/webrtc/webrtc-original.svg',
-    'Upstash Redis': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redis/redis-original.svg',
-    'MongoDB & Mongoose': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg',
-    'Firebase Auth': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/firebase/firebase-original.svg',
-    'Better Auth & OAuth': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg',
-    'Docker': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg',
-    'Git & GitHub': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg',
-    'GitHub Actions': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/githubactions/githubactions-original.svg',
-    'Git & GitHub Actions': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/githubactions/githubactions-original.svg',
-    'Postman & Swagger': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postman/postman-original.svg',
-    'Vercel & Render': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vercel/vercel-original.svg',
-    'Multer & Cloudinary': 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cloudinary/cloudinary-original.svg',
-  };
-
-  if (iconMap[name]) {
-    return <img src={iconMap[name]} alt={name} className="w-7 h-7 object-contain" />;
+export function getSkillRealIcon(name: string, size = 26) {
+  switch (name) {
+    case 'React 19 / React.js':
+      return <SiReact size={size} color="#61DAFB" />;
+    case 'Next.js 15 & 16':
+      return <SiNextdotjs size={size} color="#FFFFFF" />;
+    case 'TypeScript':
+      return <SiTypescript size={size} color="#3178C6" />;
+    case 'JavaScript (ES6+)':
+      return <SiJavascript size={size} color="#F7DF1E" />;
+    case 'Tailwind CSS v4':
+      return <SiTailwindcss size={size} color="#06B6D4" />;
+    case 'TanStack Query (React Query)':
+      return <SiReactquery size={size} color="#FF4154" />;
+    case 'Framer Motion':
+      return <SiFramer size={size} color="#FF0055" />;
+    case 'GSAP Animation':
+      return <SiGreensock size={size} color="#88CE02" />;
+    case 'Redux Toolkit & Zustand':
+      return <SiRedux size={size} color="#764ABC" />;
+    case 'HTML5 & Semantic Web':
+      return <SiHtml5 size={size} color="#E34F26" />;
+    case 'Vite & Modern Bundlers':
+      return <SiVite size={size} color="#646CFF" />;
+    case 'Node.js':
+      return <SiNodedotjs size={size} color="#339933" />;
+    case 'Express.js':
+      return <SiExpress size={size} color="#FFFFFF" />;
+    case 'Socket.IO Real-Time':
+      return <SiSocketdotio size={size} color="#FFFFFF" />;
+    case 'WebRTC Video & Audio':
+      return <SiWebrtc size={size} color="#339933" />;
+    case 'Upstash Redis Caching':
+      return <SiRedis size={size} color="#FF4438" />;
+    case 'Nodemailer & SMTP':
+      return <FaEnvelope size={size} color="#EA4335" />;
+    case 'Multer & Cloudinary SDK':
+      return <SiCloudinary size={size} color="#3448C5" />;
+    case 'RESTful Architecture':
+      return <FaChartLine size={size} color="#06B6D4" />;
+    case 'MongoDB Atlas & Mongoose':
+      return <SiMongodb size={size} color="#47A248" />;
+    case 'PostgreSQL & Supabase':
+      return <SiPostgresql size={size} color="#4169E1" />;
+    case 'JWT Authentication':
+      return <SiJsonwebtokens size={size} color="#D63AFF" />;
+    case 'Better Auth & OAuth 2.0':
+      return <FaGoogle size={size} color="#4285F4" />;
+    case 'RBAC Access Control':
+      return <FaShieldHalved size={size} color="#7C3AED" />;
+    case 'Firebase Authentication':
+      return <SiFirebase size={size} color="#FFCA28" />;
+    case 'Docker & Docker Compose':
+      return <SiDocker size={size} color="#2496ED" />;
+    case 'Git & GitHub Workflows':
+      return <SiGithub size={size} color="#F05032" />;
+    case 'GitHub Actions (CI/CD)':
+      return <SiGithubactions size={size} color="#2088FF" />;
+    case 'Vercel Deployment':
+      return <SiVercel size={size} color="#FFFFFF" />;
+    case 'Render Cloud Platform':
+      return <SiRender size={size} color="#46E3B7" />;
+    case 'Postman API Testing':
+      return <SiPostman size={size} color="#FF6C37" />;
+    case 'Linux & Bash Scripting':
+      return <SiLinux size={size} color="#FCC624" />;
+    case 'Google Gemini AI API':
+      return <SiGooglegemini size={size} color="#4285F4" />;
+    case 'Stripe Payment Gateway':
+      return <SiStripe size={size} color="#635BFF" />;
+    case 'SSLCommerz Gateway':
+      return <FaCreditCard size={size} color="#00A65A" />;
+    case 'Leaflet GIS Maps':
+      return <SiLeaflet size={size} color="#199900" />;
+    default:
+      return <SiReact size={size} color="#06B6D4" />;
   }
-
-  return (
-    <div 
-      className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-inner"
-      style={{ backgroundColor: color }}
-    >
-      {name.slice(0, 2).toUpperCase()}
-    </div>
-  );
 }
 
 export default function Skills() {
@@ -70,7 +120,7 @@ export default function Skills() {
           </div>
           <h2 className="section-heading">Production Tech Stack</h2>
           <p className="section-subheading mx-auto text-center max-w-2xl">
-            Real-world technologies and tools battle-tested across my 10 live production and enterprise projects.
+            Real-world technologies and tools battle-tested across my 10 production repositories with authentic vector brand icons.
           </p>
         </motion.div>
 
@@ -79,7 +129,7 @@ export default function Skills() {
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.15 }}
-          className="flex flex-wrap justify-center gap-2.5 mb-10"
+          className="flex flex-wrap justify-center gap-2 mb-10"
           role="tablist"
           aria-label="Skill categories"
         >
@@ -95,7 +145,7 @@ export default function Skills() {
                 aria-selected={isActive}
                 aria-controls={`skills-panel-${cat.id}`}
                 id={`skills-tab-${cat.id}`}
-                className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2 border ${
+                className={`px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 flex items-center gap-2 border cursor-pointer ${
                   isActive
                     ? 'text-white border-primary shadow-[0_0_20px_rgba(124,58,237,0.4)]'
                     : 'text-[var(--color-text-secondary)] border-[var(--color-border)] hover:text-[var(--color-text-primary)] hover:border-primary/40 bg-[var(--color-surface)]/60'
@@ -115,7 +165,7 @@ export default function Skills() {
           })}
         </motion.div>
 
-        {/* Clean Modern Skills Grid */}
+        {/* Clean Modern Skills Grid with Real Icons */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
@@ -128,14 +178,14 @@ export default function Skills() {
             aria-labelledby={`skills-tab-${activeTab}`}
             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
           >
-            {activeCategory.skills.map((skill, i) => (
+            {activeCategory.skills.map((skill: Skill, i: number) => (
               <motion.div
                 key={skill.name}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.25, delay: i * 0.03 }}
+                transition={{ duration: 0.25, delay: i * 0.02 }}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                className="group relative p-4 rounded-2xl bg-[var(--color-surface)]/80 backdrop-blur-md border border-[var(--color-border)] hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-[0_8px_25px_rgba(124,58,237,0.15)] flex items-center gap-4"
+                className="group relative p-4 rounded-2xl bg-[var(--color-surface)]/80 backdrop-blur-md border border-[var(--color-border)] hover:border-[#06B6D4]/50 transition-all duration-300 shadow-sm hover:shadow-[0_8px_25px_rgba(6,182,212,0.18)] flex items-start gap-3.5"
               >
                 {/* Glow on hover */}
                 <div 
@@ -143,25 +193,37 @@ export default function Skills() {
                   style={{ background: skill.color }}
                 />
 
-                {/* Tech Icon */}
+                {/* Tech Real Vector Brand Icon */}
                 <div 
-                  className="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center p-2 transition-transform duration-300 group-hover:scale-110 shadow-sm"
+                  className="w-12 h-12 rounded-xl flex-shrink-0 flex items-center justify-center p-2.5 transition-transform duration-300 group-hover:scale-110 shadow-sm"
                   style={{ 
                     background: `${skill.color}15`, 
                     border: `1px solid ${skill.color}35` 
                   }}
                 >
-                  <SkillIcon name={skill.name} color={skill.color} />
+                  {getSkillRealIcon(skill.name, 26)}
                 </div>
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-sm text-[var(--color-text-primary)] group-hover:text-primary transition-colors truncate">
-                    {skill.name}
-                  </h3>
-                  <p className="text-xs text-[var(--color-text-secondary)] mt-0.5 line-clamp-2 leading-snug">
+                  <div className="flex items-center justify-between gap-1 mb-0.5">
+                    <h3 className="font-bold text-sm text-[var(--color-text-primary)] group-hover:text-[#06B6D4] transition-colors truncate">
+                      {skill.name}
+                    </h3>
+                    {skill.experienceLevel && (
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-white/5 text-gray-400 flex-shrink-0">
+                        {skill.experienceLevel}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-[var(--color-text-secondary)] leading-snug line-clamp-2">
                     {skill.description}
                   </p>
+                  {skill.repoProof && (
+                    <div className="text-[10px] text-gray-500 mt-1 truncate font-mono">
+                      📁 {skill.repoProof}
+                    </div>
+                  )}
                 </div>
               </motion.div>
             ))}

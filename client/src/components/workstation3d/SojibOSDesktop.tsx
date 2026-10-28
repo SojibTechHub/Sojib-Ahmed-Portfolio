@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
+import { skillCategories, allSkillsList } from '../../data/skills';
+import { getSkillRealIcon } from '../sections/Skills';
 
 interface SojibOSProps {
   onZoomOut: () => void;
@@ -655,32 +657,122 @@ function OSAboutApp() {
 }
 
 // -------------------------------------------------------------
-// APP 4: TECHNICAL SKILLS BREAKDOWN
+// APP 4: TECHNICAL SKILLS BREAKDOWN (All Repositories & Real Brand Icons)
 // -------------------------------------------------------------
 function OSSkillsApp() {
-  const skillCategories = [
-    { name: 'Frontend', items: ['React 19', 'Next.js 16', 'TypeScript', 'Tailwind CSS v4', 'Framer Motion', 'GSAP', 'HTML5/CSS3'] },
-    { name: 'Backend', items: ['Node.js', 'Express.js', 'RESTful API', 'Socket.IO', 'WebRTC', 'Nodemailer', 'Upstash Redis'] },
-    { name: 'Database & Cloud', items: ['MongoDB Atlas', 'Mongoose', 'Firebase Auth', 'PostgreSQL', 'Docker', 'Cloudinary'] },
-    { name: 'AI & Automation', items: ['Google Gemini API', 'OpenAI SDK', 'RAG Chatbot Pipelines', 'Prompt Architecture'] },
-  ];
+  const [selectedCat, setSelectedCat] = useState<string>('all');
+  const [filterSearch, setFilterSearch] = useState<string>('');
+
+  const filteredSkills = allSkillsList.filter((s) => {
+    const matchesCat = selectedCat === 'all' || s.category === selectedCat;
+    const matchesQuery =
+      s.name.toLowerCase().includes(filterSearch.toLowerCase()) ||
+      s.description.toLowerCase().includes(filterSearch.toLowerCase()) ||
+      (s.repoProof && s.repoProof.toLowerCase().includes(filterSearch.toLowerCase()));
+    return matchesCat && matchesQuery;
+  });
 
   return (
-    <div className="space-y-4 max-w-3xl">
-      <div className="grid sm:grid-cols-2 gap-4">
-        {skillCategories.map((cat, i) => (
-          <div key={i} className="p-4 rounded-xl bg-[#030712] border border-white/5 space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#06B6D4] flex items-center gap-2">
-              <Cpu size={14} />
-              {cat.name}
-            </h4>
-            <div className="flex flex-wrap gap-1.5">
-              {cat.items.map((skill, idx) => (
-                <span key={idx} className="px-2 py-1 rounded-lg text-xs bg-white/5 border border-white/5 text-gray-200 font-medium">
-                  {skill}
-                </span>
-              ))}
+    <div className="space-y-4 max-w-4xl pb-4">
+      {/* Header & Category Filter Bar */}
+      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between pb-3 border-b border-white/10">
+        <div>
+          <div className="flex items-center gap-2">
+            <Cpu size={16} className="text-[#06B6D4]" />
+            <h3 className="font-bold text-sm text-white uppercase tracking-wider">
+              Technical Arsenal & Repository Provenance
+            </h3>
+          </div>
+          <p className="text-xs text-gray-400 mt-0.5">
+            {allSkillsList.length} verified technologies across 10 production & client projects.
+          </p>
+        </div>
+
+        {/* Search */}
+        <div className="relative w-full sm:w-56">
+          <Search size={13} className="absolute left-2.5 top-2.5 text-gray-500" />
+          <input
+            type="text"
+            value={filterSearch}
+            onChange={(e) => setFilterSearch(e.target.value)}
+            placeholder="Search skill or repo..."
+            className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-[#030712] border border-white/10 text-xs text-white placeholder-gray-500 outline-none focus:border-[#06B6D4]"
+          />
+        </div>
+      </div>
+
+      {/* Category Pills */}
+      <div className="flex flex-wrap gap-1.5">
+        <button
+          onClick={() => setSelectedCat('all')}
+          className={`px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
+            selectedCat === 'all'
+              ? 'bg-[#06B6D4] text-black shadow-lg shadow-[#06B6D4]/30'
+              : 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white border border-white/5'
+          }`}
+        >
+          All Tech ({allSkillsList.length})
+        </button>
+        {skillCategories.map((cat) => (
+          <button
+            key={cat.id}
+            onClick={() => setSelectedCat(cat.id)}
+            className={`px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
+              selectedCat === cat.id
+                ? 'bg-[#06B6D4] text-black shadow-lg shadow-[#06B6D4]/30'
+                : 'bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white border border-white/5'
+            }`}
+          >
+            {cat.label} ({cat.skills.length})
+          </button>
+        ))}
+      </div>
+
+      {/* Skills Grid with Real Brand Logos */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 max-h-[58vh] overflow-y-auto pr-1">
+        {filteredSkills.map((skill, idx) => (
+          <div
+            key={idx}
+            className="p-3 rounded-xl bg-[#030712]/90 border border-white/10 hover:border-[#06B6D4]/50 transition-all flex flex-col justify-between group shadow-sm hover:shadow-md"
+          >
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center p-1 group-hover:scale-110 transition-transform">
+                    {getSkillRealIcon(skill.name, 18)}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-xs text-white group-hover:text-[#06B6D4] transition-colors leading-tight">
+                      {skill.name}
+                    </h4>
+                    <span className="text-[10px] text-gray-400 capitalize">{skill.category}</span>
+                  </div>
+                </div>
+
+                {skill.experienceLevel && (
+                  <span
+                    className={`text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider ${
+                      skill.experienceLevel === 'Expert'
+                        ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                        : 'bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30'
+                    }`}
+                  >
+                    {skill.experienceLevel}
+                  </span>
+                )}
+              </div>
+
+              <p className="text-[11px] text-gray-400 leading-snug line-clamp-2">
+                {skill.description}
+              </p>
             </div>
+
+            {skill.repoProof && (
+              <div className="mt-2 pt-2 border-t border-white/5 flex items-center gap-1.5 text-[10px] text-gray-500">
+                <span className="text-gray-400 font-medium">Repos:</span>
+                <span className="text-[#06B6D4] truncate font-mono">{skill.repoProof}</span>
+              </div>
+            )}
           </div>
         ))}
       </div>

@@ -7,7 +7,20 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-dom/client', 'react-router-dom', 'three', 'framer-motion', 'lucide-react', 'gsap'],
+    exclude: ['react-icons', 'react-icons/si', 'react-icons/fa6', 'react-icons/fa'],
+  },
   server: {
+    port: 5173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+    },
+  },
+  preview: {
     port: 5173,
     proxy: {
       '/api': {
