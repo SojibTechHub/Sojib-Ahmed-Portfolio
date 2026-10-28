@@ -23,11 +23,11 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
   const keyLightRef = useRef<THREE.DirectionalLight | null>(null);
   const ambientLightRef = useRef<THREE.AmbientLight | null>(null);
 
-  // Aesthetic 3/4 perspective camera coordinates (removes flat orthographic look)
-  const ROOM_CAMERA_POS = { x: 0.55, y: 2.22, z: 3.85 };
-  const ROOM_CAMERA_LOOK = { x: 0, y: 1.35, z: -0.15 };
-  const MONITOR_CAMERA_POS = { x: 0, y: 1.62, z: 1.55 };
-  const MONITOR_CAMERA_LOOK = { x: 0, y: 1.62, z: -0.28 };
+  // Aesthetic centered 3D perspective camera (perfect balance & maximum monitor legibility)
+  const ROOM_CAMERA_POS = { x: 0.18, y: 2.05, z: 3.65 };
+  const ROOM_CAMERA_LOOK = { x: 0, y: 1.50, z: -0.20 };
+  const MONITOR_CAMERA_POS = { x: 0, y: 1.72, z: 1.35 };
+  const MONITOR_CAMERA_LOOK = { x: 0, y: 1.72, z: -0.25 };
 
   useEffect(() => {
     const container = mountRef.current;
@@ -56,14 +56,14 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     renderer.shadowMap.type = THREE.PCFShadowMap;
     container.appendChild(renderer.domElement);
 
-    // 4. Lighting System — Warm, Cozy Loft & Studio Illumination
-    const ambientLight = new THREE.AmbientLight(0xfff7ed, 1.6);
+    // 4. Lighting System — High-Definition Cozy Studio & Cinematic Cyber Lighting
+    const ambientLight = new THREE.AmbientLight(0xfff7ed, 2.2);
     ambientLightRef.current = ambientLight;
     scene.add(ambientLight);
 
     // Main warm overhead studio key light
-    const keyLight = new THREE.DirectionalLight(0xffedd5, 2.6);
-    keyLight.position.set(4, 6.5, 4);
+    const keyLight = new THREE.DirectionalLight(0xffedd5, 3.2);
+    keyLight.position.set(3.5, 6.5, 4);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 2048;
     keyLight.shadow.mapSize.height = 2048;
@@ -72,17 +72,32 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     scene.add(keyLight);
 
     // Window daylight / moonlight (left side)
-    const windowLight = new THREE.DirectionalLight(0x93c5fd, 1.4);
+    const windowLight = new THREE.DirectionalLight(0x93c5fd, 1.8);
     windowLight.position.set(-6, 5, 1);
     scene.add(windowLight);
 
     // Back accent rim light (purple/cyan)
-    const rimLight = new THREE.PointLight(0x8b5cf6, 2.2, 10);
+    const rimLight = new THREE.PointLight(0x8b5cf6, 2.8, 10);
     rimLight.position.set(2.8, 3.2, -1.2);
     scene.add(rimLight);
 
+    // Atmospheric Desk Backlight Wall-Wash LED Strip (Cyan Ambient Glow)
+    const deskBacklight = new THREE.PointLight(0x06b6d4, 3.8, 6.0);
+    deskBacklight.position.set(0, 1.45, -0.6);
+    scene.add(deskBacklight);
+
+    // Shelf Underglow Accent (Soft Violet)
+    const shelfUnderglow = new THREE.PointLight(0x8b5cf6, 2.6, 5.0);
+    shelfUnderglow.position.set(0, 3.25, -2.6);
+    scene.add(shelfUnderglow);
+
+    // Internal Custom PC Tower Illumination
+    const pcInternalLight = new THREE.PointLight(0x06b6d4, 3.0, 3.0);
+    pcInternalLight.position.set(1.45, 1.58, -0.1);
+    scene.add(pcInternalLight);
+
     // Desk Lamp warm pool of light
-    const deskLampLight = new THREE.PointLight(0xf59e0b, 4.5, 6.5);
+    const deskLampLight = new THREE.PointLight(0xf59e0b, 5.0, 7.0);
     deskLampLight.position.set(-1.1, 2.1, 0.1);
     deskLampLight.castShadow = true;
     lampLightRef.current = deskLampLight;
@@ -260,32 +275,60 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     frameMesh.position.set(2.45, 2.45, -3.05);
     scene.add(frameMesh);
 
-    // Canvas inside frame
+    // Canvas inside frame (Ultra High-Res 1024x680 with 4 Verified Credentials)
     const certCanvas = document.createElement('canvas');
-    certCanvas.width = 512;
-    certCanvas.height = 340;
+    certCanvas.width = 1024;
+    certCanvas.height = 680;
     const cCtx = certCanvas.getContext('2d')!;
     cCtx.fillStyle = '#060B17';
-    cCtx.fillRect(0, 0, 512, 340);
-    cCtx.strokeStyle = '#06B6D4';
-    cCtx.lineWidth = 6;
-    cCtx.strokeRect(12, 12, 488, 316);
+    cCtx.fillRect(0, 0, 1024, 680);
+    
+    // Glowing gradient frame border
+    const cGrad = cCtx.createLinearGradient(0, 0, 1024, 680);
+    cGrad.addColorStop(0, '#7C3AED');
+    cGrad.addColorStop(0.5, '#06B6D4');
+    cGrad.addColorStop(1, '#10B981');
+    cCtx.strokeStyle = cGrad;
+    cCtx.lineWidth = 10;
+    cCtx.strokeRect(18, 18, 988, 644);
+
     cCtx.fillStyle = '#FFFFFF';
-    cCtx.font = 'bold 32px sans-serif';
-    cCtx.fillText('SOJIB AHMED', 36, 75);
+    cCtx.font = 'bold 54px sans-serif';
+    cCtx.fillText('SOJIB AHMED', 56, 100);
+
     cCtx.fillStyle = '#06B6D4';
-    cCtx.font = 'bold 22px sans-serif';
-    cCtx.fillText('FULL STACK DEVELOPER', 36, 115);
+    cCtx.font = 'bold 32px sans-serif';
+    cCtx.fillText('FULL STACK DEVELOPER', 56, 155);
+
+    // Subtitle badge
+    cCtx.fillStyle = 'rgba(6, 182, 212, 0.15)';
+    cCtx.fillRect(56, 185, 912, 48);
+    cCtx.strokeStyle = 'rgba(6, 182, 212, 0.4)';
+    cCtx.lineWidth = 2;
+    cCtx.strokeRect(56, 185, 912, 48);
+    cCtx.fillStyle = '#22D3EE';
+    cCtx.font = 'bold 22px monospace';
+    cCtx.fillText('★ 4 OFFICIALLY VERIFIED CREDENTIALS & INDUSTRY RECORDS ★', 76, 218);
+
+    cCtx.fillStyle = '#E2E8F0';
+    cCtx.font = '22px monospace';
+    cCtx.fillText('1. FlyRank — Full Stack Web Development Appointment', 56, 285);
+    cCtx.fillText('2. Programming Hero — Official Letter of Recommendation', 56, 335);
+    cCtx.fillText('3. Programming Hero — Complete Web Development Course', 56, 385);
+    cCtx.fillText('4. Datheon AI Systems — Full Stack Engineering Internship', 56, 435);
+
     cCtx.fillStyle = '#94A3B8';
-    cCtx.font = '17px monospace';
-    cCtx.fillText('// React 19 · Next.js · Node.js', 36, 175);
-    cCtx.fillText('// Express · MongoDB · TypeScript', 36, 210);
+    cCtx.font = '20px monospace';
+    cCtx.fillText('// Tech: React 19 · Next.js 16 · Node.js · Express · MongoDB · TypeScript', 56, 505);
+
     cCtx.fillStyle = '#10B981';
-    cCtx.font = 'bold 18px sans-serif';
-    cCtx.fillText('VERIFIED FULL STACK ARCHITECT ★', 36, 270);
+    cCtx.font = 'bold 26px sans-serif';
+    cCtx.fillText('● SYSTEM STATUS: PRODUCTION READY & AVAILABLE FOR HIRE', 56, 580);
 
     const certTex = new THREE.CanvasTexture(certCanvas);
-    const certMat = new THREE.MeshStandardMaterial({ map: certTex, roughness: 0.2 });
+    certTex.minFilter = THREE.LinearFilter;
+    certTex.magFilter = THREE.LinearFilter;
+    const certMat = new THREE.MeshStandardMaterial({ map: certTex, roughness: 0.15 });
     const certPlane = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.0), certMat);
     certPlane.position.set(2.45, 2.45, -3.02);
     scene.add(certPlane);
@@ -386,60 +429,130 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     monitorFrame.castShadow = true;
     scene.add(monitorFrame);
 
-    // Monitor Active Canvas Screen
+    // Monitor Active Canvas Screen (2048x840 Ultra-High Definition for Crystal-Clear Readability)
     const screenGeo = new THREE.PlaneGeometry(2.22, 0.90);
     const screenCanvas = document.createElement('canvas');
-    screenCanvas.width = 1024;
-    screenCanvas.height = 420;
+    screenCanvas.width = 2048;
+    screenCanvas.height = 840;
     const sCtx = screenCanvas.getContext('2d')!;
 
     const drawScreen = () => {
-      sCtx.fillStyle = '#030712';
-      sCtx.fillRect(0, 0, 1024, 420);
+      // Deep cyber dark background
+      sCtx.fillStyle = '#040814';
+      sCtx.fillRect(0, 0, 2048, 840);
 
-      // Top gradient bar
-      const grad = sCtx.createLinearGradient(0, 0, 1024, 0);
+      // Top glowing neon bar
+      const grad = sCtx.createLinearGradient(0, 0, 2048, 0);
       grad.addColorStop(0, '#7C3AED');
       grad.addColorStop(0.5, '#06B6D4');
       grad.addColorStop(1, '#10B981');
       sCtx.fillStyle = grad;
-      sCtx.fillRect(0, 0, 1024, 10);
+      sCtx.fillRect(0, 0, 2048, 14);
 
-      // Header branding
+      // Top OS Navigation / Window Controls Bar
+      sCtx.fillStyle = '#080E20';
+      sCtx.fillRect(0, 14, 2048, 64);
+      sCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      sCtx.lineWidth = 1;
+      sCtx.beginPath();
+      sCtx.moveTo(0, 78);
+      sCtx.lineTo(2048, 78);
+      sCtx.stroke();
+
+      // Window dots (Traffic lights)
+      const dotColors = ['#EF4444', '#F59E0B', '#10B981'];
+      dotColors.forEach((color, i) => {
+        sCtx.beginPath();
+        sCtx.arc(50 + i * 36, 46, 10, 0, Math.PI * 2);
+        sCtx.fillStyle = color;
+        sCtx.fill();
+      });
+
+      // Window title
+      sCtx.fillStyle = '#94A3B8';
+      sCtx.font = 'bold 22px monospace';
+      sCtx.fillText('sojib-workstation :: ~/portfolio-enterprise (main)', 180, 53);
+
+      // Status Badge (Top Right)
+      sCtx.fillStyle = 'rgba(16, 185, 129, 0.15)';
+      sCtx.fillRect(1720, 26, 270, 40);
+      sCtx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
+      sCtx.strokeRect(1720, 26, 270, 40);
+      sCtx.fillStyle = '#10B981';
+      sCtx.font = 'bold 18px sans-serif';
+      sCtx.fillText('● AVAILABLE FOR HIRE', 1745, 52);
+
+      // Main Branding Title
       sCtx.fillStyle = '#FFFFFF';
-      sCtx.font = 'bold 34px sans-serif';
-      sCtx.fillText('SOJIB AHMED · FULL STACK DEVELOPER', 48, 76);
+      sCtx.font = 'bold 56px sans-serif';
+      sCtx.fillText('SOJIB AHMED', 80, 165);
 
       sCtx.fillStyle = '#06B6D4';
-      sCtx.font = 'bold 18px monospace';
-      sCtx.fillText('🚀 SOJIB OS v2.6 ENTERPRISE · FULL STACK ARCHITECTURE', 48, 116);
+      sCtx.font = 'bold 28px sans-serif';
+      sCtx.fillText('FULL STACK DEVELOPER · PRODUCTION SYSTEMS', 80, 215);
 
-      // Terminal window
-      sCtx.fillStyle = '#090D1A';
-      sCtx.strokeStyle = 'rgba(6, 182, 212, 0.5)';
-      sCtx.lineWidth = 2;
+      // Central Terminal Window
+      sCtx.fillStyle = '#080E1E';
+      sCtx.strokeStyle = 'rgba(6, 182, 212, 0.6)';
+      sCtx.lineWidth = 3;
       sCtx.beginPath();
-      sCtx.roundRect(48, 145, 928, 220, 14);
+      sCtx.roundRect(80, 250, 1888, 410, 20);
       sCtx.fill();
       sCtx.stroke();
 
-      sCtx.fillStyle = '#10B981';
-      sCtx.font = '20px monospace';
-      sCtx.fillText('$ git status --fullstack', 72, 195);
-      sCtx.fillStyle = '#E2E8F0';
-      sCtx.font = '18px monospace';
-      sCtx.fillText('● ShopX BD Enterprise  ● FoodFlow Logistics  ● SkillForge AI', 72, 240);
-      sCtx.fillText('● StartupForge         ● TypeMarket Store    ● InvestProp AI', 72, 275);
-      sCtx.fillStyle = '#38BDF8';
-      sCtx.fillText('● Flagship Builds with Live Links & Verified Credentials', 72, 310);
+      // Terminal Header inside box
+      sCtx.fillStyle = '#0C152E';
+      sCtx.beginPath();
+      sCtx.roundRect(80, 250, 1888, 54, [20, 20, 0, 0]);
+      sCtx.fill();
 
-      sCtx.fillStyle = '#F59E0B';
-      sCtx.font = 'bold 20px sans-serif';
-      sCtx.fillText('👉 CLICK ANYWHERE ON THIS SCREEN TO ZOOM IN & EXPLORE OS 👈', 72, 350);
+      sCtx.fillStyle = '#38BDF8';
+      sCtx.font = 'bold 22px monospace';
+      sCtx.fillText('$ git status --production-verified', 120, 286);
+
+      // Terminal Body Content
+      sCtx.fillStyle = '#10B981';
+      sCtx.font = '24px monospace';
+      sCtx.fillText('✔ 10 Flagship Projects Live:', 120, 350);
+
+      sCtx.fillStyle = '#E2E8F0';
+      sCtx.font = '22px monospace';
+      sCtx.fillText('● ShopX BD Enterprise  ● FoodFlow Logistics  ● SkillForge AI  ● StartupForge ATS', 150, 395);
+      sCtx.fillText('● TypeMarket Store     ● InvestProp AI       ● Issue Tracker  ● Pet Adoption API', 150, 435);
+
+      sCtx.fillStyle = '#A78BFA';
+      sCtx.font = '24px monospace';
+      sCtx.fillText('✔ 4 Verified Credentials & Documents:', 120, 495);
+
+      sCtx.fillStyle = '#CBD5E1';
+      sCtx.font = '22px monospace';
+      sCtx.fillText('★ FlyRank Appointment  ★ PH Letter of Recommendation  ★ PH Batch 13  ★ Datheon AI', 150, 540);
+
+      sCtx.fillStyle = '#38BDF8';
+      sCtx.font = '22px monospace';
+      sCtx.fillText('⚡ Tech Stack: React 19 • Next.js 16 • TypeScript • Node.js • Express • MongoDB Atlas', 120, 605);
+
+      // Bottom Clickable Interactive CTA Bar
+      const ctaGrad = sCtx.createLinearGradient(80, 0, 1968, 0);
+      ctaGrad.addColorStop(0, '#7C3AED');
+      ctaGrad.addColorStop(0.5, '#06B6D4');
+      ctaGrad.addColorStop(1, '#10B981');
+      sCtx.fillStyle = ctaGrad;
+      sCtx.beginPath();
+      sCtx.roundRect(80, 690, 1888, 100, 16);
+      sCtx.fill();
+
+      sCtx.fillStyle = '#FFFFFF';
+      sCtx.font = 'bold 34px sans-serif';
+      sCtx.textAlign = 'center';
+      sCtx.fillText('👉 CLICK ANYWHERE ON THIS MONITOR TO LAUNCH SOJIB OS DESKTOP 🚀', 1024, 755);
+      sCtx.textAlign = 'left';
     };
     drawScreen();
 
     const screenTexture = new THREE.CanvasTexture(screenCanvas);
+    screenTexture.minFilter = THREE.LinearFilter;
+    screenTexture.magFilter = THREE.LinearFilter;
     const screenMat = new THREE.MeshBasicMaterial({ map: screenTexture, toneMapped: false });
     const screenMesh = new THREE.Mesh(screenGeo, screenMat);
     screenMesh.position.set(0, 1.72, -0.245);
