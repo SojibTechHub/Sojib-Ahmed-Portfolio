@@ -11,7 +11,7 @@ const settingSchema = new mongoose.Schema({
   email: { type: String, default: 'sojibahmedshorif998@gmail.com' },
   phone: { type: String, default: '+880 1942791004' },
   whatsapp: { type: String, default: '+880 1942791004' },
-  github: { type: String, default: 'sojibahmedshorif25-ai' },
+  github: { type: String, default: 'SojibTechHub' },
   linkedin: { type: String, default: 'sojib-ahmed-shorif' },
   facebook: { type: String, default: 'https://www.facebook.com/share/16G2SwmtSFk/' },
   yearsExperience: { type: String, default: '2+' },

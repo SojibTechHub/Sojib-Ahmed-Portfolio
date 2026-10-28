@@ -332,7 +332,7 @@ function OSProjectsApp() {
       category: 'full-stack',
       tech: ['React 19', 'TypeScript', 'Node.js', 'Express', 'MongoDB Atlas', 'Upstash Redis'],
       live: 'https://shopx-bd-enterprise.vercel.app/',
-      github: 'https://github.com/sojibahmedshorif25-ai/Shopx-BD-Enterprise',
+      github: 'https://github.com/SojibTechHub/Shopx-BD-Enterprise',
       image: '/images/shopx.png',
     },
     {
@@ -350,7 +350,7 @@ function OSProjectsApp() {
       category: 'full-stack',
       tech: ['Next.js 16', 'React 19', 'Express.js', 'Better Auth', 'Docker', 'React Query'],
       live: 'https://job-student-task.vercel.app/',
-      github: 'https://github.com/sojibahmedshorif25-ai/JOB-STUDENT-TASK.git',
+      github: 'https://github.com/SojibTechHub/JOB-STUDENT-TASK.git',
       image: '/images/skillforge.png',
     },
     {
@@ -359,7 +359,7 @@ function OSProjectsApp() {
       category: 'full-stack',
       tech: ['React.js', 'Node.js', 'Express.js', 'MongoDB', 'Socket.IO', 'WebRTC', 'Stripe'],
       live: 'https://startupforge-ruby.vercel.app/',
-      github: 'https://github.com/sojibahmedshorif25-ai/startupforge.git',
+      github: 'https://github.com/SojibTechHub/startupforge.git',
       image: '/images/startupforge.png',
     },
     {
@@ -368,7 +368,7 @@ function OSProjectsApp() {
       category: 'frontend',
       tech: ['TypeScript', 'React.js', 'Tailwind CSS', 'TanStack Query', 'Lucide React'],
       live: 'https://type-script-project-nine.vercel.app',
-      github: 'https://github.com/sojibahmedshorif25-ai/TypeScript-Project',
+      github: 'https://github.com/SojibTechHub/TypeScript-Project',
       image: '/images/typemarket.png',
     },
     {
@@ -377,7 +377,7 @@ function OSProjectsApp() {
       category: 'frontend',
       tech: ['React.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Recharts'],
       live: 'https://investprop-ai.vercel.app',
-      github: 'https://github.com/sojibahmedshorif25-ai/Investprop-Ai.git',
+      github: 'https://github.com/SojibTechHub/Investprop-Ai.git',
       image: '/images/investprop.png',
     },
     {
@@ -386,7 +386,7 @@ function OSProjectsApp() {
       category: 'frontend',
       tech: ['React.js', 'Tailwind CSS', 'GitHub API', 'Lucide React'],
       live: 'https://fabulous-profiterole-d6e817.netlify.app/',
-      github: 'https://github.com/sojibahmedshorif25-ai/github-issue-tracker.git',
+      github: 'https://github.com/SojibTechHub/github-issue-tracker.git',
       image: '/images/issuetracker.png',
     },
     {
@@ -395,7 +395,7 @@ function OSProjectsApp() {
       category: 'backend',
       tech: ['Node.js', 'Express.js', 'MongoDB Atlas', 'JWT', 'Nodemailer'],
       live: 'https://pet-adoption-client-rho-jet.vercel.app',
-      github: 'https://github.com/sojibahmedshorif25-ai/Pet-Adoption-Server',
+      github: 'https://github.com/SojibTechHub/Pet-Adoption-Server',
       image: '/images/petadoption.png',
     },
     {
@@ -404,7 +404,7 @@ function OSProjectsApp() {
       category: 'backend',
       tech: ['Node.js', 'Express.js', 'MongoDB Atlas', 'JWT', 'Cloudinary'],
       live: 'https://job-finder-client.vercel.app',
-      github: 'https://github.com/sojibahmedshorif25-ai/Job-Finder',
+      github: 'https://github.com/SojibTechHub/Job-Finder',
       image: '/images/jobfinder.png',
     },
     {
@@ -413,7 +413,7 @@ function OSProjectsApp() {
       category: 'backend',
       tech: ['Node.js', 'Express.js', 'MongoDB Atlas', 'Express Validator'],
       live: 'https://books-platfrom-48rm.vercel.app/',
-      github: 'https://github.com/sojibahmedshorif25-ai/Books-Platfrom.git',
+      github: 'https://github.com/SojibTechHub/Books-Platfrom.git',
       image: '/images/digitools.png',
     },
   ];
@@ -612,7 +612,7 @@ function OSTerminalApp() {
     } else if (lower === 'projects') {
       output = `1. ShopX BD Enterprise — Hyperlocal Multi-Vendor E-Commerce\n2. FoodFlow — AI Multi-Vendor Food Delivery\n3. SkillForge — AI Learning & Code Sandbox\n4. StartupForge — AI Startup ATS & Video Interviews`;
     } else if (lower === 'contact') {
-      output = `Email:    sojibahmedshorif998@gmail.com\nPhone:    +880 1942791004\nWhatsApp: +880 1942791004\nGitHub:   https://github.com/sojibahmedshorif25-ai`;
+      output = `Email:    sojibahmedshorif998@gmail.com\nPhone:    +880 1942791004\nWhatsApp: +880 1942791004\nGitHub:   https://github.com/SojibTechHub`;
     } else if (lower === 'sudo hire') {
       output = `Access granted! 🎉 Opening email composer...`;
       window.open('mailto:sojibahmedshorif998@gmail.com?subject=Job%20Opportunity', '_blank');

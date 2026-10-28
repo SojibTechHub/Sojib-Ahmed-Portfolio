@@ -187,7 +187,7 @@ export default function Contact() {
             {/* Social links */}
             <div className="flex gap-2">
               {[
-                { icon: FaGithub, href: 'https://github.com/sojibahmedshorif25-ai', label: 'GitHub' },
+                { icon: FaGithub, href: 'https://github.com/SojibTechHub', label: 'GitHub' },
                 { icon: FaLinkedinIn, href: 'https://www.linkedin.com/in/sojib-ahmed-shorif', label: 'LinkedIn' },
                 { icon: FaEnvelope, href: 'mailto:sojibahmedshorif998@gmail.com', label: 'Email' },
               ].map(({ icon: Icon, href, label }) => (

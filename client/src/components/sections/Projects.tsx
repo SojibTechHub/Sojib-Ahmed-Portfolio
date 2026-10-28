@@ -465,7 +465,7 @@ export default function Projects() {
             All projects are available on GitHub with complete source code and documentation.
           </p>
           <motion.a
-            href="https://github.com/sojibahmedshorif25-ai"
+            href="https://github.com/SojibTechHub"
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.03, boxShadow: '0 8px 30px rgba(124,58,237,0.3)' }}

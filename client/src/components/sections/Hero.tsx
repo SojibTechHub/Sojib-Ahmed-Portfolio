@@ -327,7 +327,7 @@ export default function Hero() {
             >
               <span className="text-xs text-[var(--color-text-secondary)]">Find me on:</span>
               {[
-                { icon: FaGithub, href: 'https://github.com/sojibahmedshorif25-ai', label: 'GitHub', id: 'social-GitHub' },
+                { icon: FaGithub, href: 'https://github.com/SojibTechHub', label: 'GitHub', id: 'social-GitHub' },
                 { icon: FaLinkedinIn, href: 'https://www.linkedin.com/in/sojib-ahmed-shorif', label: 'LinkedIn', id: 'social-LinkedIn' },
                 { icon: FaEnvelope, href: 'mailto:sojibahmedshorif998@gmail.com', label: 'Email', id: 'social-email' },
               ].map(({ icon: Icon, href, label, id }) => (

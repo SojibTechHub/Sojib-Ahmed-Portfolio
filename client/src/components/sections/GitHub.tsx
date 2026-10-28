@@ -148,7 +148,7 @@ export default function GitHub() {
                   <div className="flex items-center gap-1"><GitFork size={11} />{repo.forks}</div>
                 </div>
                 <a
-                  href={`https://github.com/sojibahmedshorif25-ai/${repo.name}`}
+                  href={`https://github.com/SojibTechHub/${repo.name}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1 text-[#8B5CF6] font-medium opacity-0 group-hover:opacity-100 transition-opacity"
@@ -169,7 +169,7 @@ export default function GitHub() {
           className="text-center"
         >
           <motion.a
-            href="https://github.com/sojibahmedshorif25-ai"
+            href="https://github.com/SojibTechHub"
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ scale: 1.02 }}

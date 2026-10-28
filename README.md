@@ -128,7 +128,7 @@ Sojib-Ahmed-Portfolio/
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/sojibahmedshorif25-ai/Sojib-Ahmed-Portfolio.git
+git clone https://github.com/SojibTechHub/Sojib-Ahmed-Portfolio.git
 
 # 2. Install Client Dependencies
 cd client
@@ -198,7 +198,7 @@ npm run dev
 
 **Sojib Ahmed**
 
-[![GitHub](https://img.shields.io/badge/GitHub-sojibahmedshorif25--ai-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/sojibahmedshorif25-ai)
+[![GitHub](https://img.shields.io/badge/GitHub-SojibTechHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/SojibTechHub)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Sojib_Ahmed-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sojib-ahmed-shorif)
 [![Portfolio](https://img.shields.io/badge/Portfolio-Live-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://my-portfolio-inky-two-40.vercel.app)
 

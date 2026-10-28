@@ -227,7 +227,7 @@ export default function AdminPage() {
     email: 'sojibahmedshorif998@gmail.com',
     phone: '+880 1942791004',
     whatsapp: '+880 1942791004',
-    github: 'https://github.com/sojibahmedshorif25-ai',
+    github: 'https://github.com/SojibTechHub',
     linkedin: 'https://www.linkedin.com/in/sojib-ahmed-shorif',
     facebook: 'https://www.facebook.com/share/16G2SwmtSFk/',
     yearsExperience: '2+',
@@ -1167,7 +1167,7 @@ export default function AdminPage() {
                       type="url"
                       value={projectForm.githubUrl}
                       onChange={(e) => setProjectForm({ ...projectForm, githubUrl: e.target.value })}
-                      placeholder="https://github.com/sojibahmedshorif25-ai/repo"
+                      placeholder="https://github.com/SojibTechHub/repo"
                       className="w-full px-3 py-2 rounded-xl bg-[#030712] border border-white/10 text-xs text-white outline-none focus:border-[#06B6D4]"
                     />
                   </div>

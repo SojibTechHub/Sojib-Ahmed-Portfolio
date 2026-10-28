@@ -12,7 +12,7 @@ const quickLinks = [
 ];
 
 const socialLinks = [
-  { icon: FaGithub, href: 'https://github.com/sojibahmedshorif25-ai', label: 'GitHub' },
+  { icon: FaGithub, href: 'https://github.com/SojibTechHub', label: 'GitHub' },
   { icon: FaLinkedinIn, href: 'https://www.linkedin.com/in/sojib-ahmed-shorif', label: 'LinkedIn' },
   { icon: FaWhatsapp, href: 'https://wa.me/8801942791004', label: 'WhatsApp' },
   { icon: FaFacebookF, href: 'https://www.facebook.com/share/16G2SwmtSFk/', label: 'Facebook' },
@@ -152,12 +152,12 @@ export default function Footer() {
                 <span className="w-1.5 h-1.5 rounded-full bg-[#06B6D4] flex-shrink-0" />
                 <span className="font-bold text-white min-w-[75px]">GitHub:</span>
                 <a
-                  href="https://github.com/sojibahmedshorif25-ai"
+                  href="https://github.com/SojibTechHub"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[#9CA3AF] hover:text-[#06B6D4] transition-colors"
                 >
-                  sojibahmedshorif25-ai
+                  SojibTechHub
                 </a>
               </div>
             </div>
