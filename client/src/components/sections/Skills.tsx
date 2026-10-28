@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { skillCategories, type Skill } from '../../data/skills';
+import { allSkillsList, type Skill, type SkillCategory } from '../../data/skills';
 import { 
   SiReact, SiNextdotjs, SiTypescript, SiJavascript, SiTailwindcss, 
   SiReactquery, SiFramer, SiGreensock, SiRedux, SiHtml5, SiVite, 
@@ -15,6 +15,8 @@ import {
   FaGoogle, FaEnvelope, FaCreditCard, 
   FaShieldHalved, FaChartLine 
 } from 'react-icons/fa6';
+
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export function getSkillRealIcon(name: string, size = 26) {
   switch (name) {
@@ -96,10 +98,66 @@ export function getSkillRealIcon(name: string, size = 26) {
 }
 
 export default function Skills() {
+  const [skillList, setSkillList] = useState<Skill[]>(allSkillsList);
   const [activeTab, setActiveTab] = useState('frontend');
   const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
 
-  const activeCategory = skillCategories.find(c => c.id === activeTab) || skillCategories[0];
+  useEffect(() => {
+    // 1. Try local storage cache
+    try {
+      const saved = localStorage.getItem('sojib_custom_skills');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setSkillList(parsed);
+        }
+      }
+    } catch {}
+
+    // 2. Fetch from backend API
+    const fetchLiveSkills = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/skills`);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          setSkillList(data.data);
+          localStorage.setItem('sojib_custom_skills', JSON.stringify(data.data));
+        }
+      } catch {}
+    };
+
+    fetchLiveSkills();
+  }, []);
+
+  const dynamicCategories: SkillCategory[] = [
+    {
+      id: 'frontend',
+      label: 'Frontend',
+      skills: skillList.filter(s => s.category === 'frontend'),
+    },
+    {
+      id: 'backend',
+      label: 'Backend & APIs',
+      skills: skillList.filter(s => s.category === 'backend'),
+    },
+    {
+      id: 'database',
+      label: 'Database & Auth',
+      skills: skillList.filter(s => s.category === 'database'),
+    },
+    {
+      id: 'devops',
+      label: 'DevOps & Cloud',
+      skills: skillList.filter(s => s.category === 'devops'),
+    },
+    {
+      id: 'ai-services',
+      label: 'AI & Services',
+      skills: skillList.filter(s => s.category === 'ai-services'),
+    },
+  ];
+
+  const activeCategory = dynamicCategories.find(c => c.id === activeTab) || dynamicCategories[0];
 
   return (
     <section id="skills" className="section-padding relative overflow-hidden" ref={ref}>
@@ -120,7 +178,7 @@ export default function Skills() {
           </div>
           <h2 className="section-heading">Production Tech Stack</h2>
           <p className="section-subheading mx-auto text-center max-w-2xl">
-            Real-world technologies and tools battle-tested across my 10 production repositories with authentic vector brand icons.
+            Real-world technologies and tools battle-tested across my production repositories with authentic vector brand icons.
           </p>
         </motion.div>
 
@@ -133,7 +191,7 @@ export default function Skills() {
           role="tablist"
           aria-label="Skill categories"
         >
-          {skillCategories.map((cat) => {
+          {dynamicCategories.map((cat) => {
             const isActive = activeTab === cat.id;
             return (
               <motion.button

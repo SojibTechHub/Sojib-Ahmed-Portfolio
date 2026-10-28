@@ -7,7 +7,17 @@ const stats = [
   { value: '100%', label: 'Code Quality & Reliability' },
 ];
 
-const ticker = 'Enterprise Full Stack Developer â€¢ React 19 & Next.js 16 â€¢ Node.js & Express Architecture â€¢ MongoDB Atlas & PostgreSQL â€¢ Upstash Redis Caching â€¢ Real-Time WebSockets â€¢ AI Agent Pipelines â€¢ Docker & CI/CD â€¢ Available for Worldwide Hire';
+const tickerItems = [
+  'Enterprise Full Stack Developer',
+  'React 19 & Next.js 16',
+  'Node.js & Express Architecture',
+  'MongoDB Atlas & PostgreSQL',
+  'Upstash Redis Caching',
+  'Real-Time WebSockets',
+  'AI Agent Pipelines',
+  'Docker & CI/CD',
+  'Available for Worldwide Hire',
+];
 
 export default function TrustBar() {
   return (
@@ -16,7 +26,7 @@ export default function TrustBar() {
       {/* Ticker */}
       <div className="ticker-wrap mb-10">
         <div className="ticker-content gap-8">
-          {[...ticker.split(' â€¢ '), ...ticker.split(' â€¢ ')].map((item, i) => (
+          {[...tickerItems, ...tickerItems].map((item, i) => (
             <span key={i} className="flex items-center gap-4 text-sm text-[var(--color-text-secondary)] font-medium whitespace-nowrap pr-8">
               <span className="w-1.5 h-1.5 rounded-full bg-[#7C3AED] flex-shrink-0" />
               {item}

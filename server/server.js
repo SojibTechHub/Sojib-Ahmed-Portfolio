@@ -41,6 +41,8 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use('/api/contact', require('./routes/contact'));
 app.use('/api/chat', require('./routes/chat'));
 app.use('/api/projects', require('./routes/projects'));
+app.use('/api/certificates', require('./routes/certificates'));
+app.use('/api/skills', require('./routes/skills'));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/settings', require('./routes/settings'));
 

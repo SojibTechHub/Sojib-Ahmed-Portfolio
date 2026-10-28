@@ -1,10 +1,41 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { ExternalLink, Download } from 'lucide-react';
-import { certificates } from '../../data/certificates';
+import { certificates as defaultCertificates, type Certificate } from '../../data/certificates';
+
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function Certificates() {
+  const [certList, setCertList] = useState<Certificate[]>(defaultCertificates);
   const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
+
+  useEffect(() => {
+    // 1. Try local storage cache
+    try {
+      const saved = localStorage.getItem('sojib_custom_certificates');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setCertList(parsed);
+        }
+      }
+    } catch {}
+
+    // 2. Fetch from backend API
+    const fetchLiveCertificates = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/certificates`);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+          setCertList(data.data);
+          localStorage.setItem('sojib_custom_certificates', JSON.stringify(data.data));
+        }
+      } catch {}
+    };
+
+    fetchLiveCertificates();
+  }, []);
 
   return (
     <section id="certificates" className="section-padding relative overflow-hidden" ref={ref}>
@@ -28,21 +59,23 @@ export default function Certificates() {
           </p>
         </motion.div>
 
-        {/* 4 Compact Credentials Grid */}
+        {/* Dynamic Credentials Grid */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.15 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
         >
-          {certificates.map((cert) => {
-            const isFlyRank = cert.id === 'flyrank-offer-letter';
-            const isPHCourse = cert.id === 'ph-complete-web-dev';
-            const isPHRecommendation = cert.id === 'ph-recommendation-letter';
+          {certList.map((cert) => {
+            const certId = cert.id || (cert as any)._id || cert.title;
+            const isFlyRank = certId === 'flyrank-offer-letter' || cert.issuer?.toLowerCase().includes('flyrank');
+            const isPHCourse = certId === 'ph-complete-web-dev' || (cert.image && cert.image.includes('certificate.png'));
+            const isPHRecommendation = certId === 'ph-recommendation-letter' || (cert.image && cert.image.includes('recommendation_letter'));
+            const isDatheon = certId === 'datheon-internship' || cert.issuer?.toLowerCase().includes('datheon');
 
             return (
               <motion.div
-                key={cert.id}
+                key={certId}
                 whileHover={{ y: -4 }}
                 transition={{ duration: 0.2 }}
                 className="card flex flex-col justify-between overflow-hidden bg-[var(--color-surface)]/80 backdrop-blur-md border border-white/10 hover:border-[#06B6D4]/50 shadow-lg rounded-2xl p-4 sm:p-5 group"
@@ -94,7 +127,7 @@ export default function Certificates() {
                           <span className="text-emerald-400 font-bold">✓ Verified</span>
                         </div>
                       </div>
-                    ) : (
+                    ) : isDatheon ? (
                       <div className="w-full h-full p-3.5 bg-gradient-to-br from-[#06241a] via-[#061510] to-[#020a06] flex flex-col justify-between text-left relative overflow-hidden">
                         <div className="absolute -right-8 -bottom-8 w-32 h-32 rounded-full bg-[#10B981]/10 blur-xl pointer-events-none" />
                         <div className="flex items-center justify-between z-10">
@@ -118,6 +151,30 @@ export default function Certificates() {
                         <div className="flex items-center justify-between text-[8px] font-mono text-gray-400 border-t border-white/10 pt-1.5 z-10">
                           <span>datheon.in/verify</span>
                           <span className="text-[#10B981] font-bold">✓ Verified</span>
+                        </div>
+                      </div>
+                    ) : cert.image ? (
+                      <div className="relative w-full h-full bg-[#0b1120]">
+                        <img
+                          src={cert.image}
+                          alt={cert.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                      </div>
+                    ) : (
+                      <div className="w-full h-full p-3.5 bg-gradient-to-br from-purple-900/40 to-cyan-900/40 flex flex-col justify-between text-left">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xl">{cert.issuerLogo || '📜'}</span>
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-white/10 text-white">
+                            {cert.issuer}
+                          </span>
+                        </div>
+                        <div className="text-xs font-bold text-white line-clamp-2">
+                          {cert.title}
+                        </div>
+                        <div className="text-[9px] text-emerald-400 font-mono font-bold">
+                          ✓ Verified
                         </div>
                       </div>
                     )}
@@ -156,27 +213,31 @@ export default function Certificates() {
                   </div>
 
                   {/* Credential ID Chip */}
-                  <div className="p-1.5 rounded-lg bg-black/40 border border-white/5 mb-2.5 flex items-center justify-between text-[10px]">
-                    <span className="text-gray-400">ID:</span>
-                    <span className="font-mono font-bold text-purple-300 truncate ml-1">{cert.credentialId}</span>
-                  </div>
+                  {cert.credentialId && (
+                    <div className="p-1.5 rounded-lg bg-black/40 border border-white/5 mb-2.5 flex items-center justify-between text-[10px]">
+                      <span className="text-gray-400">ID:</span>
+                      <span className="font-mono font-bold text-purple-300 truncate ml-1">{cert.credentialId}</span>
+                    </div>
+                  )}
 
                   {/* Skills Pills */}
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {cert.skills.slice(0, 3).map((skill) => (
-                      <span
-                        key={skill}
-                        className="text-[9px] font-medium py-0.5 px-1.5 rounded bg-white/5 border border-white/5 text-gray-300 truncate"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                    {cert.skills.length > 3 && (
-                      <span className="text-[9px] font-mono py-0.5 px-1 rounded bg-white/5 text-gray-400">
-                        +{cert.skills.length - 3}
-                      </span>
-                    )}
-                  </div>
+                  {Array.isArray(cert.skills) && cert.skills.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      {cert.skills.slice(0, 3).map((skill) => (
+                        <span
+                          key={skill}
+                          className="text-[9px] font-medium py-0.5 px-1.5 rounded bg-white/5 border border-white/5 text-gray-300 truncate"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                      {cert.skills.length > 3 && (
+                        <span className="text-[9px] font-mono py-0.5 px-1 rounded bg-white/5 text-gray-400">
+                          +{cert.skills.length - 3}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Direct Action Links */}

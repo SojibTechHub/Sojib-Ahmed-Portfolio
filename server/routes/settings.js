@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Setting = require('../models/Setting');
 const Project = require('../models/Project');
+const Certificate = require('../models/Certificate');
+const Skill = require('../models/Skill');
 const Contact = require('../models/Contact');
 const ChatLog = require('../models/ChatLog');
 const authMiddleware = require('../middleware/auth');
@@ -30,6 +32,9 @@ router.put('/', authMiddleware, async (req, res) => {
   try {
     const setting = await getOrCreateSettings();
     const allowed = [
+      'name',
+      'title',
+      'heroSubtitle',
       'availableForHire',
       'availabilityText',
       'statusBadge',
@@ -40,6 +45,7 @@ router.put('/', authMiddleware, async (req, res) => {
       'github',
       'linkedin',
       'facebook',
+      'resumeUrl',
       'yearsExperience',
       'projectsCompleted',
       'clientSatisfaction',
@@ -61,8 +67,10 @@ router.put('/', authMiddleware, async (req, res) => {
 // GET /api/settings/stats (Admin only - overall dashboard analytics)
 router.get('/stats', authMiddleware, async (req, res) => {
   try {
-    const [projectCount, messageCount, unreadMessages, chatCount] = await Promise.all([
+    const [projectCount, certCount, skillCount, messageCount, unreadMessages, chatCount] = await Promise.all([
       Project.countDocuments().catch(() => 10),
+      Certificate.countDocuments().catch(() => 4),
+      Skill.countDocuments().catch(() => 36),
       Contact.countDocuments().catch(() => 0),
       Contact.countDocuments({ isRead: false }).catch(() => 0),
       ChatLog.countDocuments().catch(() => 0),
@@ -72,10 +80,12 @@ router.get('/stats', authMiddleware, async (req, res) => {
       success: true,
       data: {
         totalProjects: projectCount || 10,
+        totalCertificates: certCount || 4,
+        totalSkills: skillCount || 36,
         totalMessages: messageCount || 0,
         unreadMessages: unreadMessages || 0,
         totalChatQueries: chatCount || 0,
-        totalViews: 1480, // Dynamic baseline
+        totalViews: 1480,
       },
     });
   } catch (err) {
@@ -83,10 +93,12 @@ router.get('/stats', authMiddleware, async (req, res) => {
       success: true,
       data: {
         totalProjects: 10,
+        totalCertificates: 4,
+        totalSkills: 36,
         totalMessages: 0,
         unreadMessages: 0,
         totalChatQueries: 0,
-        totalViews: 1200,
+        totalViews: 1480,
       },
     });
   }
