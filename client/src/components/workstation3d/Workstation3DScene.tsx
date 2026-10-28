@@ -20,34 +20,34 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
   const monitorScreenMeshRef = useRef<THREE.Mesh | null>(null);
   const lampLightRef = useRef<THREE.PointLight | null>(null);
   const lampBulbRef = useRef<THREE.Mesh | null>(null);
-  const fansRef = useRef<THREE.Mesh[]>([]);
+  const keyLightRef = useRef<THREE.DirectionalLight | null>(null);
+  const ambientLightRef = useRef<THREE.AmbientLight | null>(null);
 
-  // Base camera positions
-  const ROOM_CAMERA_POS = { x: 0, y: 2.1, z: 4.1 };
-  const ROOM_CAMERA_LOOK = { x: 0, y: 1.4, z: 0 };
-  const MONITOR_CAMERA_POS = { x: 0, y: 1.62, z: 1.6 };
-  const MONITOR_CAMERA_LOOK = { x: 0, y: 1.62, z: -0.25 };
+  // Aesthetic 3/4 perspective camera coordinates (removes flat orthographic look)
+  const ROOM_CAMERA_POS = { x: 0.55, y: 2.22, z: 3.85 };
+  const ROOM_CAMERA_LOOK = { x: 0, y: 1.35, z: -0.15 };
+  const MONITOR_CAMERA_POS = { x: 0, y: 1.62, z: 1.55 };
+  const MONITOR_CAMERA_LOOK = { x: 0, y: 1.62, z: -0.28 };
 
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
 
-    // 1. Scene setup — Clean, bright studio background, NO heavy black fog!
+    // 1. Scene Setup
     const scene = new THREE.Scene();
     sceneRef.current = scene;
-    scene.background = new THREE.Color(0x080e1e);
-    // Subtle distance fog only for extreme depth
-    scene.fog = new THREE.Fog(0x080e1e, 14, 28);
+    scene.background = new THREE.Color(0x0a0f1d);
+    scene.fog = new THREE.Fog(0x0a0f1d, 15, 30);
 
-    // 2. Camera setup
+    // 2. Camera Setup (Natural 45deg field of view)
     const width = container.clientWidth;
     const height = container.clientHeight;
-    const camera = new THREE.PerspectiveCamera(46, width / height, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 80);
     cameraRef.current = camera;
     camera.position.set(ROOM_CAMERA_POS.x, ROOM_CAMERA_POS.y, ROOM_CAMERA_POS.z);
     camera.lookAt(ROOM_CAMERA_LOOK.x, ROOM_CAMERA_LOOK.y, ROOM_CAMERA_LOOK.z);
 
-    // 3. Renderer setup
+    // 3. Renderer Setup
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
     rendererRef.current = renderer;
     renderer.setSize(width, height);
@@ -56,258 +56,338 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     renderer.shadowMap.type = THREE.PCFShadowMap;
     container.appendChild(renderer.domElement);
 
-    // 4. Studio Lighting System — Bright, warm, inviting and visible
-    // Balanced ambient light
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);
+    // 4. Lighting System — Warm, Cozy Loft & Studio Illumination
+    const ambientLight = new THREE.AmbientLight(0xfff7ed, 1.6);
+    ambientLightRef.current = ambientLight;
     scene.add(ambientLight);
 
-    // Main warm overhead key light
-    const keyLight = new THREE.DirectionalLight(0xfff5ea, 2.8);
-    keyLight.position.set(3.5, 6, 4);
+    // Main warm overhead studio key light
+    const keyLight = new THREE.DirectionalLight(0xffedd5, 2.6);
+    keyLight.position.set(4, 6.5, 4);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 2048;
     keyLight.shadow.mapSize.height = 2048;
-    keyLight.shadow.bias = -0.0005;
+    keyLight.shadow.bias = -0.0004;
+    keyLightRef.current = keyLight;
     scene.add(keyLight);
 
-    // Cyber accent rim light (from left-front)
-    const cyanRim = new THREE.DirectionalLight(0x06b6d4, 1.6);
-    cyanRim.position.set(-4, 4.5, 3);
-    scene.add(cyanRim);
+    // Window daylight / moonlight (left side)
+    const windowLight = new THREE.DirectionalLight(0x93c5fd, 1.4);
+    windowLight.position.set(-6, 5, 1);
+    scene.add(windowLight);
 
-    // Purple fill light (back-right)
-    const purpleFill = new THREE.PointLight(0x8b5cf6, 2.2, 12);
-    purpleFill.position.set(3, 3.5, -1);
-    scene.add(purpleFill);
+    // Back accent rim light (purple/cyan)
+    const rimLight = new THREE.PointLight(0x8b5cf6, 2.2, 10);
+    rimLight.position.set(2.8, 3.2, -1.2);
+    scene.add(rimLight);
 
-    // Left Window Cool Moonlight
-    const moonLight = new THREE.DirectionalLight(0x93c5fd, 1.8);
-    moonLight.position.set(-6, 5, 0);
-    scene.add(moonLight);
-
-    // Dedicated Desk Lamp Light — warm cozy pool of light over desk & keyboard
-    const deskLampLight = new THREE.PointLight(0xfbbf24, 4.2, 7.5);
-    deskLampLight.position.set(-1.1, 2.05, 0.15);
+    // Desk Lamp warm pool of light
+    const deskLampLight = new THREE.PointLight(0xf59e0b, 4.5, 6.5);
+    deskLampLight.position.set(-1.1, 2.1, 0.1);
     deskLampLight.castShadow = true;
     lampLightRef.current = deskLampLight;
     scene.add(deskLampLight);
 
-    // 5. Room Architecture & Floor
-    // Modern Wood Plank Floor
-    const floorGeo = new THREE.PlaneGeometry(18, 18);
+    // 5. Room Architecture & Modern Materials
+    // Hardwood Floor with subtle sheen
+    const floorGeo = new THREE.PlaneGeometry(16, 16);
     const floorMat = new THREE.MeshStandardMaterial({
-      color: 0x1f2430,
+      color: 0x181c26,
       roughness: 0.35,
-      metalness: 0.15,
+      metalness: 0.1,
     });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
-    floor.position.y = 0;
     floor.receiveShadow = true;
     scene.add(floor);
 
-    // Plush Cyber Geometric Area Rug (under desk & chair)
-    const rugGeo = new THREE.PlaneGeometry(4.4, 3.4);
+    // Luxury Area Rug under desk
+    const rugGeo = new THREE.PlaneGeometry(4.2, 3.2);
     const rugMat = new THREE.MeshStandardMaterial({
-      color: 0x0b1120,
-      roughness: 0.8,
-      metalness: 0.05,
+      color: 0x0f172a,
+      roughness: 0.85,
     });
     const rug = new THREE.Mesh(rugGeo, rugMat);
     rug.rotation.x = -Math.PI / 2;
-    rug.position.set(0, 0.005, 0.4);
+    rug.position.set(0, 0.005, 0.35);
     rug.receiveShadow = true;
     scene.add(rug);
 
-    // Rug glowing cyan rim border
-    const rugBorderGeo = new THREE.RingGeometry(1.6, 1.62, 4);
-    const rugBorderMat = new THREE.MeshBasicMaterial({ color: 0x06b6d4 });
-    const rugBorder = new THREE.Mesh(rugBorderGeo, rugBorderMat);
-    rugBorder.rotation.x = -Math.PI / 2;
-    rugBorder.rotation.z = Math.PI / 4;
-    rugBorder.scale.set(1.9, 1.45, 1);
-    rugBorder.position.set(0, 0.008, 0.4);
-    scene.add(rugBorder);
+    // Rug glowing cyan border trim
+    const rugTrimGeo = new THREE.RingGeometry(1.65, 1.67, 4);
+    const rugTrimMat = new THREE.MeshBasicMaterial({ color: 0x06b6d4 });
+    const rugTrim = new THREE.Mesh(rugTrimGeo, rugTrimMat);
+    rugTrim.rotation.x = -Math.PI / 2;
+    rugTrim.rotation.z = Math.PI / 4;
+    rugTrim.scale.set(1.75, 1.35, 1);
+    rugTrim.position.set(0, 0.008, 0.35);
+    scene.add(rugTrim);
 
-    // Modern Studio Back Wall
-    const wallGeo = new THREE.PlaneGeometry(18, 10);
-    const wallMat = new THREE.MeshStandardMaterial({
-      color: 0x0f172a,
-      roughness: 0.7,
-      metalness: 0.1,
-    });
-    const backWall = new THREE.Mesh(wallGeo, wallMat);
-    backWall.position.set(0, 5, -3.2);
+    // Back Studio Wall (Dark Navy)
+    const backWallGeo = new THREE.PlaneGeometry(16, 9);
+    const backWallMat = new THREE.MeshStandardMaterial({ color: 0x0d1322, roughness: 0.8 });
+    const backWall = new THREE.Mesh(backWallGeo, backWallMat);
+    backWall.position.set(0, 4.5, -3.1);
     backWall.receiveShadow = true;
     scene.add(backWall);
 
-    // Left Wall with Loft Window
-    const leftWall = new THREE.Mesh(wallGeo, wallMat);
+    // Left Studio Wall with Loft Window
+    const leftWall = new THREE.Mesh(backWallGeo, backWallMat);
     leftWall.rotation.y = Math.PI / 2;
-    leftWall.position.set(-6, 5, 0);
+    leftWall.position.set(-6, 4.5, 0);
     leftWall.receiveShadow = true;
     scene.add(leftWall);
 
-    // Loft Window Frame & Glass
-    const windowFrameMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.5 });
-    const windowFrameGeo = new THREE.BoxGeometry(0.1, 3.6, 2.6);
+    // Modern Loft Window on Left Wall
+    const windowFrameGeo = new THREE.BoxGeometry(0.08, 3.2, 2.4);
+    const windowFrameMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8, roughness: 0.3 });
     const windowFrame = new THREE.Mesh(windowFrameGeo, windowFrameMat);
-    windowFrame.position.set(-5.95, 4.2, 0);
+    windowFrame.position.set(-5.95, 4.0, 0);
     scene.add(windowFrame);
 
+    // Window Glass with soft blue glow
+    const windowGlassGeo = new THREE.PlaneGeometry(2.2, 3.0);
     const windowGlassMat = new THREE.MeshPhysicalMaterial({
       color: 0x93c5fd,
       transparent: true,
       opacity: 0.35,
       roughness: 0.1,
     });
-    const windowGlassGeo = new THREE.PlaneGeometry(2.4, 3.4);
     const windowGlass = new THREE.Mesh(windowGlassGeo, windowGlassMat);
     windowGlass.rotation.y = Math.PI / 2;
-    windowGlass.position.set(-5.92, 4.2, 0);
+    windowGlass.position.set(-5.92, 4.0, 0);
     scene.add(windowGlass);
 
-    // Neon Accent Wall Strip
-    const stripGeo = new THREE.BoxGeometry(8, 0.05, 0.05);
-    const stripMat = new THREE.MeshBasicMaterial({ color: 0x06b6d4 });
-    const neonStrip = new THREE.Mesh(stripGeo, stripMat);
-    neonStrip.position.set(0, 4.2, -3.15);
-    scene.add(neonStrip);
+    // Window Blinds Slats (creates gorgeous architectural shadows)
+    const blindMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.5 });
+    for (let b = 0; b < 10; b++) {
+      const bGeo = new THREE.BoxGeometry(0.04, 0.04, 2.2);
+      const blind = new THREE.Mesh(bGeo, blindMat);
+      blind.position.set(-5.93, 2.7 + b * 0.28, 0);
+      scene.add(blind);
+    }
 
-    // 6. Wall Floating Shelf & Props (Above Monitor)
-    const shelfGeo = new THREE.BoxGeometry(3.2, 0.08, 0.45);
-    const oakMat = new THREE.MeshStandardMaterial({ color: 0x4a3728, roughness: 0.5 });
-    const shelf = new THREE.Mesh(shelfGeo, oakMat);
-    shelf.position.set(0, 3.1, -3.0);
+    // 6. Signature Scandinavian Acoustic Wood Slat Wall Panel (Behind the desk)
+    const slatGroup = new THREE.Group();
+    const woodMat = new THREE.MeshStandardMaterial({ color: 0x785336, roughness: 0.45 });
+    const slatBackMat = new THREE.MeshStandardMaterial({ color: 0x050811, roughness: 0.9 });
+    
+    // Slat felt backboard
+    const slatBackGeo = new THREE.BoxGeometry(3.8, 3.6, 0.04);
+    const slatBack = new THREE.Mesh(slatBackGeo, slatBackMat);
+    slatBack.position.set(0, 3.2, -3.05);
+    slatGroup.add(slatBack);
+
+    // Vertical solid oak slats
+    for (let s = -22; s <= 22; s++) {
+      const slatGeo = new THREE.BoxGeometry(0.045, 3.5, 0.03);
+      const slat = new THREE.Mesh(slatGeo, woodMat);
+      slat.position.set(s * 0.082, 3.2, -3.02);
+      slat.castShadow = true;
+      slatGroup.add(slat);
+    }
+    scene.add(slatGroup);
+
+    // 7. Floating Wall Shelf with Books & Golden Trophy
+    const shelfGeo = new THREE.BoxGeometry(2.8, 0.08, 0.42);
+    const shelfMat = new THREE.MeshStandardMaterial({ color: 0x3e2817, roughness: 0.4 });
+    const shelf = new THREE.Mesh(shelfGeo, shelfMat);
+    shelf.position.set(0, 3.4, -2.85);
     shelf.castShadow = true;
     shelf.receiveShadow = true;
     scene.add(shelf);
 
     // Shelf metal brackets
-    const bracketMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9 });
-    [-1.2, 1.2].forEach(bx => {
-      const bGeo = new THREE.BoxGeometry(0.06, 0.3, 0.4);
-      const bracket = new THREE.Mesh(bGeo, bracketMat);
-      bracket.position.set(bx, 2.95, -3.0);
-      scene.add(bracket);
+    const bracketMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2 });
+    [-1.0, 1.0].forEach(bx => {
+      const bGeo = new THREE.BoxGeometry(0.05, 0.35, 0.38);
+      const bMesh = new THREE.Mesh(bGeo, bracketMat);
+      bMesh.position.set(bx, 3.22, -2.85);
+      scene.add(bMesh);
     });
 
-    // Tech books on shelf
-    const bookColors = [0x3b82f6, 0xef4444, 0x10b981, 0xf59e0b, 0x8b5cf6];
-    bookColors.forEach((col, idx) => {
-      const bGeo = new THREE.BoxGeometry(0.08, 0.32, 0.3);
-      const bMat = new THREE.MeshStandardMaterial({ color: col, roughness: 0.4 });
+    // Naturally leaning & stacked tech books
+    const bookColors = [0x2563eb, 0xdc2626, 0x059669, 0xd97706, 0x7c3aed, 0x0891b2];
+    bookColors.forEach((color, i) => {
+      const h = 0.28 + (i % 3) * 0.04;
+      const bGeo = new THREE.BoxGeometry(0.065, h, 0.26);
+      const bMat = new THREE.MeshStandardMaterial({ color, roughness: 0.4 });
       const book = new THREE.Mesh(bGeo, bMat);
-      book.position.set(-1.0 + idx * 0.11, 3.3, -3.0);
+      // Slight natural lean on the last book
+      if (i === bookColors.length - 1) {
+        book.rotation.z = -Math.PI / 10;
+        book.position.set(-0.85 + i * 0.085 + 0.04, 3.44 + h / 2, -2.85);
+      } else {
+        book.position.set(-0.85 + i * 0.085, 3.44 + h / 2, -2.85);
+      }
       book.castShadow = true;
       scene.add(book);
     });
 
-    // Golden Award Trophy on shelf
-    const trophyBaseGeo = new THREE.CylinderGeometry(0.08, 0.1, 0.08, 16);
+    // Golden Award Trophy
     const trophyGoldMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.95, roughness: 0.15 });
+    const trophyBaseGeo = new THREE.CylinderGeometry(0.07, 0.09, 0.08, 16);
     const trophyBase = new THREE.Mesh(trophyBaseGeo, trophyGoldMat);
-    trophyBase.position.set(0.9, 3.2, -3.0);
+    trophyBase.position.set(0.8, 3.48, -2.85);
     scene.add(trophyBase);
 
-    const trophyCupGeo = new THREE.CylinderGeometry(0.12, 0.04, 0.22, 16);
+    const trophyCupGeo = new THREE.CylinderGeometry(0.11, 0.04, 0.24, 16);
     const trophyCup = new THREE.Mesh(trophyCupGeo, trophyGoldMat);
-    trophyCup.position.set(0.9, 3.35, -3.0);
+    trophyCup.position.set(0.8, 3.64, -2.85);
     scene.add(trophyCup);
 
-    // Wall Art Poster: "Full Stack Architect"
-    const posterGeo = new THREE.PlaneGeometry(1.6, 1.0);
-    const posterCanvas = document.createElement('canvas');
-    posterCanvas.width = 512;
-    posterCanvas.height = 320;
-    const pCtx = posterCanvas.getContext('2d')!;
-    pCtx.fillStyle = '#0B1120';
-    pCtx.fillRect(0, 0, 512, 320);
-    pCtx.strokeStyle = '#06B6D4';
-    pCtx.lineWidth = 6;
-    pCtx.strokeRect(10, 10, 492, 300);
-    pCtx.fillStyle = '#FFFFFF';
-    pCtx.font = 'bold 32px sans-serif';
-    pCtx.fillText('SOJIB AHMED', 32, 80);
-    pCtx.fillStyle = '#06B6D4';
-    pCtx.font = 'bold 22px sans-serif';
-    pCtx.fillText('FULL STACK DEVELOPER', 32, 120);
-    pCtx.fillStyle = '#10B981';
-    pCtx.font = '18px monospace';
-    pCtx.fillText('// React 19 · Next.js · Node · MongoDB', 32, 180);
-    pCtx.fillText('// 10+ Production Repositories Live', 32, 220);
+    // Trailing Potted Plant on Shelf (Hanging Vines)
+    const shelfPotGeo = new THREE.CylinderGeometry(0.08, 0.06, 0.12, 16);
+    const shelfPotMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
+    const shelfPot = new THREE.Mesh(shelfPotGeo, shelfPotMat);
+    shelfPot.position.set(-1.15, 3.5, -2.85);
+    scene.add(shelfPot);
 
-    const posterTex = new THREE.CanvasTexture(posterCanvas);
-    const posterMat = new THREE.MeshStandardMaterial({ map: posterTex, roughness: 0.3 });
-    const poster = new THREE.Mesh(posterGeo, posterMat);
-    poster.position.set(2.4, 2.2, -3.18);
-    scene.add(poster);
+    const vineMat = new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.4 });
+    for (let v = 0; v < 6; v++) {
+      const vGeo = new THREE.ConeGeometry(0.03, 0.25 + v * 0.05, 5);
+      const vine = new THREE.Mesh(vGeo, vineMat);
+      vine.rotation.x = Math.PI * 0.85;
+      vine.rotation.z = (v - 3) * 0.2;
+      vine.position.set(-1.15 + (v - 3) * 0.04, 3.45 - (v * 0.04), -2.68);
+      scene.add(vine);
+    }
 
-    // 7. The Developer Desk (Rich Dark Walnut / Carbon)
+    // 8. Framed Developer Art / Certificate (Right Wall)
+    const frameGeo = new THREE.BoxGeometry(1.6, 1.1, 0.04);
+    const frameMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.8, roughness: 0.2 });
+    const frameMesh = new THREE.Mesh(frameGeo, frameMat);
+    frameMesh.position.set(2.45, 2.45, -3.05);
+    scene.add(frameMesh);
+
+    // Canvas inside frame
+    const certCanvas = document.createElement('canvas');
+    certCanvas.width = 512;
+    certCanvas.height = 340;
+    const cCtx = certCanvas.getContext('2d')!;
+    cCtx.fillStyle = '#060B17';
+    cCtx.fillRect(0, 0, 512, 340);
+    cCtx.strokeStyle = '#06B6D4';
+    cCtx.lineWidth = 6;
+    cCtx.strokeRect(12, 12, 488, 316);
+    cCtx.fillStyle = '#FFFFFF';
+    cCtx.font = 'bold 32px sans-serif';
+    cCtx.fillText('SOJIB AHMED', 36, 75);
+    cCtx.fillStyle = '#06B6D4';
+    cCtx.font = 'bold 22px sans-serif';
+    cCtx.fillText('FULL STACK DEVELOPER', 36, 115);
+    cCtx.fillStyle = '#94A3B8';
+    cCtx.font = '17px monospace';
+    cCtx.fillText('// React 19 · Next.js · Node.js', 36, 175);
+    cCtx.fillText('// Express · MongoDB · TypeScript', 36, 210);
+    cCtx.fillStyle = '#10B981';
+    cCtx.font = 'bold 18px sans-serif';
+    cCtx.fillText('VERIFIED FULL STACK ARCHITECT ★', 36, 270);
+
+    const certTex = new THREE.CanvasTexture(certCanvas);
+    const certMat = new THREE.MeshStandardMaterial({ map: certTex, roughness: 0.2 });
+    const certPlane = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.0), certMat);
+    certPlane.position.set(2.45, 2.45, -3.02);
+    scene.add(certPlane);
+
+    // Frame backlight glow
+    const frameGlow = new THREE.PointLight(0x06b6d4, 1.2, 3);
+    frameGlow.position.set(2.45, 2.45, -2.8);
+    scene.add(frameGlow);
+
+    // 9. The Developer Desk (Rich Solid Walnut with Beveled Edges)
     const deskTopGeo = new THREE.BoxGeometry(3.6, 0.12, 1.6);
-    const deskTopMat = new THREE.MeshStandardMaterial({
+    const deskMat = new THREE.MeshStandardMaterial({
       color: 0x242731,
-      roughness: 0.3,
-      metalness: 0.2,
+      roughness: 0.35,
+      metalness: 0.15,
     });
-    const deskTop = new THREE.Mesh(deskTopGeo, deskTopMat);
+    const deskTop = new THREE.Mesh(deskTopGeo, deskMat);
     deskTop.position.set(0, 1.15, 0);
     deskTop.castShadow = true;
     deskTop.receiveShadow = true;
     scene.add(deskTop);
 
-    // Heavy-duty Dual-Motor Standing Desk Frame & Legs (Steel)
-    const legGeo = new THREE.BoxGeometry(0.1, 1.15, 0.1);
-    const steelMat = new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.9, roughness: 0.2 });
+    // Heavy-duty Dual-Motor Standing Desk Frame (Matte Charcoal Steel)
+    const steelLegMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.85, roughness: 0.25 });
     [-1.5, 1.5].forEach(lx => {
-      const leg = new THREE.Mesh(legGeo, steelMat);
+      const legGeo = new THREE.BoxGeometry(0.1, 1.15, 0.1);
+      const leg = new THREE.Mesh(legGeo, steelLegMat);
       leg.position.set(lx, 0.575, 0);
       leg.castShadow = true;
       scene.add(leg);
 
-      // Foot base
       const footGeo = new THREE.BoxGeometry(0.14, 0.05, 1.2);
-      const foot = new THREE.Mesh(footGeo, steelMat);
+      const foot = new THREE.Mesh(footGeo, steelLegMat);
       foot.position.set(lx, 0.025, 0);
       scene.add(foot);
     });
 
-    // Desk Crossbar Beam
-    const crossbarGeo = new THREE.BoxGeometry(3.0, 0.06, 0.06);
-    const crossbar = new THREE.Mesh(crossbarGeo, steelMat);
+    // Crossbar
+    const crossbar = new THREE.Mesh(new THREE.BoxGeometry(2.9, 0.06, 0.06), steelLegMat);
     crossbar.position.set(0, 0.9, 0);
     scene.add(crossbar);
 
-    // Giant Microfiber Desk Pad with stitched teal rim
-    const padGeo = new THREE.BoxGeometry(2.6, 0.015, 0.9);
-    const padMat = new THREE.MeshStandardMaterial({ color: 0x090d16, roughness: 0.6 });
+    // Giant Microfiber Desk Mat (Soft Slate with Cyan Stitched Rim)
+    const padGeo = new THREE.BoxGeometry(2.7, 0.015, 0.9);
+    const padMat = new THREE.MeshStandardMaterial({ color: 0x090d16, roughness: 0.7 });
     const deskPad = new THREE.Mesh(padGeo, padMat);
-    deskPad.position.set(0, 1.218, 0.05);
+    deskPad.position.set(0, 1.218, 0.06);
     deskPad.receiveShadow = true;
     scene.add(deskPad);
 
-    // 8. Ultrawide Curved Computer Monitor (Clickable Target!)
+    // 10. Studio Monitor Audio Speakers (Left & Right framing the monitor)
+    const speakerMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.3, metalness: 0.4 });
+    const coneMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.2 }); // Yellow Kevlar cone
+    const tweeterMat = new THREE.MeshStandardMaterial({ color: 0x06b6d4, roughness: 0.2 });
+
+    [-1.38, 1.16].forEach((sx, idx) => {
+      const spkGroup = new THREE.Group();
+      // Cabinet
+      const spkGeo = new THREE.BoxGeometry(0.24, 0.42, 0.26);
+      const spk = new THREE.Mesh(spkGeo, speakerMat);
+      spk.castShadow = true;
+      spkGroup.add(spk);
+
+      // Woofer cone
+      const coneGeo = new THREE.CylinderGeometry(0.07, 0.04, 0.02, 16);
+      const cone = new THREE.Mesh(coneGeo, coneMat);
+      cone.rotation.x = Math.PI / 2;
+      cone.position.set(0, -0.06, 0.135);
+      spkGroup.add(cone);
+
+      // Tweeter
+      const tweetGeo = new THREE.SphereGeometry(0.028, 14, 14);
+      const tweet = new THREE.Mesh(tweetGeo, tweeterMat);
+      tweet.position.set(0, 0.1, 0.135);
+      spkGroup.add(tweet);
+
+      // Angle inward 12 degrees toward developer
+      spkGroup.rotation.y = idx === 0 ? 0.22 : -0.22;
+      spkGroup.position.set(sx, 1.42, -0.2);
+      scene.add(spkGroup);
+    });
+
+    // 11. Ultrawide Curved Computer Monitor (Clickable Target!)
     const standMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.85, roughness: 0.2 });
-    const standBaseGeo = new THREE.BoxGeometry(0.48, 0.025, 0.32);
-    const standBase = new THREE.Mesh(standBaseGeo, standMat);
+    const standBase = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.025, 0.3), standMat);
     standBase.position.set(0, 1.225, -0.32);
     scene.add(standBase);
 
-    const standArmGeo = new THREE.BoxGeometry(0.09, 0.48, 0.09);
-    const standArm = new THREE.Mesh(standArmGeo, standMat);
+    const standArm = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.48, 0.09), standMat);
     standArm.position.set(0, 1.46, -0.34);
     scene.add(standArm);
 
-    // Monitor Bezel Frame
-    const monitorFrameGeo = new THREE.BoxGeometry(2.3, 0.98, 0.06);
-    const frameMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.7, roughness: 0.3 });
-    const monitorFrame = new THREE.Mesh(monitorFrameGeo, frameMat);
+    // Bezel
+    const monitorFrameGeo = new THREE.BoxGeometry(2.32, 0.98, 0.06);
+    const frameMat2 = new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.8, roughness: 0.2 });
+    const monitorFrame = new THREE.Mesh(monitorFrameGeo, frameMat2);
     monitorFrame.position.set(0, 1.72, -0.28);
     monitorFrame.castShadow = true;
     scene.add(monitorFrame);
 
     // Monitor Active Canvas Screen
-    const screenGeo = new THREE.PlaneGeometry(2.18, 0.90);
+    const screenGeo = new THREE.PlaneGeometry(2.22, 0.90);
     const screenCanvas = document.createElement('canvas');
     screenCanvas.width = 1024;
     screenCanvas.height = 420;
@@ -334,7 +414,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
       sCtx.font = 'bold 18px monospace';
       sCtx.fillText('🚀 SOJIB OS v2.6 ENTERPRISE · 10 PRODUCTION REPOSITORIES', 48, 116);
 
-      // Simulated IDE bash window
+      // Terminal window
       sCtx.fillStyle = '#090D1A';
       sCtx.strokeStyle = 'rgba(6, 182, 212, 0.5)';
       sCtx.lineWidth = 2;
@@ -367,281 +447,262 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     monitorScreenMeshRef.current = screenMesh;
     scene.add(screenMesh);
 
-    // Screen backlight glow
-    const screenGlow = new THREE.PointLight(0x06b6d4, 1.8, 3.8);
-    screenGlow.position.set(0, 1.72, 0.2);
+    // Ambient bias glow behind monitor
+    const screenGlow = new THREE.PointLight(0x06b6d4, 2.2, 4.0);
+    screenGlow.position.set(0, 1.75, -0.15);
     scene.add(screenGlow);
 
-    // 9. Fully Articulated Architectural Desk Lamp (Fixes floating cone bug!)
-    const lampStandMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.85, roughness: 0.2 });
+    // 12. Architectural Articulated Desk Lamp (Pointed naturally down at desk)
+    const lampStandMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2 });
     
-    // Heavy round base resting on desk
-    const lampBaseGeo = new THREE.CylinderGeometry(0.14, 0.15, 0.035, 20);
+    // Heavy circular desk base
+    const lampBaseGeo = new THREE.CylinderGeometry(0.13, 0.14, 0.035, 20);
     const lampBase = new THREE.Mesh(lampBaseGeo, lampStandMat);
-    lampBase.position.set(-1.25, 1.228, -0.15);
+    lampBase.position.set(-1.18, 1.228, -0.12);
     lampBase.castShadow = true;
     lampBase.name = 'DeskLamp';
     scene.add(lampBase);
 
-    // Lower hinge pivot
-    const hingeGeo = new THREE.SphereGeometry(0.045, 16, 16);
+    // Lower hinge
+    const hingeGeo = new THREE.SphereGeometry(0.04, 16, 16);
     const lowerHinge = new THREE.Mesh(hingeGeo, lampStandMat);
-    lowerHinge.position.set(-1.25, 1.27, -0.15);
+    lowerHinge.position.set(-1.18, 1.27, -0.12);
     scene.add(lowerHinge);
 
-    // Lower arm angled up and slightly back
-    const lowerArmGeo = new THREE.CylinderGeometry(0.018, 0.018, 0.65, 12);
+    // Lower arm angled back and up
+    const lowerArmGeo = new THREE.CylinderGeometry(0.016, 0.016, 0.65, 12);
     const lowerArm = new THREE.Mesh(lowerArmGeo, lampStandMat);
-    lowerArm.rotation.z = -Math.PI / 12;
-    lowerArm.rotation.x = -Math.PI / 16;
-    lowerArm.position.set(-1.28, 1.58, -0.2);
+    lowerArm.rotation.z = -Math.PI / 14;
+    lowerArm.rotation.x = -Math.PI / 18;
+    lowerArm.position.set(-1.22, 1.58, -0.18);
     lowerArm.castShadow = true;
     scene.add(lowerArm);
 
-    // Middle elbow pivot
+    // Elbow hinge
     const elbowHinge = new THREE.Mesh(hingeGeo, lampStandMat);
-    elbowHinge.position.set(-1.2, 1.9, -0.22);
+    elbowHinge.position.set(-1.15, 1.9, -0.2);
     scene.add(elbowHinge);
 
-    // Upper arm angled forward over the desk
-    const upperArmGeo = new THREE.CylinderGeometry(0.018, 0.018, 0.55, 12);
-    const upperArm = new THREE.Mesh(upperArmGeo, lampStandMat);
-    upperArm.rotation.z = Math.PI / 6;
-    upperArm.rotation.x = Math.PI / 8;
-    upperArm.position.set(-1.12, 2.05, -0.05);
+    // Upper arm angled forward over desk
+    const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.55, 12), lampStandMat);
+    upperArm.rotation.z = Math.PI / 7;
+    upperArm.rotation.x = Math.PI / 7;
+    upperArm.position.set(-1.05, 2.06, -0.02);
     upperArm.castShadow = true;
     scene.add(upperArm);
 
-    // Conical lamp shade pointing down at desk
-    const lampShadeGeo = new THREE.ConeGeometry(0.16, 0.22, 20);
-    const lampShadeMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.85, roughness: 0.2 });
+    // Conical shade pointing directly down at desk
+    const lampShadeGeo = new THREE.ConeGeometry(0.15, 0.22, 20);
+    const lampShadeMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.9, roughness: 0.2 });
     const lampShade = new THREE.Mesh(lampShadeGeo, lampShadeMat);
-    lampShade.rotation.x = Math.PI * 0.85;
-    lampShade.rotation.z = -Math.PI / 10;
-    lampShade.position.set(-1.08, 2.12, 0.12);
+    lampShade.rotation.x = Math.PI; // Point down
+    lampShade.position.set(-0.98, 2.15, 0.12);
     lampShade.name = 'DeskLamp';
     lampShade.castShadow = true;
     scene.add(lampShade);
 
-    // Glowing warm bulb inside the shade
-    const bulbGeo = new THREE.SphereGeometry(0.05, 16, 16);
-    const bulbMat = new THREE.MeshBasicMaterial({ color: 0xfbbf24 });
+    // Bulb
+    const bulbGeo = new THREE.SphereGeometry(0.045, 16, 16);
+    const bulbMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b });
     const bulb = new THREE.Mesh(bulbGeo, bulbMat);
-    bulb.position.set(-1.08, 2.04, 0.13);
+    bulb.position.set(-0.98, 2.06, 0.12);
     bulb.name = 'DeskLamp';
     lampBulbRef.current = bulb;
     scene.add(bulb);
 
-    // 10. Ergonomic Mesh Developer Chair in front of desk
+    // 13. Aesthetic Modern Designer Office Chair (ANGLED at 25° so it doesn't block the desk!)
     const chairGroup = new THREE.Group();
-    chairGroup.position.set(0, 0, 1.35);
+    // Rotate chair 25 degrees toward right to reveal desk, rug, and keyboard!
+    chairGroup.rotation.y = -Math.PI / 7;
+    chairGroup.position.set(0.15, 0, 1.25);
 
-    // 5-Star Caster Base
-    const starBaseMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.9, roughness: 0.2 });
+    // 5-Star Caster Chrome Base
+    const chromeMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.95, roughness: 0.15 });
     for (let c = 0; c < 5; c++) {
       const armAngle = (c * Math.PI * 2) / 5;
-      const starArmGeo = new THREE.BoxGeometry(0.05, 0.04, 0.42);
-      const sArm = new THREE.Mesh(starArmGeo, starBaseMat);
+      const sArmGeo = new THREE.BoxGeometry(0.04, 0.035, 0.38);
+      const sArm = new THREE.Mesh(sArmGeo, chromeMat);
       sArm.rotation.y = armAngle;
-      sArm.position.set(Math.sin(armAngle) * 0.2, 0.08, Math.cos(armAngle) * 0.2);
+      sArm.position.set(Math.sin(armAngle) * 0.18, 0.07, Math.cos(armAngle) * 0.18);
       chairGroup.add(sArm);
 
-      // Wheel
-      const wheelGeo = new THREE.SphereGeometry(0.035, 10, 10);
-      const wheel = new THREE.Mesh(wheelGeo, starBaseMat);
-      wheel.position.set(Math.sin(armAngle) * 0.38, 0.035, Math.cos(armAngle) * 0.38);
+      const wheel = new THREE.Mesh(new THREE.SphereGeometry(0.03, 10, 10), steelLegMat);
+      wheel.position.set(Math.sin(armAngle) * 0.35, 0.03, Math.cos(armAngle) * 0.35);
       chairGroup.add(wheel);
     }
 
-    // Hydraulic Lift Piston
-    const pistonGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.5, 16);
-    const piston = new THREE.Mesh(pistonGeo, starBaseMat);
-    piston.position.y = 0.35;
+    // Chrome Lift Piston
+    const piston = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.48, 16), chromeMat);
+    piston.position.y = 0.32;
     chairGroup.add(piston);
 
-    // Ergonomic Seat Cushion
-    const seatMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.7 });
-    const seatGeo = new THREE.BoxGeometry(0.65, 0.08, 0.62);
+    // Sculpted Ergonomic Seat Cushion (Dark Charcoal with Teal Accent Stitch)
+    const seatMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.6 });
+    const seatGeo = new THREE.BoxGeometry(0.62, 0.08, 0.58);
     const seat = new THREE.Mesh(seatGeo, seatMat);
-    seat.position.set(0, 0.62, 0);
+    seat.position.set(0, 0.58, 0);
     seat.castShadow = true;
     chairGroup.add(seat);
 
-    // Curved Mesh Backrest
-    const backMat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.6 });
-    const backGeo = new THREE.BoxGeometry(0.58, 0.72, 0.06);
-    const chairBack = new THREE.Mesh(backGeo, backMat);
+    // Curved Breathable Mesh Backrest with Ergonomic Lumbar Support
+    const meshBackMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.5, metalness: 0.2 });
+    const chairBack = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.64, 0.05), meshBackMat);
     chairBack.rotation.x = -Math.PI / 18;
-    chairBack.position.set(0, 1.05, 0.28);
+    chairBack.position.set(0, 0.96, 0.24);
     chairBack.castShadow = true;
     chairGroup.add(chairBack);
 
+    // Lumbar spine spine curve
+    const spineGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.5, 10);
+    const spine = new THREE.Mesh(spineGeo, chromeMat);
+    spine.rotation.x = -Math.PI / 18;
+    spine.position.set(0, 0.88, 0.28);
+    chairGroup.add(spine);
+
     // Headrest
-    const headrestGeo = new THREE.BoxGeometry(0.36, 0.16, 0.06);
-    const headrest = new THREE.Mesh(headrestGeo, seatMat);
-    headrest.position.set(0, 1.48, 0.33);
+    const headrest = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.14, 0.05), seatMat);
+    headrest.position.set(0, 1.36, 0.29);
     chairGroup.add(headrest);
 
-    // Left & Right Armrests
-    const armMat = new THREE.MeshStandardMaterial({ color: 0x374151, metalness: 0.7 });
-    [-0.34, 0.34].forEach(ax => {
-      const aPostGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.28, 10);
-      const aPost = new THREE.Mesh(aPostGeo, armMat);
-      aPost.position.set(ax, 0.76, 0.02);
+    // Ergonomic 3D Armrests
+    [-0.31, 0.31].forEach(ax => {
+      const aPost = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, 0.26, 10), chromeMat);
+      aPost.position.set(ax, 0.72, 0.02);
       chairGroup.add(aPost);
 
-      const aPadGeo = new THREE.BoxGeometry(0.08, 0.03, 0.26);
-      const aPad = new THREE.Mesh(aPadGeo, seatMat);
-      aPad.position.set(ax, 0.9, 0.04);
+      const aPad = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.03, 0.24), seatMat);
+      aPad.position.set(ax, 0.86, 0.04);
       chairGroup.add(aPad);
     });
 
     scene.add(chairGroup);
 
-    // 11. Mechanical Keyboard & Ergonomic Mouse on Desk
-    const kbGeo = new THREE.BoxGeometry(0.88, 0.035, 0.3);
-    const kbMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.4, metalness: 0.3 });
+    // 14. Mechanical Keyboard (Custom Keycaps & RGB Underglow)
+    const kbGeo = new THREE.BoxGeometry(0.86, 0.035, 0.28);
+    const kbMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.35, metalness: 0.4 });
     const keyboard = new THREE.Mesh(kbGeo, kbMat);
     keyboard.position.set(-0.15, 1.23, 0.14);
     keyboard.castShadow = true;
     scene.add(keyboard);
 
-    // RGB glow plate under keyboard
-    const kbGlowGeo = new THREE.BoxGeometry(0.9, 0.01, 0.32);
+    // RGB glow under keyboard
     const kbGlowMat = new THREE.MeshBasicMaterial({ color: 0x06b6d4 });
-    const kbGlow = new THREE.Mesh(kbGlowGeo, kbGlowMat);
+    const kbGlow = new THREE.Mesh(new THREE.BoxGeometry(0.88, 0.008, 0.3), kbGlowMat);
     kbGlow.position.set(-0.15, 1.218, 0.14);
     scene.add(kbGlow);
 
-    // Wireless Mouse
-    const mouseGeo = new THREE.BoxGeometry(0.12, 0.04, 0.18);
-    const mouseMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.5, roughness: 0.3 });
+    // Ergonomic Wireless Mouse & Charging Dock
+    const mouseGeo = new THREE.BoxGeometry(0.11, 0.038, 0.17);
+    const mouseMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.6, roughness: 0.2 });
     const mouse = new THREE.Mesh(mouseGeo, mouseMat);
     mouse.position.set(0.65, 1.23, 0.14);
     mouse.castShadow = true;
     scene.add(mouse);
 
-    // 12. Ceramic Coffee Mug (Left side) with coffee surface
+    // 15. Ceramic Coffee Mug with Coffee Surface & Handle
     const mugGeo = new THREE.CylinderGeometry(0.065, 0.06, 0.15, 20);
     const mugMat = new THREE.MeshStandardMaterial({ color: 0x06b6d4, roughness: 0.2 });
     const mug = new THREE.Mesh(mugGeo, mugMat);
-    mug.position.set(-0.9, 1.28, 0.18);
+    mug.position.set(-0.85, 1.28, 0.2);
     mug.name = 'CoffeeMug';
     mug.castShadow = true;
     scene.add(mug);
 
-    // Mug handle
-    const handleGeo = new THREE.TorusGeometry(0.045, 0.012, 10, 16, Math.PI);
-    const mugHandle = new THREE.Mesh(handleGeo, mugMat);
+    const mugHandle = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.012, 10, 16, Math.PI), mugMat);
     mugHandle.rotation.z = Math.PI / 2;
-    mugHandle.position.set(-0.97, 1.28, 0.18);
+    mugHandle.position.set(-0.92, 1.28, 0.2);
     scene.add(mugHandle);
 
-    // Coffee liquid inside
-    const coffeeGeo = new THREE.CylinderGeometry(0.058, 0.058, 0.02, 16);
-    const coffeeMat = new THREE.MeshStandardMaterial({ color: 0x3d2314, roughness: 0.1 });
-    const coffee = new THREE.Mesh(coffeeGeo, coffeeMat);
-    coffee.position.set(-0.9, 1.34, 0.18);
-    scene.add(coffee);
+    const coffeeSurface = new THREE.Mesh(new THREE.CylinderGeometry(0.058, 0.058, 0.01, 16), new THREE.MeshStandardMaterial({ color: 0x2a180e }));
+    coffeeSurface.position.set(-0.85, 1.34, 0.2);
+    scene.add(coffeeSurface);
 
-    // 13. Potted Succulent Desk Plant (Right side)
-    const potGeo = new THREE.CylinderGeometry(0.09, 0.07, 0.14, 16);
+    // 16. Potted Ceramic Succulent on Desk (Right of screen)
     const potMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.2 });
-    const pot = new THREE.Mesh(potGeo, potMat);
-    pot.position.set(0.95, 1.28, -0.15);
+    const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.065, 0.13, 16), potMat);
+    pot.position.set(0.95, 1.27, -0.15);
     pot.castShadow = true;
     scene.add(pot);
 
-    const soilGeo = new THREE.CylinderGeometry(0.085, 0.085, 0.02, 16);
-    const soilMat = new THREE.MeshStandardMaterial({ color: 0x271910 });
-    const soil = new THREE.Mesh(soilGeo, soilMat);
-    soil.position.set(0.95, 1.34, -0.15);
+    const soil = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.015, 16), new THREE.MeshStandardMaterial({ color: 0x1c120c }));
+    soil.position.set(0.95, 1.33, -0.15);
     scene.add(soil);
 
-    // Succulent green leaves
-    const leafMat = new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.3 });
-    for (let l = 0; l < 8; l++) {
-      const angle = (l * Math.PI * 2) / 8;
-      const leafGeo = new THREE.ConeGeometry(0.035, 0.12, 6);
-      const leaf = new THREE.Mesh(leafGeo, leafMat);
-      leaf.rotation.z = Math.sin(angle) * 0.4;
-      leaf.rotation.x = Math.cos(angle) * 0.4;
-      leaf.position.set(0.95 + Math.sin(angle) * 0.04, 1.4, -0.15 + Math.cos(angle) * 0.04);
+    // Beautiful rounded succulent rosettes
+    const succulentMat = new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.35 });
+    for (let r = 0; r < 10; r++) {
+      const ang = (r * Math.PI * 2) / 10;
+      const leafGeo = new THREE.ConeGeometry(0.032, 0.11, 8);
+      const leaf = new THREE.Mesh(leafGeo, succulentMat);
+      leaf.rotation.z = Math.sin(ang) * 0.45;
+      leaf.rotation.x = Math.cos(ang) * 0.45;
+      leaf.position.set(0.95 + Math.sin(ang) * 0.04, 1.38, -0.15 + Math.cos(ang) * 0.04);
       scene.add(leaf);
     }
 
-    // 14. Gaming PC Tower (Right of Desk)
-    const pcCaseGeo = new THREE.BoxGeometry(0.44, 0.78, 0.72);
-    const pcCaseMat = new THREE.MeshStandardMaterial({ color: 0x090d16, metalness: 0.85, roughness: 0.2 });
+    // 17. High-End Custom Glass PC Tower (Right Side)
+    const pcCaseGeo = new THREE.BoxGeometry(0.42, 0.76, 0.7);
+    const pcCaseMat = new THREE.MeshStandardMaterial({ color: 0x090d16, metalness: 0.9, roughness: 0.2 });
     const pcCase = new THREE.Mesh(pcCaseGeo, pcCaseMat);
-    pcCase.position.set(1.42, 1.58, -0.15);
+    pcCase.position.set(1.48, 1.58, -0.12);
     pcCase.castShadow = true;
     scene.add(pcCase);
 
-    // Tempered Glass Panel
-    const glassGeo = new THREE.PlaneGeometry(0.4, 0.72);
+    // Tempered Glass Side Window
     const glassMat = new THREE.MeshPhysicalMaterial({
       color: 0x1e293b,
       transparent: true,
-      opacity: 0.55,
+      opacity: 0.5,
       roughness: 0.1,
-      metalness: 0.9,
+      metalness: 0.8,
     });
-    const glassPanel = new THREE.Mesh(glassGeo, glassMat);
-    glassPanel.rotation.y = -Math.PI / 2;
-    glassPanel.position.set(1.195, 1.58, -0.15);
-    scene.add(glassPanel);
+    const glass = new THREE.Mesh(new THREE.PlaneGeometry(0.38, 0.7), glassMat);
+    glass.rotation.y = -Math.PI / 2;
+    glass.position.set(1.265, 1.58, -0.12);
+    scene.add(glass);
 
-    // RGB cooling fan rings
+    // Internal Glowing Components (RGB RAM strips + GPU plate)
+    const ramMat = new THREE.MeshBasicMaterial({ color: 0x06b6d4 });
+    const ram = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.12, 0.14), ramMat);
+    ram.position.set(1.45, 1.72, -0.12);
+    scene.add(ram);
+
+    const gpuMat = new THREE.MeshBasicMaterial({ color: 0x8b5cf6 });
+    const gpu = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.06, 0.36), gpuMat);
+    gpu.position.set(1.44, 1.52, -0.12);
+    scene.add(gpu);
+
+    // RGB Fan Rings
+    const fans: THREE.Mesh[] = [];
     const fanColors = [0x06b6d4, 0x8b5cf6, 0x10b981];
-    fansRef.current = [];
     [1.74, 1.54, 1.34].forEach((fy, i) => {
-      const ringGeo = new THREE.TorusGeometry(0.085, 0.018, 12, 24);
-      const ringMat = new THREE.MeshBasicMaterial({ color: fanColors[i] });
-      const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.position.set(1.41, fy, 0.2);
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(0.08, 0.015, 12, 24), new THREE.MeshBasicMaterial({ color: fanColors[i] }));
+      ring.position.set(1.47, fy, 0.23);
       scene.add(ring);
-      fansRef.current.push(ring);
+      fans.push(ring);
     });
 
-    // 15. Twinkling Stars & Moon Outside Left Window
-    const starsGeo = new THREE.BufferGeometry();
-    const starCount = 350;
-    const starPos = new Float32Array(starCount * 3);
-    for (let i = 0; i < starCount * 3; i += 3) {
-      starPos[i] = -8 - Math.random() * 8;
-      starPos[i + 1] = Math.random() * 12 + 1;
-      starPos[i + 2] = (Math.random() - 0.5) * 20;
+    // 18. Atmospheric Glowing Floating Dust / Ambient Particles (Cinematic cozy look!)
+    const particleCount = 65;
+    const particleGeo = new THREE.BufferGeometry();
+    const particlePos = new Float32Array(particleCount * 3);
+    for (let p = 0; p < particleCount * 3; p += 3) {
+      particlePos[p] = (Math.random() - 0.5) * 6;
+      particlePos[p + 1] = 1.0 + Math.random() * 3.0;
+      particlePos[p + 2] = (Math.random() - 0.5) * 4;
     }
-    starsGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-    const starMat = new THREE.PointsMaterial({ color: 0xc7d2fe, size: 0.1 });
-    const stars = new THREE.Points(starsGeo, starMat);
-    scene.add(stars);
+    particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
+    const particleMat = new THREE.PointsMaterial({
+      color: 0x38bdf8,
+      size: 0.04,
+      transparent: true,
+      opacity: 0.7,
+      blending: THREE.AdditiveBlending,
+    });
+    const particles = new THREE.Points(particleGeo, particleMat);
+    scene.add(particles);
 
-    // Glowing Moon
-    const moonGeo = new THREE.SphereGeometry(0.35, 20, 20);
-    const moonMat = new THREE.MeshBasicMaterial({ color: 0xfffbeb });
-    const moon = new THREE.Mesh(moonGeo, moonMat);
-    moon.position.set(-9.5, 6.2, -1.8);
-    scene.add(moon);
-
-    // 16. Floating Tech Hologram Badges in Orbit
-    const techNodes: THREE.Mesh[] = [];
-    const techColors = [0x06b6d4, 0x8b5cf6, 0x10b981, 0x38bdf8];
-    for (let i = 0; i < 4; i++) {
-      const tGeo = new THREE.OctahedronGeometry(0.07, 0);
-      const tMat = new THREE.MeshStandardMaterial({
-        color: techColors[i],
-        emissive: techColors[i],
-        emissiveIntensity: 0.9,
-        wireframe: true,
-      });
-      const node = new THREE.Mesh(tGeo, tMat);
-      scene.add(node);
-      techNodes.push(node);
-    }
-
-    // Animation Loop
+    // 19. Animation Loop
     const startTime = performance.now();
     let frameId: number;
 
@@ -649,26 +710,23 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
       frameId = requestAnimationFrame(animate);
       const elapsedTime = (performance.now() - startTime) * 0.001;
 
-      // Rotate PC cooling fan rings
-      fansRef.current.forEach(fan => {
-        fan.rotation.z += 0.08;
+      // Rotate PC cooling fans
+      fans.forEach(fan => {
+        fan.rotation.z += 0.07;
       });
 
-      // Orbit floating tech hologram nodes
-      techNodes.forEach((node, i) => {
-        const angle = elapsedTime * 0.7 + (i * Math.PI) / 2;
-        node.position.x = Math.cos(angle) * 1.6;
-        node.position.y = 2.45 + Math.sin(elapsedTime * 2 + i) * 0.08;
-        node.position.z = Math.sin(angle) * 0.65 - 0.2;
-        node.rotation.x += 0.02;
-        node.rotation.y += 0.03;
-      });
+      // Gently drift ambient particles
+      const positions = particleGeo.attributes.position.array as Float32Array;
+      for (let i = 1; i < particleCount * 3; i += 3) {
+        positions[i] += Math.sin(elapsedTime + i) * 0.002;
+      }
+      particleGeo.attributes.position.needsUpdate = true;
 
       renderer.render(scene, camera);
     };
     animate();
 
-    // Mouse Interaction / Raycasting
+    // 20. Mouse Interaction / Smooth Parallax
     const raycaster = new THREE.Raycaster();
     const mousePos = new THREE.Vector2();
 
@@ -688,11 +746,11 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
         setHoveredObject(null);
       }
 
-      // Smooth camera parallax pan
+      // Smooth camera parallax pan around 3/4 anchor
       if (!isZoomed && cameraRef.current) {
         gsap.to(cameraRef.current.position, {
-          x: ROOM_CAMERA_POS.x + mousePos.x * 0.35,
-          y: ROOM_CAMERA_POS.y + mousePos.y * 0.22,
+          x: ROOM_CAMERA_POS.x + mousePos.x * 0.28,
+          y: ROOM_CAMERA_POS.y + mousePos.y * 0.18,
           duration: 1.2,
           ease: 'power2.out',
         });
@@ -739,7 +797,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     };
   }, []);
 
-  // GSAP Camera Zoom Transition
+  // GSAP Camera Zoom Transition (Seamless zoom into monitor)
   useEffect(() => {
     const camera = cameraRef.current;
     if (!camera) return;
@@ -749,7 +807,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
         x: MONITOR_CAMERA_POS.x,
         y: MONITOR_CAMERA_POS.y,
         z: MONITOR_CAMERA_POS.z,
-        duration: 1.4,
+        duration: 1.3,
         ease: 'power3.inOut',
         onUpdate: () => camera.lookAt(MONITOR_CAMERA_LOOK.x, MONITOR_CAMERA_LOOK.y, MONITOR_CAMERA_LOOK.z),
       });
@@ -758,7 +816,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
         x: ROOM_CAMERA_POS.x,
         y: ROOM_CAMERA_POS.y,
         z: ROOM_CAMERA_POS.z,
-        duration: 1.4,
+        duration: 1.3,
         ease: 'power3.inOut',
         onUpdate: () => camera.lookAt(ROOM_CAMERA_LOOK.x, ROOM_CAMERA_LOOK.y, ROOM_CAMERA_LOOK.z),
       });
@@ -768,20 +826,22 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
   const toggleLight = () => {
     if (!lampLightRef.current || !lampBulbRef.current) return;
     if (lightMode === 'cyber') {
-      lampLightRef.current.color.setHex(0xfbbf24);
-      lampLightRef.current.intensity = 4.2;
-      (lampBulbRef.current.material as THREE.MeshBasicMaterial).color.setHex(0xfbbf24);
+      lampLightRef.current.color.setHex(0xf59e0b);
+      lampLightRef.current.intensity = 4.5;
+      (lampBulbRef.current.material as THREE.MeshBasicMaterial).color.setHex(0xf59e0b);
+      if (ambientLightRef.current) ambientLightRef.current.color.setHex(0xfff7ed);
       setLightMode('warm');
     } else {
       lampLightRef.current.color.setHex(0x06b6d4);
-      lampLightRef.current.intensity = 3.6;
+      lampLightRef.current.intensity = 4.0;
       (lampBulbRef.current.material as THREE.MeshBasicMaterial).color.setHex(0x06b6d4);
+      if (ambientLightRef.current) ambientLightRef.current.color.setHex(0xdbeafe);
       setLightMode('cyber');
     }
   };
 
   return (
-    <div className="relative w-full h-[620px] md:h-[720px] rounded-3xl overflow-hidden border border-[rgba(255,255,255,0.12)] shadow-2xl bg-[#080e1e]">
+    <div className="relative w-full h-[620px] md:h-[720px] rounded-3xl overflow-hidden border border-[rgba(255,255,255,0.12)] shadow-2xl bg-[#0a0f1d]">
       {/* Three.js Canvas Container */}
       <div ref={mountRef} className="w-full h-full" />
 
