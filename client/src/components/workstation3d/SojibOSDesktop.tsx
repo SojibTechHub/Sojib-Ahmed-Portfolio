@@ -198,7 +198,7 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[#06B6D4]" />
                   <span className="text-xs font-bold uppercase tracking-wider text-white">
-                    {activeApp === 'projects' && '🚀 Projects Explorer — 10 Flagship & Production Builds'}
+                    {activeApp === 'projects' && '🚀 Projects Explorer — Flagship & Production Builds'}
                     {activeApp === 'terminal' && '💻 Sojib Bash Terminal — Interactive CLI'}
                     {activeApp === 'about' && '👨‍💻 About Sojib Ahmed — Background & Bio'}
                     {activeApp === 'skills' && '⚡ Technical Stack & Architecture Breakdown'}
@@ -585,7 +585,7 @@ function OSTerminalApp() {
     if (lower === 'help') {
       output = `Available commands:\n• whoami      - Developer profile\n• skills      - Full-stack technical stack\n• projects    - List flagship repositories\n• contact     - Direct contact coordinates\n• sudo hire   - Instant email setup\n• clear       - Clear terminal`;
     } else if (lower === 'whoami') {
-      output = `Sojib Ahmed\nRole: Full Stack Web Developer\nLocation: Rangpur, Bangladesh\nEducation: Programming Hero Full Stack Course (8 months, Batch 13)`;
+      output = `Sojib Ahmed\nRole: Full Stack Web Developer\nLocation: Rangpur, Bangladesh\nEducation: Programming Hero Full Stack Course (Batch 13)`;
     } else if (lower === 'skills') {
       output = `Frontend: React 19, Next.js 16, TypeScript, Tailwind CSS, Framer Motion\nBackend:  Node.js, Express.js, REST API, Socket.IO, WebRTC\nDatabase: MongoDB Atlas, Mongoose, Upstash Redis\nDevOps:   Docker, GitHub Actions, Vercel, Render`;
     } else if (lower === 'projects') {
@@ -822,7 +822,7 @@ function OSSkillsApp() {
             </h3>
           </div>
           <p className="text-xs text-gray-400 mt-0.5">
-            {allSkillsList.length} verified technologies across 10 production & client projects.
+            {allSkillsList.length} verified technologies across production & client projects.
           </p>
         </div>
 

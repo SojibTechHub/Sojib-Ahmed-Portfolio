@@ -412,7 +412,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
 
       sCtx.fillStyle = '#06B6D4';
       sCtx.font = 'bold 18px monospace';
-      sCtx.fillText('🚀 SOJIB OS v2.6 ENTERPRISE · 10 PRODUCTION REPOSITORIES', 48, 116);
+      sCtx.fillText('🚀 SOJIB OS v2.6 ENTERPRISE · FULL STACK ARCHITECTURE', 48, 116);
 
       // Terminal window
       sCtx.fillStyle = '#090D1A';
@@ -431,7 +431,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
       sCtx.fillText('● ShopX BD Enterprise  ● FoodFlow Logistics  ● SkillForge AI', 72, 240);
       sCtx.fillText('● StartupForge         ● TypeMarket Store    ● InvestProp AI', 72, 275);
       sCtx.fillStyle = '#38BDF8';
-      sCtx.fillText('● 10 Flagship Builds with Live Links & Verified Credentials', 72, 310);
+      sCtx.fillText('● Flagship Builds with Live Links & Verified Credentials', 72, 310);
 
       sCtx.fillStyle = '#F59E0B';
       sCtx.font = 'bold 20px sans-serif';

@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { ExternalLink, ArrowRight, Layers, Code, Server, Key } from 'lucide-react';
+import { ExternalLink, ArrowRight, Layers, Code, Server, Key, ChevronLeft, ChevronRight } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa6';
-import { projects as defaultProjects } from '../../data/projects';
+import { projects as defaultProjects, type Project } from '../../data/projects';
 
 type Category = 'all' | 'full-stack' | 'frontend' | 'backend';
 
@@ -15,10 +15,10 @@ const categoryIcons = {
 };
 
 const categoryLabels = {
-  'all': 'All Projects',
-  'full-stack': 'Full Stack',
-  'frontend': 'Frontend',
-  'backend': 'Backend',
+  'all': 'All Projects (3 Pages)',
+  'full-stack': 'Full Stack (Page 1)',
+  'frontend': 'Frontend (Page 2)',
+  'backend': 'Backend (Page 3)',
 };
 
 const projectImageMap: Record<string, string> = {
@@ -45,19 +45,25 @@ const getProjectImage = (title?: string, id?: string, img?: string) => {
 };
 
 export default function Projects() {
-  const [projectList, setProjectList] = useState(defaultProjects);
+  const [projectList, setProjectList] = useState<Project[]>(defaultProjects);
   const [activeFilter, setActiveFilter] = useState<Category>('all');
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
   const [ref, inView] = useInView({ threshold: 0.05, triggerOnce: true });
 
   useEffect(() => {
-    // Check localStorage first for instant updates made in Admin CMS
+    // Check localStorage first
     try {
       const saved = localStorage.getItem('sojib_custom_projects');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setProjectList(parsed);
+          const hasStaleHero = parsed.some((p: any) => p.image && p.image.includes('hero.jpg'));
+          if (hasStaleHero) {
+            localStorage.removeItem('sojib_custom_projects');
+          } else {
+            setProjectList(parsed);
+          }
         }
       }
     } catch {}
@@ -74,15 +80,54 @@ export default function Projects() {
           } catch {}
         }
       } catch {
-        // Fallback to defaultProjects or cached
+        // Fallback to defaultProjects
       }
     };
     fetchLiveProjects();
   }, []);
 
-  const filtered = activeFilter === 'all'
-    ? projectList
-    : projectList.filter(p => p.category === activeFilter);
+  // Separate into 3 clean pages:
+  // Page 1: 4 Full-Stack Flagship Projects
+  // Page 2: 3 Modern Frontend Projects
+  // Page 3: 3 High-Performance Backend Projects
+  const fullStackProjects = projectList.filter(p => p.category === 'full-stack');
+  const frontendProjects = projectList.filter(p => p.category === 'frontend');
+  const backendProjects = projectList.filter(p => p.category === 'backend');
+
+  // Determine which projects to show based on filter and page
+  let displayedProjects: Project[] = [];
+  if (activeFilter === 'full-stack') {
+    displayedProjects = fullStackProjects;
+  } else if (activeFilter === 'frontend') {
+    displayedProjects = frontendProjects;
+  } else if (activeFilter === 'backend') {
+    displayedProjects = backendProjects;
+  } else {
+    // 'all' filter with 3 distinct pages
+    if (currentPage === 1) displayedProjects = fullStackProjects;
+    else if (currentPage === 2) displayedProjects = frontendProjects;
+    else if (currentPage === 3) displayedProjects = backendProjects;
+    else displayedProjects = fullStackProjects;
+  }
+
+  const handleFilterClick = (cat: Category) => {
+    setActiveFilter(cat);
+    if (cat === 'full-stack') setCurrentPage(1);
+    else if (cat === 'frontend') setCurrentPage(2);
+    else if (cat === 'backend') setCurrentPage(3);
+    else setCurrentPage(1);
+  };
+
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+    if (page === 1) setActiveFilter('all');
+    else if (page === 2) setActiveFilter('all');
+    else if (page === 3) setActiveFilter('all');
+    const el = document.getElementById('projects');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <section id="projects" className="section-padding relative" ref={ref}>
@@ -106,7 +151,7 @@ export default function Projects() {
           </p>
         </motion.div>
 
-        {/* Filter tabs */}
+        {/* Filter / Page Tabs */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -117,16 +162,21 @@ export default function Projects() {
         >
           {(['all', 'full-stack', 'frontend', 'backend'] as Category[]).map((cat) => {
             const Icon = categoryIcons[cat];
-            const isActive = activeFilter === cat;
+            const isActive = activeFilter === cat || (activeFilter === 'all' && (
+              (cat === 'full-stack' && currentPage === 1) ||
+              (cat === 'frontend' && currentPage === 2) ||
+              (cat === 'backend' && currentPage === 3)
+            ));
+
             return (
               <motion.button
                 key={cat}
                 whileHover={{ scale: 1.04 }}
                 whileTap={{ scale: 0.96 }}
-                onClick={() => setActiveFilter(cat)}
+                onClick={() => handleFilterClick(cat)}
                 role="tab"
                 aria-selected={isActive}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 border ${
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 border cursor-pointer ${
                   isActive
                     ? 'text-white border-primary shadow-[0_0_20px_rgba(124,58,237,0.4)]'
                     : 'text-[var(--color-text-secondary)] border-[var(--color-border)] hover:text-[var(--color-text-primary)] hover:border-primary/40 bg-[var(--color-surface)]/60'
@@ -151,16 +201,16 @@ export default function Projects() {
         {/* Projects grid */}
         <AnimatePresence mode="wait">
           <motion.div
-            key={activeFilter}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            key={`${activeFilter}-${currentPage}`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.35 }}
             className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10"
           >
-            {filtered.map((project, i) => (
+            {displayedProjects.map((project, i) => (
               <motion.article
-                key={project.id}
+                key={project.id || (project as any)._id}
                 initial={{ opacity: 0, y: 35 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45, delay: i * 0.06 }}
@@ -277,7 +327,7 @@ export default function Projects() {
                   </div>
                 </div>
 
-                {/* Footer with Clear Labeled Action Buttons and Real Logos */}
+                {/* Footer with Clear Labeled Action Buttons */}
                 <div className="px-6 md:px-8 pb-6 pt-0 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)]/50 pt-4 mt-auto">
                   <span className="text-[11px] text-[var(--color-text-secondary)]">
                     Role: <span className="text-[var(--color-text-primary)] font-medium">{project.role || 'Full Stack Developer'}</span>
@@ -319,7 +369,7 @@ export default function Projects() {
                       </motion.a>
                     )}
 
-                    {/* Secondary Repo (Client / Server) if available */}
+                    {/* Secondary Repo if available */}
                     {project.docsUrl && (
                       <motion.a
                         href={project.docsUrl}
@@ -341,12 +391,75 @@ export default function Projects() {
           </motion.div>
         </AnimatePresence>
 
+        {/* 3-Page Pagination Controls (4 projects on page 1, 3 on page 2, 3 on page 3) */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-12 p-4 sm:p-5 rounded-2xl bg-[var(--color-surface)]/90 backdrop-blur-md border border-[var(--color-border)] shadow-xl"
+        >
+          {/* Current Page Info */}
+          <div className="flex items-center gap-2.5 text-xs text-[var(--color-text-secondary)] font-medium">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#06B6D4] animate-pulse flex-shrink-0" />
+            <div>
+              <span>Page <strong className="text-white font-bold">{currentPage}</strong> of <strong>3</strong></span>
+              <span className="mx-2 text-gray-500">·</span>
+              <span className="text-[#06B6D4] font-semibold">
+                {currentPage === 1 && 'Flagship Full-Stack Systems (4 Projects)'}
+                {currentPage === 2 && 'Modern Frontend Applications (3 Projects)'}
+                {currentPage === 3 && 'High-Performance Backend Gateways (3 Projects)'}
+              </span>
+            </div>
+          </div>
+
+          {/* Page Buttons */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => goToPage(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              className="px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer bg-[var(--color-surface)] border-[var(--color-border)] text-gray-300 hover:text-white hover:border-primary/50 shadow-sm"
+              aria-label="Previous Page"
+            >
+              <ChevronLeft size={14} />
+              <span>Previous</span>
+            </button>
+
+            {[1, 2, 3].map((pageNum) => {
+              const isSelected = currentPage === pageNum;
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => goToPage(pageNum)}
+                  className={`w-9 h-9 rounded-xl text-xs font-bold transition-all flex items-center justify-center cursor-pointer shadow-sm ${
+                    isSelected
+                      ? 'bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] text-white shadow-[0_0_15px_rgba(6,182,212,0.4)] scale-105'
+                      : 'bg-[var(--color-surface)] text-gray-400 hover:text-white border border-[var(--color-border)] hover:border-primary/40'
+                  }`}
+                  aria-label={`Go to Page ${pageNum}`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+
+            <button
+              onClick={() => goToPage(Math.min(3, currentPage + 1))}
+              disabled={currentPage === 3}
+              className="px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer bg-[var(--color-surface)] border-[var(--color-border)] text-gray-300 hover:text-white hover:border-primary/50 shadow-sm"
+              aria-label="Next Page"
+            >
+              <span>Next</span>
+              <ChevronRight size={14} />
+            </button>
+          </div>
+        </motion.div>
+
         {/* More projects CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="text-center mt-12"
+          className="text-center mt-10"
         >
           <p className="text-sm text-[var(--color-text-secondary)] mb-4">
             All projects are available on GitHub with complete source code and documentation.

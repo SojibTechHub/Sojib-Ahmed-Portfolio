@@ -264,10 +264,10 @@ export default function Hero() {
               className="flex flex-wrap items-center gap-4 sm:gap-6 mb-6 sm:mb-8"
             >
               {[
-                { value: '8+', label: 'Months Learning' },
-                { value: '10+', label: 'Projects Built' },
-                { value: '15+', label: 'Technologies' },
-                { value: '100%', label: 'Passion' },
+                { value: 'Full-Stack', label: 'MERN & Next.js' },
+                { value: 'Production', label: 'Cloud Architecture' },
+                { value: '35+', label: 'Technologies' },
+                { value: '100%', label: 'Commitment' },
               ].map(({ value, label }) => (
                 <div key={label} className="text-left pr-3 border-r last:border-r-0 border-[rgba(255,255,255,0.08)]">
                   <div className="text-xl sm:text-2xl font-black gradient-text leading-none">{value}</div>

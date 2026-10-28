@@ -1,13 +1,13 @@
 import { motion } from 'framer-motion';
 
 const stats = [
-  { value: '8+', label: 'Months Learning' },
-  { value: '10+', label: 'Projects Built' },
-  { value: '15+', label: 'Technologies' },
-  { value: '100%', label: 'Passion' },
+  { value: 'Full-Stack', label: 'MERN & Next.js Architecture' },
+  { value: 'Production', label: 'Cloud Deployment & CI/CD' },
+  { value: '35+', label: 'Verified Technologies' },
+  { value: '100%', label: 'Code Quality & Reliability' },
 ];
 
-const ticker = '8+ Months Intensive Learning • 10+ Projects Built • 15+ Technologies Mastered • Full Stack Developer • React • Node.js • MongoDB • TypeScript • Available for Hire';
+const ticker = 'Enterprise Full Stack Developer • React 19 & Next.js 16 • Node.js & Express Architecture • MongoDB Atlas & PostgreSQL • Upstash Redis Caching • Real-Time WebSockets • AI Agent Pipelines • Docker & CI/CD • Available for Worldwide Hire';
 
 export default function TrustBar() {
   return (
@@ -37,8 +37,8 @@ export default function TrustBar() {
               transition={{ duration: 0.5, delay: i * 0.1 }}
               className="text-center"
             >
-              <div className="text-4xl font-black gradient-text mb-1">{value}</div>
-              <div className="text-sm text-[var(--color-text-secondary)]">{label}</div>
+              <div className="text-3xl sm:text-4xl font-black gradient-text mb-1">{value}</div>
+              <div className="text-xs sm:text-sm text-[var(--color-text-secondary)]">{label}</div>
             </motion.div>
           ))}
         </div>

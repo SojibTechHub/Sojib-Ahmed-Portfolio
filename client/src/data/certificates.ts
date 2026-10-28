@@ -36,7 +36,7 @@ export const certificates: Certificate[] = [
     issuer: 'Programming Hero',
     issuerLogo: '🦸',
     date: 'January 2026 – August 2026',
-    duration: '8 Months Intensive Training',
+    duration: 'Full-Stack Engineering Specialization',
     skills: ['MERN Stack', 'JavaScript (ES6+)', 'React.js', 'Node.js', 'Express.js', 'MongoDB', 'JWT Auth', 'Firebase', 'TypeScript', 'Tailwind CSS'],
     verifyUrl: 'https://drive.google.com/file/d/1xthcbztqypL5RCzst-gNL4bg4eMNFWyK/view?usp=sharing',
     credentialId: 'PH-2026-MERN-SOJIB',

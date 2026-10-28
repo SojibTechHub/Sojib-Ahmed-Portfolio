@@ -91,7 +91,7 @@ export default function About() {
               {[
                 { icon: MapPin, label: 'Location', value: 'Rangpur, Bangladesh' },
                 { icon: Code2, label: 'Specialization', value: 'Full Stack Development' },
-                { icon: Rocket, label: 'Experience', value: '8+ Months Intensive' },
+                { icon: Rocket, label: 'Specialization', value: 'Full-Stack Engineering' },
                 { icon: CheckCircle2, label: 'Status', value: 'Open to Opportunities' },
               ].map(({ icon: Icon, label, value }) => (
                 <div key={label} className="flex items-center gap-4 p-4 rounded-xl"
@@ -119,7 +119,7 @@ export default function About() {
             {/* Intro paragraph */}
             <motion.div variants={fadeUp} className="space-y-4">
               <p className="text-base sm:text-lg text-[var(--color-text-secondary)] leading-relaxed">
-                I'm <span className="text-[var(--color-text-primary)] font-semibold">Sojib Ahmed</span>, a Full-Stack Developer who completed an intensive full-stack web development program at Programming Hero. I've built 10+ projects with hands-on experience in React, Next.js, Node.js, TypeScript, REST APIs, authentication, databases, real-time applications, AI integrations, and deployment.
+                I'm <span className="text-[var(--color-text-primary)] font-semibold">Sojib Ahmed</span>, a Full-Stack Developer specialized in enterprise MERN & Next.js architectures, real-time WebSockets, and scalable cloud systems. I build high-performance production systems with hands-on experience in React, Next.js, Node.js, TypeScript, REST APIs, authentication, databases, real-time applications, AI integrations, and deployment.
               </p>
               <p className="text-base sm:text-lg text-[var(--color-text-secondary)] leading-relaxed">
                 I enjoy turning ideas into practical, scalable, and user-focused applications while continuously improving my problem-solving and software engineering skills.

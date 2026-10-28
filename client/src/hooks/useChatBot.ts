@@ -9,7 +9,7 @@ interface Message {
 
 const FALLBACK_RESPONSES: Record<string, string> = {
   skills: "Sojib is proficient in full stack web development — React.js, Next.js, Node.js, Express.js, MongoDB, TypeScript, Tailwind CSS, JWT, Firebase, Socket.IO, and AI integration with Gemini/OpenAI APIs. He has 15+ technologies in his arsenal!",
-  projects: "Sojib has built **10+ projects** including:\n• **InvestProp AI** – AI-powered real estate platform\n• **Job Finder** – Full-stack job board\n• **Pet Adoption Platform** – Community website\n• **E-Commerce Platform** – With Stripe payments\n...and more! Check the Projects section for details.",
+  projects: "Sojib has architected flagship production systems including:\n• **InvestProp AI** – AI-powered real estate platform\n• **Job Finder** – Full-stack job board\n• **Pet Adoption Platform** – Community website\n• **E-Commerce Platform** – With Stripe payments\n...and more! Check the Projects section for details.",
   services: "Sojib offers:\n• **Full Stack Web Development**\n• **Frontend Development** (React/Next.js)\n• **Backend Development** (Node.js/Express)\n• **AI Integration** (Gemini/OpenAI)\n• **E-Commerce Development**\n• **Admin Dashboards**",
   available: "Yes! Sojib is **currently available** for:\n✓ Full-time positions\n✓ Freelance projects\n✓ Remote work\n\nHe typically replies within 15 minutes. Reach him at sojibahmedshorif998@gmail.com or +880 1942791004.",
   experience: "Sojib completed an **8-month intensive full-stack program** at Programming Hero (Jan–Aug 2026). His journey:\n• Feb 2026: HTML, CSS, JavaScript\n• Mar 2026: React.js\n• Apr 2026: Node.js & Express\n• May 2026: MongoDB\n• Jun–Aug 2026: Full Stack + AI Integration",

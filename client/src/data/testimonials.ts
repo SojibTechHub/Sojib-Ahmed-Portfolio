@@ -21,7 +21,7 @@ export const testimonials: Testimonial[] = [
     company: 'Programming Hero',
     avatar: 'JM',
     rating: 5,
-    quote: "Sojib is one of those rare learners who goes above and beyond. His dedication to understanding the 'why' behind every concept, not just the 'how', is what sets him apart. His projects demonstrate senior-level thinking for someone who started just 8 months ago.",
+    quote: "Sojib is one of those rare learners who goes above and beyond. His dedication to understanding the 'why' behind every concept, not just the 'how', is what sets him apart. His projects demonstrate senior-level thinking for a dedicated full-stack engineer.",
     relation: 'Instructor',
   },
   {
