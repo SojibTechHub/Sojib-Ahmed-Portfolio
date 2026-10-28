@@ -1063,6 +1063,7 @@ function OSServicesApp({ onNavigate }: { onNavigate?: (app: AppId) => void }) {
 function OSCertificatesApp({ onNavigate }: { onNavigate?: (app: AppId) => void }) {
   const flyRankDriveLink = 'https://drive.google.com/file/d/10ONRQsFH14NB1RvG7aJIltzSm6YGXqcy/view?usp=sharing';
   const flyRankEmbedLink = 'https://drive.google.com/file/d/10ONRQsFH14NB1RvG7aJIltzSm6YGXqcy/preview';
+  const phRecommendationLink = 'https://drive.google.com/file/d/1TLfBdunMKD2_PCyJOru01juczImQD6I2/view?usp=sharing';
   const phCertLink = 'https://drive.google.com/file/d/1xthcbztqypL5RCzst-gNL4bg4eMNFWyK/view?usp=sharing';
   const datheonVerifyLink = 'https://datheon.in/verify?id=DT-2026-33B1M';
 
@@ -1144,7 +1145,39 @@ function OSCertificatesApp({ onNavigate }: { onNavigate?: (app: AppId) => void }
         </div>
       </div>
 
-      {/* 2. Programming Hero Full-Stack Web Development Course */}
+      {/* 2. Programming Hero Official Letter of Recommendation (LOR) */}
+      <div className="p-4 rounded-xl bg-[#030712] border border-[#EC4899]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md hover:border-[#EC4899]/60 transition-all">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#EC4899]/20 border border-[#EC4899]/40 flex items-center justify-center text-[#F472B6] flex-shrink-0">
+            <FileText size={20} />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h5 className="font-bold text-xs text-white">
+                Official Letter of Recommendation — Programming Hero
+              </h5>
+              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#EC4899]/20 text-[#F472B6] border border-[#EC4899]/30">
+                Endgame Program
+              </span>
+            </div>
+            <p className="text-[11px] text-gray-400 mt-0.5">
+              FoodFlow Project & Code Rangers vs 6 Team Endorsement by CEO Jhankar Mahbub · ID: <span className="font-mono text-pink-300 font-bold">RID: PH-R 1190</span>
+            </p>
+          </div>
+        </div>
+
+        <a
+          href={phRecommendationLink}
+          target="_blank"
+          rel="noreferrer"
+          className="px-3 py-1.5 rounded-lg bg-[#EC4899]/20 hover:bg-[#EC4899]/30 border border-[#EC4899]/40 text-pink-300 text-xs font-semibold flex items-center gap-1.5 transition-all flex-shrink-0"
+        >
+          <ExternalLink size={12} />
+          <span>Verify Recommendation</span>
+        </a>
+      </div>
+
+      {/* 3. Programming Hero Full-Stack Web Development Course */}
       <div className="p-4 rounded-xl bg-[#030712] border border-[#7C3AED]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md hover:border-[#7C3AED]/60 transition-all">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[#7C3AED]/20 border border-[#7C3AED]/40 flex items-center justify-center text-[#A78BFA] flex-shrink-0">
@@ -1176,7 +1209,7 @@ function OSCertificatesApp({ onNavigate }: { onNavigate?: (app: AppId) => void }
         </a>
       </div>
 
-      {/* 3. Datheon AI Systems Full Stack Engineering Internship */}
+      {/* 4. Datheon AI Systems Full Stack Engineering Internship */}
       <div className="p-4 rounded-xl bg-[#030712] border border-[#10B981]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md hover:border-[#10B981]/60 transition-all">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[#10B981]/20 border border-[#10B981]/40 flex items-center justify-center text-[#34D399] flex-shrink-0">
