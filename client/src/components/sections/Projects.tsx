@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { ExternalLink, ArrowRight, Layers, Code, Server, Key, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ExternalLink, ArrowRight, Layers, Code, Server, Key, ChevronLeft, ChevronRight, X, Sparkles, CheckCircle2 } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa6';
 import { projects as defaultProjects, type Project } from '../../data/projects';
 
@@ -49,6 +49,7 @@ export default function Projects() {
   const [activeFilter, setActiveFilter] = useState<Category>('all');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [ref, inView] = useInView({ threshold: 0.05, triggerOnce: true });
 
   useEffect(() => {
@@ -85,6 +86,23 @@ export default function Projects() {
     };
     fetchLiveProjects();
   }, []);
+
+  // Lock body scroll and listen for Escape key when modal is open
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSelectedProject(null);
+    };
+    if (selectedProject) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedProject]);
 
   // Separate into 3 clean pages:
   // Page 1: 4 Full-Stack Flagship Projects
@@ -147,7 +165,7 @@ export default function Projects() {
           </div>
           <h2 className="section-heading">Featured & Production Projects</h2>
           <p className="section-subheading mx-auto text-center max-w-2xl">
-            A showcase of enterprise full-stack systems, modern frontend applications, and high-performance backend API gateways.
+            A showcase of enterprise full-stack systems, modern frontend applications, and high-performance backend API gateways. Click any project to view full architecture & live demo.
           </p>
         </motion.div>
 
@@ -198,7 +216,7 @@ export default function Projects() {
           })}
         </motion.div>
 
-        {/* Projects grid */}
+        {/* Compact Projects Grid (Choto kore, tap korle modal open hoy) */}
         <AnimatePresence mode="wait">
           <motion.div
             key={`${activeFilter}-${currentPage}`}
@@ -206,183 +224,142 @@ export default function Projects() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.35 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10"
+            className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-7 lg:gap-8"
           >
             {displayedProjects.map((project, i) => (
               <motion.article
                 key={project.id || (project as any)._id}
-                initial={{ opacity: 0, y: 35 }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45, delay: i * 0.06 }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
                 onHoverStart={() => setHoveredProject(project.id)}
                 onHoverEnd={() => setHoveredProject(null)}
-                className="project-card card group relative overflow-hidden flex flex-col justify-between"
+                onClick={() => setSelectedProject(project)}
+                className="project-card card group relative overflow-hidden flex flex-col justify-between cursor-pointer border border-white/10 hover:border-[#06B6D4]/60 transition-all duration-300 shadow-lg hover:shadow-[0_12px_35px_rgba(6,182,212,0.15)] rounded-2xl bg-[var(--color-surface)]"
                 style={{
                   '--project-color': project.color || '#06B6D4',
                 } as React.CSSProperties}
                 aria-label={`${project.title} - ${project.subtitle}`}
               >
-                {/* Top color line */}
+                {/* Top accent line */}
                 <div 
-                  className="absolute top-0 left-0 right-0 h-[2px] transition-all duration-500 z-10"
+                  className="absolute top-0 left-0 right-0 h-[2.5px] transition-all duration-500 z-10"
                   style={{
                     background: hoveredProject === (project.id || (project as any)._id)
                       ? `linear-gradient(90deg, ${project.color || '#06B6D4'}, ${project.accentColor || '#7C3AED'})`
-                      : `linear-gradient(90deg, ${project.color || '#06B6D4'}50, transparent)`,
+                      : `linear-gradient(90deg, ${project.color || '#06B6D4'}60, transparent)`,
                   }}
                 />
 
                 <div>
-                  <div className="project-card-image w-full h-52 sm:h-64 relative overflow-hidden bg-[#0a0f1d]">
+                  {/* Compact Preview Image */}
+                  <div className="w-full h-44 sm:h-48 relative overflow-hidden bg-[#070b14]">
                     <img 
                       src={getProjectImage(project.title, project.id, project.image)} 
                       alt={project.title} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       loading="lazy"
                       onError={(e) => {
                         (e.currentTarget as HTMLImageElement).src = '/images/shopx.png';
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-surface)] via-transparent to-transparent opacity-90 pointer-events-none" />
+
+                    {/* Category pill & year on image */}
+                    <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/75 backdrop-blur-md text-[#06B6D4] border border-[#06B6D4]/40 shadow">
+                        {project.category === 'full-stack' ? 'Full Stack' : project.category === 'frontend' ? 'Frontend' : 'Backend'}
+                      </span>
+                    </div>
+
+                    <div className="absolute top-3 right-3 z-10">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-black/70 backdrop-blur-md text-gray-300 border border-white/10">
+                        {project.year || '2026'}
+                      </span>
+                    </div>
+
+                    {/* Quick tap indicator hint on hover */}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                      <span className="px-3.5 py-1.5 rounded-full bg-black/80 text-white text-xs font-semibold backdrop-blur-md flex items-center gap-1.5 border border-[#06B6D4]/50 shadow-xl text-[#06B6D4]">
+                        <Sparkles size={14} className="text-[#06B6D4]" />
+                        <span>Tap to View Details & Live Demo</span>
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="p-6 md:p-8 pt-4">
-                    {/* Header */}
-                    <div className="flex items-start justify-between gap-3 mb-3">
-                      <div>
-                        {/* Category badge */}
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <span className="tech-badge text-[10px] uppercase tracking-wider font-bold">
-                            {project.category === 'full-stack' ? 'Full Stack' : project.category === 'frontend' ? 'Frontend' : 'Backend'}
-                          </span>
-                          <span className="text-[11px] text-[var(--color-text-secondary)] font-mono">{project.year}</span>
-                        </div>
-                        <h3 className="text-xl font-bold text-[var(--color-text-primary)] group-hover:text-primary transition-colors">
-                          {project.title}
-                        </h3>
-                        <p className="text-xs text-[var(--color-text-secondary)] mt-0.5 leading-relaxed">{project.subtitle}</p>
-                      </div>
-
-                      {/* Number */}
+                  {/* Compact Card Content */}
+                  <div className="p-5 sm:p-6 pb-3">
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <h3 className="text-lg sm:text-xl font-bold text-[var(--color-text-primary)] group-hover:text-[#06B6D4] transition-colors leading-snug">
+                        {project.title}
+                      </h3>
                       <div 
-                        className="text-3xl font-black opacity-15 font-mono select-none"
+                        className="text-2xl font-black opacity-15 font-mono select-none flex-shrink-0"
                         style={{ color: project.color }}
                       >
                         {String(i + 1).padStart(2, '0')}
                       </div>
                     </div>
 
-                    {/* Problem / Solution */}
-                    {(project.problem || project.solution) && (
-                      <div className="mb-4 space-y-2 text-xs leading-relaxed">
-                        {project.problem && (
-                          <div className="flex items-start gap-2 text-[var(--color-text-secondary)]">
-                            <span className="text-[#EC4899] font-bold flex-shrink-0">Problem:</span>
-                            <span>{project.problem}</span>
-                          </div>
-                        )}
-                        {project.solution && (
-                          <div className="flex items-start gap-2 text-[var(--color-text-primary)]">
-                            <span className="text-[#10B981] font-bold flex-shrink-0">Solution:</span>
-                            <span>{project.solution}</span>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                    <p className="text-xs text-[var(--color-text-secondary)] line-clamp-2 leading-relaxed mb-4">
+                      {project.subtitle}
+                    </p>
 
-                    {/* Demo Credentials if applicable */}
-                    {(project as any).credentials && (
-                      <div className="mb-4 p-3 rounded-xl bg-[#3178C6]/10 border border-[#3178C6]/30 text-xs text-[#93C5FD]">
-                        <div className="font-semibold text-white flex items-center gap-1.5 mb-1 text-[11px]">
-                          <Key size={13} className="text-[#60A5FA]" />
-                          <span>Demo Login Credentials:</span>
-                        </div>
-                        <div className="font-mono text-[11px] text-gray-300 space-y-0.5">
-                          <div><strong className="text-white">User:</strong> {(project as any).credentials.user}</div>
-                          <div><strong className="text-white">Admin:</strong> {(project as any).credentials.admin}</div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Key Features bullet points */}
-                    {Array.isArray(project.features) && project.features.length > 0 && (
-                      <div className="space-y-1.5 mb-5">
-                        {project.features.map((feat, idx) => (
-                          <div key={idx} className="flex items-start gap-2 text-xs text-[var(--color-text-secondary)]">
-                            <span className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: project.color || '#06B6D4' }} />
-                            <span className="leading-snug">{feat}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* Tech Stack tags */}
-                    <div className="flex flex-wrap gap-1.5 mb-6">
-                      {(project.techStack || []).map((tech) => (
-                        <span key={tech} className="tech-badge text-[10px]">
+                    {/* Primary Tech Badges (Compact 3-4 items) */}
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                      {(project.techStack || []).slice(0, 4).map((tech) => (
+                        <span key={tech} className="tech-badge text-[10px] py-0.5 px-2">
                           {tech}
                         </span>
                       ))}
+                      {(project.techStack || []).length > 4 && (
+                        <span className="text-[10px] font-mono py-0.5 px-2 rounded-full bg-white/5 text-gray-400 border border-white/5">
+                          +{(project.techStack || []).length - 4} more
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                {/* Footer with Clear Labeled Action Buttons */}
-                <div className="px-6 md:px-8 pb-6 pt-0 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--color-border)]/50 pt-4 mt-auto">
-                  <span className="text-[11px] text-[var(--color-text-secondary)]">
-                    Role: <span className="text-[var(--color-text-primary)] font-medium">{project.role || 'Full Stack Developer'}</span>
-                  </span>
+                {/* Compact Card Action Footer */}
+                <div 
+                  className="px-5 sm:px-6 py-3.5 flex items-center justify-between gap-2 border-t border-[var(--color-border)]/50 bg-black/20 mt-auto"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Tap for Details Button */}
+                  <button
+                    onClick={() => setSelectedProject(project)}
+                    className="flex items-center gap-1.5 text-xs font-bold text-[#06B6D4] hover:text-white transition-colors cursor-pointer group/btn"
+                  >
+                    <span>View Details & Demo</span>
+                    <ArrowRight size={13} className="transition-transform group-hover/btn:translate-x-1" />
+                  </button>
 
-                  <div className="flex flex-wrap items-center gap-2.5">
-                    {/* Live Link Button */}
+                  {/* Direct Link Action Icons */}
+                  <div className="flex items-center gap-2">
                     {project.liveUrl && (
-                      <motion.a
+                      <a
                         href={project.liveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white shadow-[0_0_15px_rgba(124,58,237,0.3)] hover:shadow-[0_0_22px_rgba(124,58,237,0.5)] transition-all duration-200"
-                        style={{
-                          background: 'linear-gradient(135deg, #7C3AED 0%, #06B6D4 100%)',
-                        }}
-                        aria-label={`${project.title} Live Link`}
+                        className="p-1.5 rounded-lg bg-[#06B6D4]/15 hover:bg-[#06B6D4]/30 border border-[#06B6D4]/40 text-[#06B6D4] transition-all hover:scale-105"
+                        title="Open Live App"
+                        aria-label="Open Live App"
                       >
-                        <ExternalLink size={14} className="text-white flex-shrink-0" />
-                        <span>Live Link</span>
-                      </motion.a>
+                        <ExternalLink size={13} />
+                      </a>
                     )}
-
-                    {/* GitHub Link Button with Official GitHub Logo */}
                     {project.githubUrl && (
-                      <motion.a
+                      <a
                         href={project.githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-[#0f172a] hover:bg-[#1e293b] border border-[var(--color-border)] hover:border-primary/50 transition-all duration-200 shadow-sm"
-                        aria-label={`${project.title} GitHub Link`}
-                      >
-                        <FaGithub size={15} className="text-white flex-shrink-0" />
-                        <span>GitHub Link</span>
-                      </motion.a>
-                    )}
-
-                    {/* Secondary Repo if available */}
-                    {project.docsUrl && (
-                      <motion.a
-                        href={project.docsUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-mono text-[var(--color-text-secondary)] hover:text-white bg-[#0f172a]/60 border border-[var(--color-border)] hover:border-primary/40 transition-colors"
-                        aria-label={`${project.title} Secondary Repo`}
+                        className="p-1.5 rounded-lg bg-white/5 hover:bg-white/15 border border-white/10 text-gray-300 hover:text-white transition-all hover:scale-105"
+                        title="GitHub Repository"
+                        aria-label="GitHub Repository"
                       >
                         <FaGithub size={13} />
-                        <span>{project.category === 'backend' ? 'Client' : 'Server'}</span>
-                      </motion.a>
+                      </a>
                     )}
                   </div>
                 </div>
@@ -479,6 +456,217 @@ export default function Projects() {
           </motion.a>
         </motion.div>
       </div>
+
+      {/* ======================================================== */}
+      {/* INTERACTIVE PROJECT DETAILS MODAL (Tap korle sob detail)   */}
+      {/* ======================================================== */}
+      <AnimatePresence>
+        {selectedProject && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
+            onClick={() => setSelectedProject(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.93, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.93, y: 20 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
+              className="relative w-full max-w-3xl max-h-[92vh] overflow-y-auto rounded-3xl bg-[#0a0f1d] border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.8)] text-left flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setSelectedProject(null)}
+                className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/70 hover:bg-white/20 text-white/80 hover:text-white flex items-center justify-center backdrop-blur-md border border-white/15 transition-all cursor-pointer shadow-lg"
+                title="Close (Esc)"
+                aria-label="Close modal"
+              >
+                <X size={18} />
+              </button>
+
+              {/* Large Image Banner */}
+              <div className="relative w-full h-56 sm:h-72 overflow-hidden bg-[#050811] flex-shrink-0">
+                <img
+                  src={getProjectImage(selectedProject.title, selectedProject.id, selectedProject.image)}
+                  alt={selectedProject.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1d] via-[#0a0f1d]/30 to-transparent" />
+
+                {/* Badges on Banner */}
+                <div className="absolute bottom-4 left-5 right-5 flex flex-wrap items-center justify-between gap-2 z-10">
+                  <div className="flex items-center gap-2">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-black/80 backdrop-blur-md text-[#06B6D4] border border-[#06B6D4]/50 shadow">
+                      {selectedProject.category === 'full-stack' ? 'Full Stack System' : selectedProject.category === 'frontend' ? 'Frontend Application' : 'Backend Gateway'}
+                    </span>
+                    <span className="px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-black/80 backdrop-blur-md text-gray-300 border border-white/15">
+                      {selectedProject.year || '2026'}
+                    </span>
+                  </div>
+
+                  {selectedProject.role && (
+                    <span className="text-xs font-medium text-gray-300 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+                      Role: <strong className="text-white">{selectedProject.role}</strong>
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Modal Body Content */}
+              <div className="p-6 sm:p-8 space-y-6 overflow-y-auto">
+                {/* Title & Subtitle */}
+                <div>
+                  <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight">
+                    {selectedProject.title}
+                  </h2>
+                  <p className="text-sm sm:text-base text-gray-300 mt-1 leading-relaxed">
+                    {selectedProject.subtitle}
+                  </p>
+                </div>
+
+                {/* Problem & Solution Callout Boxes */}
+                {(selectedProject.problem || selectedProject.solution) && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {selectedProject.problem && (
+                      <div className="p-4 rounded-2xl bg-rose-950/20 border border-rose-500/30 text-xs sm:text-sm">
+                        <div className="font-bold text-rose-400 mb-1 flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-rose-500" />
+                          <span>The Challenge:</span>
+                        </div>
+                        <p className="text-rose-200/90 leading-relaxed">
+                          {selectedProject.problem}
+                        </p>
+                      </div>
+                    )}
+
+                    {selectedProject.solution && (
+                      <div className="p-4 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 text-xs sm:text-sm">
+                        <div className="font-bold text-emerald-400 mb-1 flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                          <span>Architected Solution:</span>
+                        </div>
+                        <p className="text-emerald-200/90 leading-relaxed">
+                          {selectedProject.solution}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Demo Login Credentials Box (if applicable) */}
+                {(selectedProject as any).credentials && (
+                  <div className="p-4 rounded-2xl bg-[#06B6D4]/10 border border-[#06B6D4]/40 text-xs sm:text-sm">
+                    <div className="font-bold text-[#06B6D4] flex items-center gap-2 mb-2">
+                      <Key size={15} />
+                      <span>Verified Demo Login Credentials (Ready to Test):</span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-xs text-gray-300">
+                      <div className="p-2.5 rounded-xl bg-black/40 border border-white/5">
+                        <span className="text-gray-400 block text-[10px] uppercase font-sans">User Access</span>
+                        <span className="text-white font-bold select-all">{(selectedProject as any).credentials.user}</span>
+                      </div>
+                      <div className="p-2.5 rounded-xl bg-black/40 border border-white/5">
+                        <span className="text-gray-400 block text-[10px] uppercase font-sans">Admin / Reviewer</span>
+                        <span className="text-white font-bold select-all">{(selectedProject as any).credentials.admin}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Architectural Features Bullet List */}
+                {Array.isArray(selectedProject.features) && selectedProject.features.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-gray-300 mb-3 flex items-center gap-2">
+                      <Sparkles size={14} className="text-[#06B6D4]" />
+                      <span>Key Engineering Highlights:</span>
+                    </h3>
+                    <ul className="space-y-2">
+                      {selectedProject.features.map((feat, idx) => (
+                        <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-300 leading-relaxed">
+                          <CheckCircle2 size={16} className="text-[#10B981] mt-0.5 flex-shrink-0" />
+                          <span>{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Complete Tech Stack Badges */}
+                <div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2.5">
+                    Complete Technology Stack:
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {(selectedProject.techStack || []).map((tech) => (
+                      <span key={tech} className="tech-badge text-xs py-1 px-3">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Action Footer Bar (Live Link & GitHub buttons) */}
+              <div className="p-5 sm:p-6 bg-black/50 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 mt-auto">
+                <button
+                  onClick={() => setSelectedProject(null)}
+                  className="px-4 py-2.5 rounded-xl text-xs font-semibold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all cursor-pointer"
+                >
+                  Close Window
+                </button>
+
+                <div className="flex flex-wrap items-center gap-3">
+                  {/* GitHub Repo Button */}
+                  {selectedProject.githubUrl && (
+                    <a
+                      href={selectedProject.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#131c2e] hover:bg-[#1e2a42] border border-white/20 hover:border-[#06B6D4]/50 transition-all shadow-md"
+                    >
+                      <FaGithub size={16} />
+                      <span>GitHub Repository</span>
+                    </a>
+                  )}
+
+                  {/* Secondary Repo if available */}
+                  {selectedProject.docsUrl && (
+                    <a
+                      href={selectedProject.docsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
+                    >
+                      <FaGithub size={14} />
+                      <span>{selectedProject.category === 'backend' ? 'Client Repo' : 'Server Repo'}</span>
+                    </a>
+                  )}
+
+                  {/* Prominent Live Link Button */}
+                  {selectedProject.liveUrl && (
+                    <a
+                      href={selectedProject.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-extrabold text-white shadow-[0_0_25px_rgba(6,182,212,0.4)] hover:shadow-[0_0_35px_rgba(6,182,212,0.6)] transition-all hover:scale-105"
+                      style={{
+                        background: 'linear-gradient(135deg, #7C3AED 0%, #06B6D4 100%)',
+                      }}
+                    >
+                      <span>Open Live Application</span>
+                      <ExternalLink size={15} />
+                    </a>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

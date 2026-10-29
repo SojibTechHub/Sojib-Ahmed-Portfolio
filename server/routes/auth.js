@@ -35,7 +35,7 @@ router.post('/login', async (req, res) => {
     // Check bcrypt hash
     try {
       isValid = await bcrypt.compare(password, ADMIN_PASSWORD_HASH);
-    } catch {}
+    } catch { }
 
     // Check direct password match
     if (!isValid) {

@@ -31,14 +31,15 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick, onToggleZ
 
     if (zoomed) {
       return {
-        pos: { x: 0, y: 1.72, z: isMobile ? 1.45 : 1.25 },
+        // Safe zoom distance on mobile so ultrawide monitor fits portrait viewport without edge clipping
+        pos: { x: 0, y: 1.72, z: isMobile ? 2.35 : 1.25 },
         look: { x: 0, y: 1.72, z: -0.28 },
       };
     }
 
     if (isMobile) {
       // Center camera directly at eye-level with the monitor, pull back dynamically based on aspect
-      const zDist = aspect < 0.75 ? 3.9 : 3.4;
+      const zDist = aspect < 0.75 ? 4.5 : 3.8;
       return {
         pos: { x: 0, y: 1.70, z: zDist },
         look: { x: 0, y: 1.68, z: -0.28 },
@@ -460,83 +461,85 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick, onToggleZ
       // Window title
       sCtx.fillStyle = '#94A3B8';
       sCtx.font = 'bold 24px monospace';
-      sCtx.fillText('sojib@workstation:~ (production-main)', 180, 54);
+      sCtx.fillText('sojib@workstation:~ (production-main)', 140, 54);
 
       // Status Badge (Top Right)
       sCtx.fillStyle = 'rgba(16, 185, 129, 0.2)';
-      sCtx.fillRect(1680, 24, 310, 44);
+      sCtx.fillRect(1620, 24, 290, 44);
       sCtx.strokeStyle = 'rgba(16, 185, 129, 0.6)';
       sCtx.lineWidth = 2;
-      sCtx.strokeRect(1680, 24, 310, 44);
+      sCtx.strokeRect(1620, 24, 290, 44);
       sCtx.fillStyle = '#10B981';
       sCtx.font = 'bold 20px sans-serif';
-      sCtx.fillText('● AVAILABLE FOR HIRE', 1715, 52);
+      sCtx.fillText('● AVAILABLE FOR HIRE', 1650, 52);
 
-      // Main Branding Title (Huge, High Contrast, Shadowed for crystal clear legibility)
-      sCtx.shadowColor = 'rgba(6, 182, 212, 0.5)';
-      sCtx.shadowBlur = 12;
+      // Main Branding Title (Centered, Huge, High Contrast, Shadowed for crystal clear legibility on all devices)
+      sCtx.shadowColor = 'rgba(6, 182, 212, 0.6)';
+      sCtx.shadowBlur = 14;
       sCtx.fillStyle = '#FFFFFF';
-      sCtx.font = 'bold 68px sans-serif';
-      sCtx.fillText('SOJIB AHMED', 80, 168);
+      sCtx.font = 'bold 66px sans-serif';
+      sCtx.textAlign = 'center';
+      sCtx.fillText('SOJIB AHMED', 1024, 165);
       sCtx.shadowBlur = 0;
 
       sCtx.fillStyle = '#38BDF8';
-      sCtx.font = 'bold 32px sans-serif';
-      sCtx.fillText('FULL STACK DEVELOPER · PRODUCTION SYSTEMS', 80, 218);
+      sCtx.font = 'bold 30px sans-serif';
+      sCtx.fillText('FULL STACK DEVELOPER · PRODUCTION SYSTEMS ARCHITECT', 1024, 214);
+      sCtx.textAlign = 'left';
 
-      // Central Terminal Window
+      // Central Terminal Window (Safe 140px margins to prevent edge clipping on mobile)
       sCtx.fillStyle = '#080E1E';
       sCtx.strokeStyle = 'rgba(6, 182, 212, 0.7)';
       sCtx.lineWidth = 3;
       sCtx.beginPath();
-      sCtx.roundRect(80, 250, 1888, 410, 20);
+      sCtx.roundRect(140, 248, 1768, 412, 20);
       sCtx.fill();
       sCtx.stroke();
 
       // Terminal Header inside box
       sCtx.fillStyle = '#0C152E';
       sCtx.beginPath();
-      sCtx.roundRect(80, 250, 1888, 56, [20, 20, 0, 0]);
+      sCtx.roundRect(140, 248, 1768, 56, [20, 20, 0, 0]);
       sCtx.fill();
 
       sCtx.fillStyle = '#38BDF8';
       sCtx.font = 'bold 24px monospace';
-      sCtx.fillText('$ git status --production-verified', 120, 287);
+      sCtx.fillText('$ git status --production-verified', 180, 285);
 
       // Terminal Body Content (Crisp, High Contrast, Bold Fonts)
       sCtx.fillStyle = '#10B981';
       sCtx.font = 'bold 26px monospace';
-      sCtx.fillText('✔ 10 Flagship Production Repositories Live:', 120, 350);
+      sCtx.fillText('✔ 10 Flagship Production Repositories Live:', 180, 348);
 
       sCtx.fillStyle = '#FFFFFF';
-      sCtx.font = 'bold 24px monospace';
-      sCtx.fillText('● ShopX BD Enterprise   ● FoodFlow Logistics   ● SkillForge AI   ● StartupForge ATS', 150, 395);
-      sCtx.fillText('● TypeMarket Store      ● InvestProp AI        ● Issue Tracker   ● Pet Adoption API', 150, 440);
+      sCtx.font = 'bold 23px monospace';
+      sCtx.fillText('● ShopX BD Enterprise   ● FoodFlow Logistics   ● SkillForge AI   ● StartupForge ATS', 200, 393);
+      sCtx.fillText('● TypeMarket Store      ● InvestProp AI        ● Issue Tracker   ● Pet Adoption API', 200, 438);
 
       sCtx.fillStyle = '#C084FC';
       sCtx.font = 'bold 26px monospace';
-      sCtx.fillText('✔ 4 Verified Credentials & Industry Records:', 120, 505);
+      sCtx.fillText('✔ 4 Verified Credentials & Industry Records:', 180, 503);
 
       sCtx.fillStyle = '#FFFFFF';
-      sCtx.font = 'bold 24px monospace';
-      sCtx.fillText('★ FlyRank Appointment   ★ PH Recommendation   ★ PH Course Batch 13   ★ Datheon AI', 150, 550);
+      sCtx.font = 'bold 23px monospace';
+      sCtx.fillText('★ FlyRank Appointment   ★ PH Recommendation   ★ PH Course Batch 13   ★ Datheon AI', 200, 548);
 
       sCtx.fillStyle = '#38BDF8';
-      sCtx.font = 'bold 24px monospace';
-      sCtx.fillText('⚡ Tech Stack: React 19 • Next.js 16 • TypeScript • Node.js • Express • MongoDB Atlas', 120, 615);
+      sCtx.font = 'bold 23px monospace';
+      sCtx.fillText('⚡ Tech Stack: React 19 • Next.js 16 • TypeScript • Node.js • Express • MongoDB Atlas', 180, 613);
 
       // Bottom Clickable Interactive CTA Bar (Vibrant High-Contrast Button)
-      const ctaGrad = sCtx.createLinearGradient(80, 0, 1968, 0);
+      const ctaGrad = sCtx.createLinearGradient(140, 0, 1908, 0);
       ctaGrad.addColorStop(0, '#7C3AED');
       ctaGrad.addColorStop(0.5, '#06B6D4');
       ctaGrad.addColorStop(1, '#10B981');
       sCtx.fillStyle = ctaGrad;
       sCtx.beginPath();
-      sCtx.roundRect(80, 680, 1888, 115, 18);
+      sCtx.roundRect(140, 680, 1768, 115, 18);
       sCtx.fill();
 
       sCtx.fillStyle = '#FFFFFF';
-      sCtx.font = 'bold 40px sans-serif';
+      sCtx.font = 'bold 38px sans-serif';
       sCtx.textAlign = 'center';
       sCtx.fillText('👉 CLICK OR TAP THIS MONITOR TO OPEN SOJIB OS (VIRTUAL DESKTOP) 🚀', 1024, 752);
       sCtx.textAlign = 'left';

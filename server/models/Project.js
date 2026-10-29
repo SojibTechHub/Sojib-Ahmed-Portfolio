@@ -21,7 +21,7 @@ const projectSchema = new mongoose.Schema({
   docsUrl: { type: String, default: '' },
   color: { type: String, default: '#06B6D4' },
   accentColor: { type: String, default: '#7C3AED' },
-  image: { type: String, default: '/images/hero.jpg' },
+  image: { type: String, default: '/images/shopx.png' },
   credentials: {
     user: { type: String, default: '' },
     admin: { type: String, default: '' },

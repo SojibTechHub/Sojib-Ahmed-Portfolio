@@ -19,7 +19,7 @@ const ensureSeeded = async () => {
         techStack: p.techStack || [],
         liveUrl: p.liveUrl || '',
         githubUrl: p.githubUrl || '',
-        image: p.image || '/images/hero.jpg',
+        image: p.image && !p.image.includes('hero.jpg') ? p.image : '/images/shopx.png',
         order: index,
       }));
       await Project.insertMany(seeded);
@@ -82,7 +82,7 @@ router.post('/', authMiddleware, async (req, res) => {
       techStack: Array.isArray(techStack) ? techStack : (techStack ? techStack.split(',').map(s => s.trim()) : []),
       liveUrl: liveUrl || '',
       githubUrl: githubUrl || '',
-      image: image || '/images/hero.jpg',
+      image: image || '/images/shopx.png',
     });
 
     res.status(201).json({ success: true, data: newProject, message: 'Project created successfully' });
