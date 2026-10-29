@@ -8,23 +8,39 @@ interface Message {
 }
 
 const FALLBACK_RESPONSES: Record<string, string> = {
-  skills: "Sojib is proficient in full stack web development — React.js, Next.js, Node.js, Express.js, MongoDB, TypeScript, Tailwind CSS, JWT, Firebase, Socket.IO, and AI integration with Gemini/OpenAI APIs. He has 15+ technologies in his arsenal!",
-  projects: "Sojib has architected flagship production systems including:\n• **InvestProp AI** – AI-powered real estate platform\n• **Job Finder** – Full-stack job board\n• **Pet Adoption Platform** – Community website\n• **E-Commerce Platform** – With Stripe payments\n...and more! Check the Projects section for details.",
-  services: "Sojib offers:\n• **Full Stack Web Development**\n• **Frontend Development** (React/Next.js)\n• **Backend Development** (Node.js/Express)\n• **AI Integration** (Gemini/OpenAI)\n• **E-Commerce Development**\n• **Admin Dashboards**",
-  available: "Yes! Sojib is **currently available** for:\n✓ Full-time positions\n✓ Freelance projects\n✓ Remote work\n\nHe typically replies within 15 minutes. Reach him at sojibahmedshorif998@gmail.com or +880 1942791004.",
-  experience: "Sojib completed an **8-month intensive full-stack program** at Programming Hero (Jan–Aug 2026). His journey:\n• Feb 2026: HTML, CSS, JavaScript\n• Mar 2026: React.js\n• Apr 2026: Node.js & Express\n• May 2026: MongoDB\n• Jun–Aug 2026: Full Stack + AI Integration",
-  contact: "You can reach Sojib at:\n📧 **Email:** sojibahmedshorif998@gmail.com\n📱 **Phone:** +880 1942791004\n📍 **Location:** Rangpur, Bangladesh\n\nOr use the **Contact form** on this page!",
+  whatsapp: "You can chat with Sojib directly on **WhatsApp** at **+880 1942791004** (01942791004), or tap the WhatsApp button right above this chat window! He typically responds within minutes.",
+  skills: "Sojib is proficient in **Full Stack Web Development**:\n• **Frontend:** React 19, Next.js 16, TypeScript, Tailwind CSS, Framer Motion\n• **Backend:** Node.js, Express.js, REST APIs, Socket.IO, WebRTC\n• **Databases:** MongoDB Atlas, PostgreSQL, Upstash Redis\n• **Cloud & AI:** Docker, CI/CD, Google Gemini AI & OpenAI integration.",
+  projects: "Sojib has built **10 production & flagship projects**:\n1. **ShopX BD Enterprise** — Hyperlocal Multi-Vendor E-Commerce & DEX Logistics (React 19, Node.js, Redis, Leaflet)\n2. **FoodFlow** — AI-Powered Multi-Vendor Food Delivery (Next.js 15, Socket.IO, Gemini AI, Stripe)\n3. **SkillForge** — AI Learning, Code Sandbox & ATS Platform\n4. **StartupForge** — Startup Ecosystem & WebRTC Video Interviews\n...and 6 more! Check out the Projects section for full details and live demos.",
+  services: "Sojib offers production engineering services:\n• **Full Stack Web Applications** (MERN & Next.js)\n• **High-Performance APIs & Microservices** (Node.js/Express)\n• **Frontend UI/UX Systems** (React 19, Tailwind, 3D)\n• **AI Integrations & Automation** (Gemini AI, Chatbots)",
+  available: "Yes! Sojib is **actively available** for:\n✓ Full-time engineering roles\n✓ Remote opportunities worldwide\n✓ Freelance & contract projects\n\nReach him directly at **+880 1942791004** (WhatsApp/Call) or **sojibahmedshorif998@gmail.com**.",
+  experience: "Sojib is a dedicated Full Stack Developer with verified production appointments and achievements:\n• **FlyRank** — Full Stack Web Development Appointment Letter\n• **Programming Hero** — Letter of Recommendation (FoodFlow Project, Code Rangers vs 6)\n• **Programming Hero** — Complete Web Development Course (Batch 13)\n• **Datheon AI Systems** — Full Stack Systems Internship Record",
+  contact: "You can reach Sojib at:\n📱 **WhatsApp / Phone:** +880 1942791004 (01942791004)\n📧 **Email:** sojibahmedshorif998@gmail.com\n🐙 **GitHub:** https://github.com/SojibTechHub\n📍 **Location:** Rangpur, Bangladesh",
 };
 
 function getFallbackResponse(query: string): string {
   const q = query.toLowerCase();
-  if (q.includes('skill') || q.includes('tech') || q.includes('language') || q.includes('know')) return FALLBACK_RESPONSES.skills;
-  if (q.includes('project') || q.includes('work') || q.includes('portfolio') || q.includes('built')) return FALLBACK_RESPONSES.projects;
-  if (q.includes('service') || q.includes('offer') || q.includes('do for')) return FALLBACK_RESPONSES.services;
-  if (q.includes('available') || q.includes('hire') || q.includes('freelance') || q.includes('job')) return FALLBACK_RESPONSES.available;
-  if (q.includes('experience') || q.includes('background') || q.includes('learn') || q.includes('journey')) return FALLBACK_RESPONSES.experience;
-  if (q.includes('contact') || q.includes('reach') || q.includes('email') || q.includes('phone')) return FALLBACK_RESPONSES.contact;
-  return "I'm Sojib's AI assistant! I can tell you about his:\n• **Skills & Technologies**\n• **Projects**\n• **Services**\n• **Availability**\n• **Experience**\n• **Contact details**\n\nWhat would you like to know?";
+  if (q.includes('whatsapp') || q.includes('number') || q.includes('phone') || q.includes('call') || q.includes('হোয়াটসঅ্যাপ') || q.includes('নাম্বার')) {
+    return FALLBACK_RESPONSES.whatsapp;
+  }
+  if (q.includes('skill') || q.includes('tech') || q.includes('language') || q.includes('know') || q.includes('দক্ষতা') || q.includes('স্ট্যাক')) {
+    return FALLBACK_RESPONSES.skills;
+  }
+  if (q.includes('project') || q.includes('work') || q.includes('portfolio') || q.includes('built') || q.includes('প্রজেক্ট') || q.includes('কাজ')) {
+    return FALLBACK_RESPONSES.projects;
+  }
+  if (q.includes('service') || q.includes('offer') || q.includes('do for') || q.includes('সার্ভিস')) {
+    return FALLBACK_RESPONSES.services;
+  }
+  if (q.includes('available') || q.includes('hire') || q.includes('freelance') || q.includes('job') || q.includes('হায়ার')) {
+    return FALLBACK_RESPONSES.available;
+  }
+  if (q.includes('experience') || q.includes('background') || q.includes('certificate') || q.includes('recommendation') || q.includes('সার্টিফিকেট')) {
+    return FALLBACK_RESPONSES.experience;
+  }
+  if (q.includes('contact') || q.includes('reach') || q.includes('email') || q.includes('jogajog') || q.includes('যোগাযোগ')) {
+    return FALLBACK_RESPONSES.contact;
+  }
+  return "I'm Sojib AI! I can give you real and accurate answers about Sojib's **skills**, **projects**, **credentials**, **services**, or connect you directly with him on **WhatsApp (+880 1942791004)**. What would you like to know?";
 }
 
 export function useChatBot() {
@@ -33,20 +49,20 @@ export function useChatBot() {
     {
       id: '1',
       role: 'assistant',
-      content: "Hi! I'm **Sojib AI** 👋 I'm here to tell you about Sojib Ahmed — his skills, projects, services, and availability. What would you like to know?",
+      content: "Hi! I'm **Sojib AI** 👋 Ask me anything about Sojib Ahmed — his skills, projects, credentials, or hire him for your team! How can I help you today?",
       timestamp: new Date(),
     },
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const [messageCount, setMessageCount] = useState(0);
-  const maxMessages = 10;
+  const maxMessages = 25;
 
   const sendMessage = async (content: string) => {
     if (messageCount >= maxMessages) {
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
         role: 'assistant',
-        content: "You've reached the session limit (10 messages). Please refresh to start a new chat, or contact Sojib directly at sojibahmedshorif998@gmail.com.",
+        content: "You've reached the current session limit. You can message Sojib directly on **WhatsApp (+880 1942791004)** or refresh the page to start a new chat!",
         timestamp: new Date(),
       }]);
       return;
@@ -76,12 +92,12 @@ export function useChatBot() {
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.reply,
+        content: data.reply || getFallbackResponse(content),
         timestamp: new Date(),
       }]);
     } catch {
-      // Fallback to predefined responses
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Fallback to predefined intelligent responses
+      await new Promise(resolve => setTimeout(resolve, 600));
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
