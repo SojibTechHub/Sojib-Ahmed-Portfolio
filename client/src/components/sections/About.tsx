@@ -90,11 +90,11 @@ export default function About() {
             <div className="mt-8 space-y-3">
               {[
                 { icon: MapPin, label: 'Location', value: 'Rangpur, Bangladesh' },
-                { icon: Code2, label: 'Specialization', value: 'Full Stack Development' },
-                { icon: Rocket, label: 'Specialization', value: 'Full-Stack Engineering' },
-                { icon: CheckCircle2, label: 'Status', value: 'Open to Opportunities' },
-              ].map(({ icon: Icon, label, value }) => (
-                <div key={label} className="flex items-center gap-4 p-4 rounded-xl"
+                { icon: Code2, label: 'Core Specialization', value: 'Full Stack Development' },
+                { icon: Rocket, label: 'Architecture', value: 'Production MERN & Next.js Systems' },
+                { icon: CheckCircle2, label: 'Current Status', value: 'Available for Hire' },
+              ].map(({ icon: Icon, label, value }, idx) => (
+                <div key={`${label}-${idx}`} className="flex items-center gap-4 p-4 rounded-xl"
                   style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
                     style={{ background: 'rgba(124,58,237,0.1)' }}>

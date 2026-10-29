@@ -2469,6 +2469,7 @@ function AdminLoginForm({ onLoginSuccess }: { onLoginSuccess: (token: string) =>
 
     const cleanPassword = password.trim();
     const isMasterPassword = 
+      cleanPassword === 'Sojibboss@321946##' ||
       cleanPassword === 'Sojibboss@321646##' ||
       cleanPassword === 'sojib@admin2026' || 
       cleanPassword === 'Sojib@2026!Secure';

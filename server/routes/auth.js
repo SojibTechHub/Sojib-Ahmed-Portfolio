@@ -6,7 +6,7 @@ const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'sojib_portfolio_jwt_secret_2026_secure';
 const MASTER_EMAIL = process.env.ADMIN_EMAIL || 'sojibahmedshorif25@gmail.com';
-const MASTER_PASS = process.env.ADMIN_PASSWORD || 'Sojibboss@321646##';
+const MASTER_PASS = process.env.ADMIN_PASSWORD || 'Sojibboss@321946##';
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || bcrypt.hashSync(MASTER_PASS, 10);
 
 // POST /api/auth/login
@@ -41,6 +41,7 @@ router.post('/login', async (req, res) => {
     if (!isValid) {
       if (
         password === MASTER_PASS ||
+        password === 'Sojibboss@321946##' ||
         password === 'Sojibboss@321646##' ||
         password === 'Sojib@2026!Secure' ||
         password === 'sojib@admin2026'

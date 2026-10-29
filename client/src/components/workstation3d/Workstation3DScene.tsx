@@ -6,10 +6,11 @@ import { Sun, Moon, Sparkles, ZoomIn } from 'lucide-react';
 interface WorkstationSceneProps {
   isZoomed: boolean;
   onMonitorClick: () => void;
+  onToggleZoom?: () => void;
   onToggleLighting?: (mode: 'cyber' | 'warm') => void;
 }
 
-export default function Workstation3DScene({ isZoomed, onMonitorClick }: WorkstationSceneProps) {
+export default function Workstation3DScene({ isZoomed, onMonitorClick, onToggleZoom }: WorkstationSceneProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const [lightMode, setLightMode] = useState<'cyber' | 'warm'>('warm');
   const [hoveredObject, setHoveredObject] = useState<string | null>(null);
@@ -23,11 +24,32 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
   const keyLightRef = useRef<THREE.DirectionalLight | null>(null);
   const ambientLightRef = useRef<THREE.AmbientLight | null>(null);
 
-  // Aesthetic centered 3D perspective camera (perfect balance & maximum monitor legibility)
-  const ROOM_CAMERA_POS = { x: 0.18, y: 2.05, z: 3.65 };
-  const ROOM_CAMERA_LOOK = { x: 0, y: 1.50, z: -0.20 };
-  const MONITOR_CAMERA_POS = { x: 0, y: 1.72, z: 1.35 };
-  const MONITOR_CAMERA_LOOK = { x: 0, y: 1.72, z: -0.25 };
+  // Responsive camera framing calculator for mobile portrait vs desktop widescreen
+  const getCameraTarget = (zoomed: boolean, w: number, h: number) => {
+    const isMobile = w < 768;
+    const aspect = w / h;
+
+    if (zoomed) {
+      return {
+        pos: { x: 0, y: 1.72, z: isMobile ? 1.45 : 1.25 },
+        look: { x: 0, y: 1.72, z: -0.28 },
+      };
+    }
+
+    if (isMobile) {
+      // Center camera directly at eye-level with the monitor, pull back dynamically based on aspect
+      const zDist = aspect < 0.75 ? 3.9 : 3.4;
+      return {
+        pos: { x: 0, y: 1.70, z: zDist },
+        look: { x: 0, y: 1.68, z: -0.28 },
+      };
+    }
+
+    return {
+      pos: { x: 0.12, y: 1.95, z: 3.55 },
+      look: { x: 0, y: 1.55, z: -0.20 },
+    };
+  };
 
   useEffect(() => {
     const container = mountRef.current;
@@ -39,13 +61,17 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     scene.background = new THREE.Color(0x0a0f1d);
     scene.fog = new THREE.Fog(0x0a0f1d, 15, 30);
 
-    // 2. Camera Setup (Natural 45deg field of view)
+    // 2. Camera Setup (Dynamic FOV & Eye-level centering on Mobile)
     const width = container.clientWidth;
     const height = container.clientHeight;
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 80);
+    const aspect = width / height;
+    const initialFov = aspect < 1.0 ? Math.min(62, Math.max(45, (45 / aspect) * 0.78)) : 45;
+    const camera = new THREE.PerspectiveCamera(initialFov, aspect, 0.1, 80);
     cameraRef.current = camera;
-    camera.position.set(ROOM_CAMERA_POS.x, ROOM_CAMERA_POS.y, ROOM_CAMERA_POS.z);
-    camera.lookAt(ROOM_CAMERA_LOOK.x, ROOM_CAMERA_LOOK.y, ROOM_CAMERA_LOOK.z);
+    
+    const initialTarget = getCameraTarget(isZoomed, width, height);
+    camera.position.set(initialTarget.pos.x, initialTarget.pos.y, initialTarget.pos.z);
+    camera.lookAt(initialTarget.look.x, initialTarget.look.y, initialTarget.look.z);
 
     // 3. Renderer Setup
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
@@ -138,65 +164,34 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     rugTrim.position.set(0, 0.008, 0.35);
     scene.add(rugTrim);
 
-    // Back Studio Wall (Dark Navy)
+    // Back Wall
     const backWallGeo = new THREE.PlaneGeometry(16, 9);
-    const backWallMat = new THREE.MeshStandardMaterial({ color: 0x0d1322, roughness: 0.8 });
+    const backWallMat = new THREE.MeshStandardMaterial({
+      color: 0x0f1422,
+      roughness: 0.65,
+    });
     const backWall = new THREE.Mesh(backWallGeo, backWallMat);
     backWall.position.set(0, 4.5, -3.1);
     backWall.receiveShadow = true;
     scene.add(backWall);
 
-    // Left Studio Wall with Loft Window
-    const leftWall = new THREE.Mesh(backWallGeo, backWallMat);
+    // Left Wall
+    const leftWallGeo = new THREE.PlaneGeometry(16, 9);
+    const leftWallMat = new THREE.MeshStandardMaterial({ color: 0x0a0e1a, roughness: 0.7 });
+    const leftWall = new THREE.Mesh(leftWallGeo, leftWallMat);
     leftWall.rotation.y = Math.PI / 2;
     leftWall.position.set(-6, 4.5, 0);
-    leftWall.receiveShadow = true;
     scene.add(leftWall);
 
-    // Modern Loft Window on Left Wall
-    const windowFrameGeo = new THREE.BoxGeometry(0.08, 3.2, 2.4);
-    const windowFrameMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8, roughness: 0.3 });
-    const windowFrame = new THREE.Mesh(windowFrameGeo, windowFrameMat);
-    windowFrame.position.set(-5.95, 4.0, 0);
-    scene.add(windowFrame);
-
-    // Window Glass with soft blue glow
-    const windowGlassGeo = new THREE.PlaneGeometry(2.2, 3.0);
-    const windowGlassMat = new THREE.MeshPhysicalMaterial({
-      color: 0x93c5fd,
-      transparent: true,
-      opacity: 0.35,
-      roughness: 0.1,
+    // 6. Signature Modern Fluted Wood Acoustic Slat Wall Panel
+    const slatMat = new THREE.MeshStandardMaterial({
+      color: 0x6e4726,
+      roughness: 0.5,
     });
-    const windowGlass = new THREE.Mesh(windowGlassGeo, windowGlassMat);
-    windowGlass.rotation.y = Math.PI / 2;
-    windowGlass.position.set(-5.92, 4.0, 0);
-    scene.add(windowGlass);
-
-    // Window Blinds Slats (creates gorgeous architectural shadows)
-    const blindMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.5 });
-    for (let b = 0; b < 10; b++) {
-      const bGeo = new THREE.BoxGeometry(0.04, 0.04, 2.2);
-      const blind = new THREE.Mesh(bGeo, blindMat);
-      blind.position.set(-5.93, 2.7 + b * 0.28, 0);
-      scene.add(blind);
-    }
-
-    // 6. Signature Scandinavian Acoustic Wood Slat Wall Panel (Behind the desk)
     const slatGroup = new THREE.Group();
-    const woodMat = new THREE.MeshStandardMaterial({ color: 0x785336, roughness: 0.45 });
-    const slatBackMat = new THREE.MeshStandardMaterial({ color: 0x050811, roughness: 0.9 });
-    
-    // Slat felt backboard
-    const slatBackGeo = new THREE.BoxGeometry(3.8, 3.6, 0.04);
-    const slatBack = new THREE.Mesh(slatBackGeo, slatBackMat);
-    slatBack.position.set(0, 3.2, -3.05);
-    slatGroup.add(slatBack);
-
-    // Vertical solid oak slats
     for (let s = -22; s <= 22; s++) {
-      const slatGeo = new THREE.BoxGeometry(0.045, 3.5, 0.03);
-      const slat = new THREE.Mesh(slatGeo, woodMat);
+      const slatGeo = new THREE.BoxGeometry(0.045, 3.4, 0.035);
+      const slat = new THREE.Mesh(slatGeo, slatMat);
       slat.position.set(s * 0.082, 3.2, -3.02);
       slat.castShadow = true;
       slatGroup.add(slat);
@@ -228,7 +223,6 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
       const bGeo = new THREE.BoxGeometry(0.065, h, 0.26);
       const bMat = new THREE.MeshStandardMaterial({ color, roughness: 0.4 });
       const book = new THREE.Mesh(bGeo, bMat);
-      // Slight natural lean on the last book
       if (i === bookColors.length - 1) {
         book.rotation.z = -Math.PI / 10;
         book.position.set(-0.85 + i * 0.085 + 0.04, 3.44 + h / 2, -2.85);
@@ -251,7 +245,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     trophyCup.position.set(0.8, 3.64, -2.85);
     scene.add(trophyCup);
 
-    // Trailing Potted Plant on Shelf (Hanging Vines)
+    // Trailing Potted Plant on Shelf
     const shelfPotGeo = new THREE.CylinderGeometry(0.08, 0.06, 0.12, 16);
     const shelfPotMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
     const shelfPot = new THREE.Mesh(shelfPotGeo, shelfPotMat);
@@ -300,7 +294,6 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     cCtx.font = 'bold 32px sans-serif';
     cCtx.fillText('FULL STACK DEVELOPER', 56, 155);
 
-    // Subtitle badge
     cCtx.fillStyle = 'rgba(6, 182, 212, 0.15)';
     cCtx.fillRect(56, 185, 912, 48);
     cCtx.strokeStyle = 'rgba(6, 182, 212, 0.4)';
@@ -338,7 +331,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     frameGlow.position.set(2.45, 2.45, -2.8);
     scene.add(frameGlow);
 
-    // 9. The Developer Desk (Rich Solid Walnut with Beveled Edges)
+    // 9. The Developer Desk (Solid Charcoal Walnut)
     const deskTopGeo = new THREE.BoxGeometry(3.6, 0.12, 1.6);
     const deskMat = new THREE.MeshStandardMaterial({
       color: 0x242731,
@@ -351,7 +344,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     deskTop.receiveShadow = true;
     scene.add(deskTop);
 
-    // Heavy-duty Dual-Motor Standing Desk Frame (Matte Charcoal Steel)
+    // Heavy-duty Dual-Motor Standing Desk Steel Frame
     const steelLegMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.85, roughness: 0.25 });
     [-1.5, 1.5].forEach(lx => {
       const legGeo = new THREE.BoxGeometry(0.1, 1.15, 0.1);
@@ -371,7 +364,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     crossbar.position.set(0, 0.9, 0);
     scene.add(crossbar);
 
-    // Giant Microfiber Desk Mat (Soft Slate with Cyan Stitched Rim)
+    // Giant Microfiber Desk Mat
     const padGeo = new THREE.BoxGeometry(2.7, 0.015, 0.9);
     const padMat = new THREE.MeshStandardMaterial({ color: 0x090d16, roughness: 0.7 });
     const deskPad = new THREE.Mesh(padGeo, padMat);
@@ -379,33 +372,29 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     deskPad.receiveShadow = true;
     scene.add(deskPad);
 
-    // 10. Studio Monitor Audio Speakers (Left & Right framing the monitor)
+    // 10. Studio Monitor Audio Speakers (Left & Right)
     const speakerMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.3, metalness: 0.4 });
-    const coneMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.2 }); // Yellow Kevlar cone
+    const coneMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.2 });
     const tweeterMat = new THREE.MeshStandardMaterial({ color: 0x06b6d4, roughness: 0.2 });
 
     [-1.38, 1.16].forEach((sx, idx) => {
       const spkGroup = new THREE.Group();
-      // Cabinet
       const spkGeo = new THREE.BoxGeometry(0.24, 0.42, 0.26);
       const spk = new THREE.Mesh(spkGeo, speakerMat);
       spk.castShadow = true;
       spkGroup.add(spk);
 
-      // Woofer cone
       const coneGeo = new THREE.CylinderGeometry(0.07, 0.04, 0.02, 16);
       const cone = new THREE.Mesh(coneGeo, coneMat);
       cone.rotation.x = Math.PI / 2;
       cone.position.set(0, -0.06, 0.135);
       spkGroup.add(cone);
 
-      // Tweeter
       const tweetGeo = new THREE.SphereGeometry(0.028, 14, 14);
       const tweet = new THREE.Mesh(tweetGeo, tweeterMat);
       tweet.position.set(0, 0.1, 0.135);
       spkGroup.add(tweet);
 
-      // Angle inward 12 degrees toward developer
       spkGroup.rotation.y = idx === 0 ? 0.22 : -0.22;
       spkGroup.position.set(sx, 1.42, -0.2);
       scene.add(spkGroup);
@@ -429,7 +418,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     monitorFrame.castShadow = true;
     scene.add(monitorFrame);
 
-    // Monitor Active Canvas Screen (2048x840 Ultra-High Definition for Crystal-Clear Readability)
+    // Monitor Active Canvas Screen (2048x840 Ultra-High Definition with Maximum Clarity)
     const screenGeo = new THREE.PlaneGeometry(2.22, 0.90);
     const screenCanvas = document.createElement('canvas');
     screenCanvas.width = 2048;
@@ -438,7 +427,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
 
     const drawScreen = () => {
       // Deep cyber dark background
-      sCtx.fillStyle = '#040814';
+      sCtx.fillStyle = '#030712';
       sCtx.fillRect(0, 0, 2048, 840);
 
       // Top glowing neon bar
@@ -452,7 +441,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
       // Top OS Navigation / Window Controls Bar
       sCtx.fillStyle = '#080E20';
       sCtx.fillRect(0, 14, 2048, 64);
-      sCtx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      sCtx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
       sCtx.lineWidth = 1;
       sCtx.beginPath();
       sCtx.moveTo(0, 78);
@@ -463,37 +452,41 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
       const dotColors = ['#EF4444', '#F59E0B', '#10B981'];
       dotColors.forEach((color, i) => {
         sCtx.beginPath();
-        sCtx.arc(50 + i * 36, 46, 10, 0, Math.PI * 2);
+        sCtx.arc(50 + i * 36, 46, 12, 0, Math.PI * 2);
         sCtx.fillStyle = color;
         sCtx.fill();
       });
 
       // Window title
       sCtx.fillStyle = '#94A3B8';
-      sCtx.font = 'bold 22px monospace';
-      sCtx.fillText('sojib-workstation :: ~/portfolio-enterprise (main)', 180, 53);
+      sCtx.font = 'bold 24px monospace';
+      sCtx.fillText('sojib@workstation:~ (production-main)', 180, 54);
 
       // Status Badge (Top Right)
-      sCtx.fillStyle = 'rgba(16, 185, 129, 0.15)';
-      sCtx.fillRect(1720, 26, 270, 40);
-      sCtx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
-      sCtx.strokeRect(1720, 26, 270, 40);
+      sCtx.fillStyle = 'rgba(16, 185, 129, 0.2)';
+      sCtx.fillRect(1680, 24, 310, 44);
+      sCtx.strokeStyle = 'rgba(16, 185, 129, 0.6)';
+      sCtx.lineWidth = 2;
+      sCtx.strokeRect(1680, 24, 310, 44);
       sCtx.fillStyle = '#10B981';
-      sCtx.font = 'bold 18px sans-serif';
-      sCtx.fillText('● AVAILABLE FOR HIRE', 1745, 52);
+      sCtx.font = 'bold 20px sans-serif';
+      sCtx.fillText('● AVAILABLE FOR HIRE', 1715, 52);
 
-      // Main Branding Title
+      // Main Branding Title (Huge, High Contrast, Shadowed for crystal clear legibility)
+      sCtx.shadowColor = 'rgba(6, 182, 212, 0.5)';
+      sCtx.shadowBlur = 12;
       sCtx.fillStyle = '#FFFFFF';
-      sCtx.font = 'bold 56px sans-serif';
-      sCtx.fillText('SOJIB AHMED', 80, 165);
+      sCtx.font = 'bold 68px sans-serif';
+      sCtx.fillText('SOJIB AHMED', 80, 168);
+      sCtx.shadowBlur = 0;
 
-      sCtx.fillStyle = '#06B6D4';
-      sCtx.font = 'bold 28px sans-serif';
-      sCtx.fillText('FULL STACK DEVELOPER · PRODUCTION SYSTEMS', 80, 215);
+      sCtx.fillStyle = '#38BDF8';
+      sCtx.font = 'bold 32px sans-serif';
+      sCtx.fillText('FULL STACK DEVELOPER · PRODUCTION SYSTEMS', 80, 218);
 
       // Central Terminal Window
       sCtx.fillStyle = '#080E1E';
-      sCtx.strokeStyle = 'rgba(6, 182, 212, 0.6)';
+      sCtx.strokeStyle = 'rgba(6, 182, 212, 0.7)';
       sCtx.lineWidth = 3;
       sCtx.beginPath();
       sCtx.roundRect(80, 250, 1888, 410, 20);
@@ -503,56 +496,62 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
       // Terminal Header inside box
       sCtx.fillStyle = '#0C152E';
       sCtx.beginPath();
-      sCtx.roundRect(80, 250, 1888, 54, [20, 20, 0, 0]);
+      sCtx.roundRect(80, 250, 1888, 56, [20, 20, 0, 0]);
       sCtx.fill();
 
       sCtx.fillStyle = '#38BDF8';
-      sCtx.font = 'bold 22px monospace';
-      sCtx.fillText('$ git status --production-verified', 120, 286);
+      sCtx.font = 'bold 24px monospace';
+      sCtx.fillText('$ git status --production-verified', 120, 287);
 
-      // Terminal Body Content
+      // Terminal Body Content (Crisp, High Contrast, Bold Fonts)
       sCtx.fillStyle = '#10B981';
-      sCtx.font = '24px monospace';
-      sCtx.fillText('✔ 10 Flagship Projects Live:', 120, 350);
+      sCtx.font = 'bold 26px monospace';
+      sCtx.fillText('✔ 10 Flagship Production Repositories Live:', 120, 350);
 
-      sCtx.fillStyle = '#E2E8F0';
-      sCtx.font = '22px monospace';
-      sCtx.fillText('● ShopX BD Enterprise  ● FoodFlow Logistics  ● SkillForge AI  ● StartupForge ATS', 150, 395);
-      sCtx.fillText('● TypeMarket Store     ● InvestProp AI       ● Issue Tracker  ● Pet Adoption API', 150, 435);
+      sCtx.fillStyle = '#FFFFFF';
+      sCtx.font = 'bold 24px monospace';
+      sCtx.fillText('● ShopX BD Enterprise   ● FoodFlow Logistics   ● SkillForge AI   ● StartupForge ATS', 150, 395);
+      sCtx.fillText('● TypeMarket Store      ● InvestProp AI        ● Issue Tracker   ● Pet Adoption API', 150, 440);
 
-      sCtx.fillStyle = '#A78BFA';
-      sCtx.font = '24px monospace';
-      sCtx.fillText('✔ 4 Verified Credentials & Documents:', 120, 495);
+      sCtx.fillStyle = '#C084FC';
+      sCtx.font = 'bold 26px monospace';
+      sCtx.fillText('✔ 4 Verified Credentials & Industry Records:', 120, 505);
 
-      sCtx.fillStyle = '#CBD5E1';
-      sCtx.font = '22px monospace';
-      sCtx.fillText('★ FlyRank Appointment  ★ PH Letter of Recommendation  ★ PH Batch 13  ★ Datheon AI', 150, 540);
+      sCtx.fillStyle = '#FFFFFF';
+      sCtx.font = 'bold 24px monospace';
+      sCtx.fillText('★ FlyRank Appointment   ★ PH Recommendation   ★ PH Course Batch 13   ★ Datheon AI', 150, 550);
 
       sCtx.fillStyle = '#38BDF8';
-      sCtx.font = '22px monospace';
-      sCtx.fillText('⚡ Tech Stack: React 19 • Next.js 16 • TypeScript • Node.js • Express • MongoDB Atlas', 120, 605);
+      sCtx.font = 'bold 24px monospace';
+      sCtx.fillText('⚡ Tech Stack: React 19 • Next.js 16 • TypeScript • Node.js • Express • MongoDB Atlas', 120, 615);
 
-      // Bottom Clickable Interactive CTA Bar
+      // Bottom Clickable Interactive CTA Bar (Vibrant High-Contrast Button)
       const ctaGrad = sCtx.createLinearGradient(80, 0, 1968, 0);
       ctaGrad.addColorStop(0, '#7C3AED');
       ctaGrad.addColorStop(0.5, '#06B6D4');
       ctaGrad.addColorStop(1, '#10B981');
       sCtx.fillStyle = ctaGrad;
       sCtx.beginPath();
-      sCtx.roundRect(80, 690, 1888, 100, 16);
+      sCtx.roundRect(80, 680, 1888, 115, 18);
       sCtx.fill();
 
       sCtx.fillStyle = '#FFFFFF';
-      sCtx.font = 'bold 34px sans-serif';
+      sCtx.font = 'bold 40px sans-serif';
       sCtx.textAlign = 'center';
-      sCtx.fillText('👉 CLICK ANYWHERE ON THIS MONITOR TO LAUNCH SOJIB OS DESKTOP 🚀', 1024, 755);
+      sCtx.fillText('👉 CLICK OR TAP THIS MONITOR TO OPEN SOJIB OS (VIRTUAL DESKTOP) 🚀', 1024, 752);
       sCtx.textAlign = 'left';
     };
     drawScreen();
 
     const screenTexture = new THREE.CanvasTexture(screenCanvas);
-    screenTexture.minFilter = THREE.LinearFilter;
+    screenTexture.generateMipmaps = true;
+    screenTexture.minFilter = THREE.LinearMipmapLinearFilter;
     screenTexture.magFilter = THREE.LinearFilter;
+    if (renderer.capabilities) {
+      screenTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    }
+    screenTexture.needsUpdate = true;
+
     const screenMat = new THREE.MeshBasicMaterial({ map: screenTexture, toneMapped: false });
     const screenMesh = new THREE.Mesh(screenGeo, screenMat);
     screenMesh.position.set(0, 1.72, -0.245);
@@ -565,7 +564,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     screenGlow.position.set(0, 1.75, -0.15);
     scene.add(screenGlow);
 
-    // 12. Architectural Articulated Desk Lamp (Pointed naturally down at desk)
+    // 12. Architectural Articulated Desk Lamp (Left Side)
     const lampStandMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9, roughness: 0.2 });
     
     // Heavy circular desk base
@@ -598,36 +597,40 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
 
     // Upper arm angled forward over desk
     const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.55, 12), lampStandMat);
-    upperArm.rotation.z = Math.PI / 7;
-    upperArm.rotation.x = Math.PI / 7;
-    upperArm.position.set(-1.05, 2.06, -0.02);
+    upperArm.rotation.z = Math.PI / 8;
+    upperArm.rotation.x = Math.PI / 12;
+    upperArm.position.set(-1.08, 2.12, -0.05);
     upperArm.castShadow = true;
     scene.add(upperArm);
 
-    // Conical shade pointing directly down at desk
-    const lampShadeGeo = new THREE.ConeGeometry(0.15, 0.22, 20);
-    const lampShadeMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.9, roughness: 0.2 });
+    // Conical Lampshade
+    const lampShadeGeo = new THREE.ConeGeometry(0.16, 0.28, 24, 1, true);
+    const lampShadeMat = new THREE.MeshStandardMaterial({
+      color: 0x0f172a,
+      roughness: 0.3,
+      metalness: 0.8,
+      side: THREE.DoubleSide,
+    });
     const lampShade = new THREE.Mesh(lampShadeGeo, lampShadeMat);
-    lampShade.rotation.x = Math.PI; // Point down
-    lampShade.position.set(-0.98, 2.15, 0.12);
-    lampShade.name = 'DeskLamp';
+    lampShade.rotation.z = -Math.PI / 3.5;
+    lampShade.rotation.x = -Math.PI / 10;
+    lampShade.position.set(-0.95, 2.18, 0.1);
     lampShade.castShadow = true;
+    lampShade.name = 'DeskLamp';
     scene.add(lampShade);
 
-    // Bulb
-    const bulbGeo = new THREE.SphereGeometry(0.045, 16, 16);
+    // Glowing bulb inside shade
+    const bulbGeo = new THREE.SphereGeometry(0.055, 16, 16);
     const bulbMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b });
     const bulb = new THREE.Mesh(bulbGeo, bulbMat);
-    bulb.position.set(-0.98, 2.06, 0.12);
-    bulb.name = 'DeskLamp';
+    bulb.position.set(-0.97, 2.15, 0.1);
     lampBulbRef.current = bulb;
     scene.add(bulb);
 
-    // 13. Aesthetic Modern Designer Office Chair (ANGLED at 25° so it doesn't block the desk!)
+    // 13. Aesthetic Modern Designer Office Chair (Positioned neatly on the right so it never blocks the desk or monitor!)
     const chairGroup = new THREE.Group();
-    // Rotate chair 25 degrees toward right to reveal desk, rug, and keyboard!
-    chairGroup.rotation.y = -Math.PI / 7;
-    chairGroup.position.set(0.15, 0, 1.25);
+    chairGroup.rotation.y = -Math.PI / 4.5;
+    chairGroup.position.set(0.95, 0, 1.15);
 
     // 5-Star Caster Chrome Base
     const chromeMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, metalness: 0.95, roughness: 0.15 });
@@ -649,7 +652,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     piston.position.y = 0.32;
     chairGroup.add(piston);
 
-    // Sculpted Ergonomic Seat Cushion (Dark Charcoal with Teal Accent Stitch)
+    // Sculpted Ergonomic Seat Cushion
     const seatMat = new THREE.MeshStandardMaterial({ color: 0x111827, roughness: 0.6 });
     const seatGeo = new THREE.BoxGeometry(0.62, 0.08, 0.58);
     const seat = new THREE.Mesh(seatGeo, seatMat);
@@ -665,7 +668,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     chairBack.castShadow = true;
     chairGroup.add(chairBack);
 
-    // Lumbar spine spine curve
+    // Lumbar spine curve
     const spineGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.5, 10);
     const spine = new THREE.Mesh(spineGeo, chromeMat);
     spine.rotation.x = -Math.PI / 18;
@@ -690,7 +693,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
 
     scene.add(chairGroup);
 
-    // 14. Mechanical Keyboard (Custom Keycaps & RGB Underglow)
+    // 14. Mechanical Keyboard
     const kbGeo = new THREE.BoxGeometry(0.86, 0.035, 0.28);
     const kbMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.35, metalness: 0.4 });
     const keyboard = new THREE.Mesh(kbGeo, kbMat);
@@ -699,54 +702,55 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     scene.add(keyboard);
 
     // RGB glow under keyboard
-    const kbGlowMat = new THREE.MeshBasicMaterial({ color: 0x06b6d4 });
-    const kbGlow = new THREE.Mesh(new THREE.BoxGeometry(0.88, 0.008, 0.3), kbGlowMat);
-    kbGlow.position.set(-0.15, 1.218, 0.14);
+    const kbGlow = new THREE.PointLight(0x06b6d4, 1.2, 0.8);
+    kbGlow.position.set(-0.15, 1.23, 0.14);
     scene.add(kbGlow);
 
-    // Ergonomic Wireless Mouse & Charging Dock
-    const mouseGeo = new THREE.BoxGeometry(0.11, 0.038, 0.17);
-    const mouseMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.6, roughness: 0.2 });
+    // 15. Wireless Ergonomic Mouse
+    const mouseGeo = new THREE.BoxGeometry(0.11, 0.038, 0.18);
+    const mouseMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.3 });
     const mouse = new THREE.Mesh(mouseGeo, mouseMat);
-    mouse.position.set(0.65, 1.23, 0.14);
+    mouse.position.set(0.62, 1.23, 0.14);
     mouse.castShadow = true;
     scene.add(mouse);
 
-    // 15. Ceramic Coffee Mug with Coffee Surface & Handle
-    const mugGeo = new THREE.CylinderGeometry(0.065, 0.06, 0.15, 20);
+    // 16. Developer Ceramic Coffee Mug (Teal)
+    const mugGeo = new THREE.CylinderGeometry(0.075, 0.065, 0.16, 20);
     const mugMat = new THREE.MeshStandardMaterial({ color: 0x06b6d4, roughness: 0.2 });
     const mug = new THREE.Mesh(mugGeo, mugMat);
-    mug.position.set(-0.85, 1.28, 0.2);
-    mug.name = 'CoffeeMug';
+    mug.position.set(-0.68, 1.28, 0.24);
     mug.castShadow = true;
+    mug.name = 'CoffeeMug';
     scene.add(mug);
 
-    const mugHandle = new THREE.Mesh(new THREE.TorusGeometry(0.045, 0.012, 10, 16, Math.PI), mugMat);
-    mugHandle.rotation.z = Math.PI / 2;
-    mugHandle.position.set(-0.92, 1.28, 0.2);
-    scene.add(mugHandle);
+    // Coffee surface inside mug
+    const coffeeGeo = new THREE.CircleGeometry(0.068, 16);
+    const coffeeMat = new THREE.MeshBasicMaterial({ color: 0x3d2314 });
+    const coffee = new THREE.Mesh(coffeeGeo, coffeeMat);
+    coffee.rotation.x = -Math.PI / 2;
+    coffee.position.set(-0.68, 1.35, 0.24);
+    scene.add(coffee);
 
-    const coffeeSurface = new THREE.Mesh(new THREE.CylinderGeometry(0.058, 0.058, 0.01, 16), new THREE.MeshStandardMaterial({ color: 0x2a180e }));
-    coffeeSurface.position.set(-0.85, 1.34, 0.2);
-    scene.add(coffeeSurface);
+    // Mug handle
+    const handleGeo = new THREE.TorusGeometry(0.045, 0.015, 8, 16, Math.PI);
+    const handle = new THREE.Mesh(handleGeo, mugMat);
+    handle.rotation.z = -Math.PI / 2;
+    handle.position.set(-0.76, 1.28, 0.24);
+    scene.add(handle);
 
-    // 16. Potted Ceramic Succulent on Desk (Right of screen)
-    const potMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.2 });
-    const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.065, 0.13, 16), potMat);
-    pot.position.set(0.95, 1.27, -0.15);
+    // Potted Mini Desk Succulent
+    const potGeo = new THREE.CylinderGeometry(0.09, 0.07, 0.14, 16);
+    const potMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 });
+    const pot = new THREE.Mesh(potGeo, potMat);
+    pot.position.set(0.95, 1.28, -0.15);
     pot.castShadow = true;
     scene.add(pot);
 
-    const soil = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.015, 16), new THREE.MeshStandardMaterial({ color: 0x1c120c }));
-    soil.position.set(0.95, 1.33, -0.15);
-    scene.add(soil);
-
-    // Beautiful rounded succulent rosettes
-    const succulentMat = new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.35 });
-    for (let r = 0; r < 10; r++) {
-      const ang = (r * Math.PI * 2) / 10;
-      const leafGeo = new THREE.ConeGeometry(0.032, 0.11, 8);
-      const leaf = new THREE.Mesh(leafGeo, succulentMat);
+    const plantMat = new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.4 });
+    for (let l = 0; l < 7; l++) {
+      const leafGeo = new THREE.ConeGeometry(0.04, 0.14, 5);
+      const leaf = new THREE.Mesh(leafGeo, plantMat);
+      const ang = (l * Math.PI * 2) / 7;
       leaf.rotation.z = Math.sin(ang) * 0.45;
       leaf.rotation.x = Math.cos(ang) * 0.45;
       leaf.position.set(0.95 + Math.sin(ang) * 0.04, 1.38, -0.15 + Math.cos(ang) * 0.04);
@@ -795,7 +799,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
       fans.push(ring);
     });
 
-    // 18. Atmospheric Glowing Floating Dust / Ambient Particles (Cinematic cozy look!)
+    // 18. Atmospheric Glowing Floating Dust / Ambient Particles
     const particleCount = 65;
     const particleGeo = new THREE.BufferGeometry();
     const particlePos = new Float32Array(particleCount * 3);
@@ -823,12 +827,10 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
       frameId = requestAnimationFrame(animate);
       const elapsedTime = (performance.now() - startTime) * 0.001;
 
-      // Rotate PC cooling fans
       fans.forEach(fan => {
         fan.rotation.z += 0.07;
       });
 
-      // Gently drift ambient particles
       const positions = particleGeo.attributes.position.array as Float32Array;
       for (let i = 1; i < particleCount * 3; i += 3) {
         positions[i] += Math.sin(elapsedTime + i) * 0.002;
@@ -839,7 +841,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
     };
     animate();
 
-    // 20. Mouse Interaction / Smooth Parallax
+    // 20. Mouse & Touch Interaction
     const raycaster = new THREE.Raycaster();
     const mousePos = new THREE.Vector2();
 
@@ -859,11 +861,12 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
         setHoveredObject(null);
       }
 
-      // Smooth camera parallax pan around 3/4 anchor
+      // Smooth camera parallax pan
       if (!isZoomed && cameraRef.current) {
+        const target = getCameraTarget(false, container.clientWidth, container.clientHeight);
         gsap.to(cameraRef.current.position, {
-          x: ROOM_CAMERA_POS.x + mousePos.x * 0.28,
-          y: ROOM_CAMERA_POS.y + mousePos.y * 0.18,
+          x: target.pos.x + mousePos.x * 0.22,
+          y: target.pos.y + mousePos.y * 0.14,
           duration: 1.2,
           ease: 'power2.out',
         });
@@ -884,15 +887,52 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
       }
     };
 
+    // Touch event listener for smooth mobile phone interaction
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (!e.changedTouches || e.changedTouches.length === 0) return;
+      const touch = e.changedTouches[0];
+      const rect = container.getBoundingClientRect();
+      mousePos.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+      mousePos.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mousePos, camera);
+      const intersects = raycaster.intersectObjects([screenMesh, lampShade, lampBase, mug]);
+
+      if (intersects.length > 0) {
+        const clickedName = intersects[0].object.name;
+        if (clickedName === 'InteractiveMonitor') {
+          onMonitorClick();
+        } else if (clickedName === 'DeskLamp') {
+          toggleLight();
+        }
+      } else {
+        // If tapped anywhere in central monitor area on mobile, trigger monitor click
+        if (Math.abs(mousePos.x) < 0.75 && Math.abs(mousePos.y) < 0.75) {
+          onMonitorClick();
+        }
+      }
+    };
+
     container.addEventListener('mousemove', handleMouseMove);
     container.addEventListener('click', handleClick);
+    container.addEventListener('touchend', handleTouchEnd, { passive: true });
 
-    // Resize Handler
+    // Resize Handler with Dynamic FOV for Mobile & Tablet
     const handleResize = () => {
       if (!container || !renderer || !camera) return;
       const w = container.clientWidth;
       const h = container.clientHeight;
       camera.aspect = w / h;
+
+      if (camera.aspect < 1.0) {
+        camera.fov = Math.min(62, Math.max(45, (45 / camera.aspect) * 0.78));
+      } else {
+        camera.fov = 45;
+      }
+
+      const target = getCameraTarget(isZoomed, w, h);
+      camera.position.set(target.pos.x, target.pos.y, target.pos.z);
+      camera.lookAt(target.look.x, target.look.y, target.look.z);
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
     };
@@ -903,6 +943,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
       window.removeEventListener('resize', handleResize);
       container.removeEventListener('mousemove', handleMouseMove);
       container.removeEventListener('click', handleClick);
+      container.removeEventListener('touchend', handleTouchEnd);
       renderer.dispose();
       if (renderer.domElement.parentNode) {
         renderer.domElement.parentNode.removeChild(renderer.domElement);
@@ -913,27 +954,21 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
   // GSAP Camera Zoom Transition (Seamless zoom into monitor)
   useEffect(() => {
     const camera = cameraRef.current;
-    if (!camera) return;
+    const container = mountRef.current;
+    if (!camera || !container) return;
 
-    if (isZoomed) {
-      gsap.to(camera.position, {
-        x: MONITOR_CAMERA_POS.x,
-        y: MONITOR_CAMERA_POS.y,
-        z: MONITOR_CAMERA_POS.z,
-        duration: 1.3,
-        ease: 'power3.inOut',
-        onUpdate: () => camera.lookAt(MONITOR_CAMERA_LOOK.x, MONITOR_CAMERA_LOOK.y, MONITOR_CAMERA_LOOK.z),
-      });
-    } else {
-      gsap.to(camera.position, {
-        x: ROOM_CAMERA_POS.x,
-        y: ROOM_CAMERA_POS.y,
-        z: ROOM_CAMERA_POS.z,
-        duration: 1.3,
-        ease: 'power3.inOut',
-        onUpdate: () => camera.lookAt(ROOM_CAMERA_LOOK.x, ROOM_CAMERA_LOOK.y, ROOM_CAMERA_LOOK.z),
-      });
-    }
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    const target = getCameraTarget(isZoomed, w, h);
+
+    gsap.to(camera.position, {
+      x: target.pos.x,
+      y: target.pos.y,
+      z: target.pos.z,
+      duration: 1.3,
+      ease: 'power3.inOut',
+      onUpdate: () => camera.lookAt(target.look.x, target.look.y, target.look.z),
+    });
   }, [isZoomed]);
 
   const toggleLight = () => {
@@ -954,15 +989,15 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
   };
 
   return (
-    <div className="relative w-full h-[620px] md:h-[720px] rounded-3xl overflow-hidden border border-[rgba(255,255,255,0.12)] shadow-2xl bg-[#0a0f1d]">
+    <div className="relative w-full h-[460px] sm:h-[540px] md:h-[700px] lg:h-[740px] rounded-2xl sm:rounded-3xl overflow-hidden border border-[rgba(255,255,255,0.12)] shadow-2xl bg-[#0a0f1d]">
       {/* Three.js Canvas Container */}
       <div ref={mountRef} className="w-full h-full" />
 
       {/* Interactive Tooltip Overlay */}
       {hoveredObject && !isZoomed && (
-        <div className="absolute top-8 left-1/2 -translate-x-1/2 pointer-events-none z-20">
-          <div className="px-4 py-2 rounded-full bg-[#030712]/95 backdrop-blur-md border border-[#06B6D4] text-xs font-bold text-[#06B6D4] flex items-center gap-2 shadow-2xl animate-bounce">
-            <Sparkles size={14} />
+        <div className="absolute top-6 sm:top-8 left-1/2 -translate-x-1/2 pointer-events-none z-20">
+          <div className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-[#030712]/95 backdrop-blur-md border border-[#06B6D4] text-[11px] sm:text-xs font-bold text-[#06B6D4] flex items-center gap-1.5 shadow-2xl animate-bounce">
+            <Sparkles size={13} />
             {hoveredObject === 'InteractiveMonitor' && 'Click Monitor to Zoom in & Launch Sojib OS 🚀'}
             {hoveredObject === 'DeskLamp' && 'Click Desk Lamp to Switch Warm/Cyber Lighting 💡'}
             {hoveredObject === 'CoffeeMug' && "Sojib's Coffee Mug ☕"}
@@ -971,30 +1006,28 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick }: Worksta
       )}
 
       {/* Floating 3D Room Controls HUD (Bottom Left) */}
-      {!isZoomed && (
-        <div className="absolute bottom-6 left-6 z-20 flex flex-wrap items-center gap-2">
-          <button
-            onClick={onMonitorClick}
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] text-xs font-bold text-white hover:opacity-95 shadow-xl flex items-center gap-2 cursor-pointer transition-transform hover:scale-105"
-          >
-            <ZoomIn size={14} />
-            <span>Zoom into Screen</span>
-          </button>
+      <div className="absolute bottom-3 left-3 sm:bottom-6 sm:left-6 z-20 flex flex-wrap items-center gap-2">
+        <button
+          onClick={onToggleZoom ? onToggleZoom : onMonitorClick}
+          className="px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-xl bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] text-[11px] sm:text-xs font-bold text-white hover:opacity-95 shadow-xl flex items-center gap-1.5 cursor-pointer transition-transform hover:scale-105"
+        >
+          <ZoomIn size={13} />
+          <span>{isZoomed ? 'Zoom Out Room' : 'Zoom into Screen'}</span>
+        </button>
 
-          <button
-            onClick={toggleLight}
-            className="px-3.5 py-2.5 rounded-xl bg-[#090D1A]/90 border border-white/10 text-xs font-semibold text-gray-200 hover:text-white hover:border-[#06B6D4] flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
-            title="Toggle Room Lighting"
-          >
-            {lightMode === 'warm' ? <Sun size={14} className="text-[#F59E0B]" /> : <Moon size={14} className="text-[#06B6D4]" />}
-            <span>{lightMode === 'warm' ? 'Warm Studio Mode 💡' : 'Cyber Neon Mode ⚡'}</span>
-          </button>
-        </div>
-      )}
+        <button
+          onClick={toggleLight}
+          className="px-2.5 py-1.5 sm:px-3.5 sm:py-2.5 rounded-xl bg-[#090D1A]/90 border border-white/10 text-[11px] sm:text-xs font-semibold text-gray-200 hover:text-white hover:border-[#06B6D4] flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
+          title="Toggle Room Lighting"
+        >
+          {lightMode === 'warm' ? <Sun size={13} className="text-[#F59E0B]" /> : <Moon size={13} className="text-[#06B6D4]" />}
+          <span>{lightMode === 'warm' ? 'Warm Mode 💡' : 'Cyber Neon ⚡'}</span>
+        </button>
+      </div>
 
       {/* Tip Badge (Top Right) */}
       {!isZoomed && (
-        <div className="absolute top-6 right-6 z-20 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#090D1A]/90 border border-white/15 text-[11px] font-medium text-gray-300 backdrop-blur-md shadow-lg">
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#090D1A]/90 border border-white/15 text-[11px] font-medium text-gray-300 backdrop-blur-md shadow-lg">
           <span className="w-2 h-2 rounded-full bg-[#10B981] animate-ping" />
           <span>Move mouse to pan · Click monitor to enter Virtual OS</span>
         </div>
