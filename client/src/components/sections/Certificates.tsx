@@ -10,18 +10,28 @@ type SectorTab = 'all' | 'internship' | 'ph-certification';
 
 export default function Certificates() {
   const [certList, setCertList] = useState<Certificate[]>(defaultCertificates);
-  const [activeTab, setActiveTab] = useState<SectorTab>('all');
+  const [activeTab, setActiveTab] = useState<SectorTab>('internship');
   const [previewCert, setPreviewCert] = useState<Certificate | null>(null);
   const [ref, inView] = useInView({ threshold: 0.08, triggerOnce: true });
 
   useEffect(() => {
-    // 1. Try local storage cache
+    // 1. Try local storage cache with category sanitization
     try {
       const saved = localStorage.getItem('sojib_custom_certificates');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setCertList(parsed);
+          const sanitized = parsed.map((c: any) => {
+            const id = ((c.id || c.customId || c._id || '') + '').toLowerCase();
+            const issuer = ((c.issuer || '') + '').toLowerCase();
+            if (id.includes('flyrank') || id.includes('datheon') || issuer.includes('flyrank') || issuer.includes('datheon')) {
+              c.category = 'internship';
+            } else {
+              c.category = 'ph-certification';
+            }
+            return c;
+          });
+          setCertList(sanitized);
         }
       }
     } catch {}
@@ -32,8 +42,18 @@ export default function Certificates() {
         const res = await fetch(`${API_BASE}/certificates`);
         const data = await res.json();
         if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-          setCertList(data.data);
-          localStorage.setItem('sojib_custom_certificates', JSON.stringify(data.data));
+          const sanitized = data.data.map((c: any) => {
+            const id = ((c.id || c.customId || c._id || '') + '').toLowerCase();
+            const issuer = ((c.issuer || '') + '').toLowerCase();
+            if (id.includes('flyrank') || id.includes('datheon') || issuer.includes('flyrank') || issuer.includes('datheon')) {
+              c.category = 'internship';
+            } else {
+              c.category = 'ph-certification';
+            }
+            return c;
+          });
+          setCertList(sanitized);
+          localStorage.setItem('sojib_custom_certificates', JSON.stringify(sanitized));
         }
       } catch {}
     };
@@ -41,20 +61,37 @@ export default function Certificates() {
     fetchLiveCertificates();
   }, []);
 
-  // Filter into the 2 distinct sectors requested by user:
-  // Sector 1: Industry Internships & Appointments (FlyRank & Datheon AI)
-  // Sector 2: Programming Hero Credentials (LOR & Batch 13 Certificate)
-  const internshipCerts = certList.filter(c => {
-    const id = c.id || (c as any).customId || (c as any)._id || '';
-    const issuer = (c.issuer || '').toLowerCase();
-    return c.category === 'internship' || id.includes('flyrank') || id.includes('datheon') || issuer.includes('flyrank') || issuer.includes('datheon');
-  });
+  // Strict classification to guarantee 0 crossover between sectors:
+  // Sector 1 (Intern): FlyRank and Datheon AI Systems
+  const isInternship = (c: Certificate) => {
+    const id = ((c.id || (c as any).customId || (c as any)._id || '') + '').toLowerCase();
+    const issuer = ((c.issuer || '') + '').toLowerCase();
+    const title = ((c.title || '') + '').toLowerCase();
+    return id.includes('flyrank') || 
+           id.includes('datheon') || 
+           issuer.includes('flyrank') || 
+           issuer.includes('datheon') || 
+           title.includes('flyrank') || 
+           title.includes('datheon');
+  };
 
-  const phCerts = certList.filter(c => {
-    const id = c.id || (c as any).customId || (c as any)._id || '';
-    const issuer = (c.issuer || '').toLowerCase();
-    return c.category === 'ph-certification' || id.includes('ph-') || issuer.includes('programming hero') || issuer.includes('hero');
-  });
+  // Sector 2 (PH): Programming Hero Recommendation Letter & Batch 13 Course Certificate
+  const isPH = (c: Certificate) => {
+    // Explicitly exclude any internship / industry records from PH sector
+    if (isInternship(c)) return false;
+    const id = ((c.id || (c as any).customId || (c as any)._id || '') + '').toLowerCase();
+    const issuer = ((c.issuer || '') + '').toLowerCase();
+    const title = ((c.title || '') + '').toLowerCase();
+    return id.includes('ph-') || 
+           id.includes('recommendation') ||
+           issuer.includes('hero') || 
+           title.includes('programming hero') || 
+           title.includes('recommendation') || 
+           title.includes('complete web');
+  };
+
+  const internshipCerts = certList.filter(isInternship);
+  const phCerts = certList.filter(isPH);
 
   return (
     <section id="certificates" className="section-padding relative overflow-hidden bg-[#030712]" ref={ref}>
@@ -92,56 +129,53 @@ export default function Certificates() {
             </a>
           </div>
 
-          {/* Interactive Sector Filter Tabs */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mt-7">
-            <button
-              onClick={() => setActiveTab('all')}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer shadow-sm ${
-                activeTab === 'all'
-                  ? 'bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] text-white shadow-lg shadow-[#06B6D4]/20 scale-105'
-                  : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 border border-white/10'
-              }`}
-            >
-              <span>All Credentials</span>
-              <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-white/20 font-mono">
-                {certList.length}
-              </span>
-            </button>
-
+          {/* Two Distinct Sector Switcher Tabs */}
+          <div className="flex flex-wrap items-center justify-center gap-3 mt-7">
             <button
               onClick={() => setActiveTab('internship')}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer shadow-sm ${
+              className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer shadow-sm ${
                 activeTab === 'internship'
-                  ? 'bg-gradient-to-r from-[#06B6D4] to-[#10B981] text-white shadow-lg shadow-[#10B981]/20 scale-105'
+                  ? 'bg-gradient-to-r from-[#06B6D4] to-[#10B981] text-white shadow-lg shadow-[#10B981]/25 scale-105 border border-emerald-400/40'
                   : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 border border-white/10'
               }`}
             >
-              <Briefcase size={14} className="text-[#06B6D4]" />
-              <span>Industry Internships & Offers</span>
-              <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-white/20 font-mono">
+              <Briefcase size={16} className={activeTab === 'internship' ? 'text-white' : 'text-[#06B6D4]'} />
+              <span>💼 Industry Internships & Offers</span>
+              <span className="px-2 py-0.5 rounded-full text-[11px] bg-black/30 font-mono font-bold text-white">
                 {internshipCerts.length}
               </span>
             </button>
 
             <button
               onClick={() => setActiveTab('ph-certification')}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer shadow-sm ${
+              className={`px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 cursor-pointer shadow-sm ${
                 activeTab === 'ph-certification'
-                  ? 'bg-gradient-to-r from-[#EC4899] to-[#7C3AED] text-white shadow-lg shadow-[#EC4899]/20 scale-105'
+                  ? 'bg-gradient-to-r from-[#EC4899] to-[#7C3AED] text-white shadow-lg shadow-[#EC4899]/25 scale-105 border border-pink-400/40'
                   : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 border border-white/10'
               }`}
             >
-              <GraduationCap size={15} className="text-[#EC4899]" />
-              <span>Programming Hero Credentials</span>
-              <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-white/20 font-mono">
+              <GraduationCap size={17} className={activeTab === 'ph-certification' ? 'text-white' : 'text-[#EC4899]'} />
+              <span>🎓 Programming Hero Credentials</span>
+              <span className="px-2 py-0.5 rounded-full text-[11px] bg-black/30 font-mono font-bold text-white">
                 {phCerts.length}
               </span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('all')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                activeTab === 'all'
+                  ? 'bg-white/15 text-white border border-white/30'
+                  : 'text-gray-500 hover:text-gray-300'
+              }`}
+            >
+              <span>Show Both Sectors (4)</span>
             </button>
           </div>
         </motion.div>
 
         {/* ======================================================== */}
-        {/* SECTOR 1: INDUSTRY INTERNSHIPS & APPOINTMENTS */}
+        {/* SECTOR 1: INDUSTRY INTERNSHIPS & APPOINTMENTS (ONLY 2) */}
         {/* ======================================================== */}
         {(activeTab === 'all' || activeTab === 'internship') && (
           <div className="mb-14">
@@ -155,7 +189,7 @@ export default function Certificates() {
                     Sector 1: Industry Appointments & Engineering Internships
                   </h3>
                   <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30">
-                    2 Industry Records
+                    {internshipCerts.length} Industry Records
                   </span>
                 </div>
                 <p className="text-xs text-gray-400 mt-0.5">
@@ -171,7 +205,7 @@ export default function Certificates() {
         )}
 
         {/* ======================================================== */}
-        {/* SECTOR 2: PROGRAMMING HERO CERTIFICATIONS & RECOMMENDATIONS */}
+        {/* SECTOR 2: PROGRAMMING HERO CERTIFICATIONS (ONLY 2) */}
         {/* ======================================================== */}
         {(activeTab === 'all' || activeTab === 'ph-certification') && (
           <div>
@@ -185,7 +219,7 @@ export default function Certificates() {
                     Sector 2: Programming Hero Certifications & Official Recommendations
                   </h3>
                   <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#EC4899]/15 text-[#EC4899] border border-[#EC4899]/30">
-                    2 PH Records
+                    {phCerts.length} PH Records
                   </span>
                 </div>
                 <p className="text-xs text-gray-400 mt-0.5">

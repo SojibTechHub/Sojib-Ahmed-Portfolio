@@ -44,7 +44,20 @@ router.get('/', async (req, res) => {
     if (!data || data.length === 0) {
       data = defaultCertificates;
     }
-    res.json({ success: true, data, total: data.length });
+    const normalized = data.map(c => {
+      const obj = c.toObject ? c.toObject() : { ...c };
+      const id = (obj.customId || obj.id || '').toLowerCase();
+      const issuer = (obj.issuer || '').toLowerCase();
+      if (id.includes('flyrank') || id.includes('datheon') || issuer.includes('flyrank') || issuer.includes('datheon')) {
+        obj.category = 'internship';
+        obj.sectorLabel = 'Industry Appointment & Offer Letter';
+      } else {
+        obj.category = 'ph-certification';
+        obj.sectorLabel = 'Programming Hero Credential';
+      }
+      return obj;
+    });
+    res.json({ success: true, data: normalized, total: normalized.length });
   } catch (err) {
     res.json({ success: true, data: defaultCertificates, total: defaultCertificates.length });
   }

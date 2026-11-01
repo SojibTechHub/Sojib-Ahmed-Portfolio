@@ -277,12 +277,27 @@ export default function AdminPage() {
 
   // 2. CERTIFICATES FETCH
   const fetchCertificates = async () => {
+    const sanitizeCerts = (list: any[]) => {
+      return list.map(c => {
+        const id = ((c.id || c.customId || c._id || '') + '').toLowerCase();
+        const issuer = ((c.issuer || '') + '').toLowerCase();
+        if (id.includes('flyrank') || id.includes('datheon') || issuer.includes('flyrank') || issuer.includes('datheon')) {
+          c.category = 'internship';
+        } else {
+          c.category = 'ph-certification';
+        }
+        return c;
+      });
+    };
+
     try {
       const saved = localStorage.getItem('sojib_custom_certificates');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setCertificates(parsed);
+          const sanitized = sanitizeCerts(parsed);
+          setCertificates(sanitized);
+          localStorage.setItem('sojib_custom_certificates', JSON.stringify(sanitized));
         }
       } else {
         setCertificates(defaultCertificates as any);
@@ -295,8 +310,9 @@ export default function AdminPage() {
       const res = await fetch(`${API_BASE}/certificates`);
       const data = await res.json();
       if (data.success && Array.isArray(data.data) && data.data.length > 0) {
-        setCertificates(data.data);
-        localStorage.setItem('sojib_custom_certificates', JSON.stringify(data.data));
+        const sanitized = sanitizeCerts(data.data);
+        setCertificates(sanitized);
+        localStorage.setItem('sojib_custom_certificates', JSON.stringify(sanitized));
       }
     } catch (err) {
       console.log('Using local/default certificates:', err);
@@ -879,8 +895,8 @@ export default function AdminPage() {
 
   // Filtered Certificates List (Filtered by Search and Sector)
   const filteredCertificates = certificates.filter((c) => {
-    const isIntern = c.category === 'internship' || (c.id && (c.id.includes('flyrank') || c.id.includes('datheon'))) || (c.issuer && (c.issuer.toLowerCase().includes('flyrank') || c.issuer.toLowerCase().includes('datheon')));
-    const isPH = c.category === 'ph-certification' || (c.id && c.id.includes('ph-')) || (c.issuer && c.issuer.toLowerCase().includes('hero'));
+    const isIntern = (c.id && (c.id.includes('flyrank') || c.id.includes('datheon'))) || (c.issuer && (c.issuer.toLowerCase().includes('flyrank') || c.issuer.toLowerCase().includes('datheon'))) || c.category === 'internship';
+    const isPH = !isIntern && ((c.id && c.id.includes('ph-')) || (c.issuer && c.issuer.toLowerCase().includes('hero')) || c.category === 'ph-certification');
     const matchSector = certSector === 'all' || 
       (certSector === 'internship' && isIntern) || 
       (certSector === 'ph-certification' && isPH);
@@ -1395,7 +1411,7 @@ export default function AdminPage() {
                   >
                     <span>🎓 Programming Hero Credentials</span>
                     <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-white/20 font-mono">
-                      {certificates.filter(c => c.category === 'ph-certification' || c.issuer?.toLowerCase().includes('hero')).length}
+                      {certificates.filter(c => !c.issuer?.toLowerCase().includes('flyrank') && !c.issuer?.toLowerCase().includes('datheon') && (c.category === 'ph-certification' || c.issuer?.toLowerCase().includes('hero'))).length}
                     </span>
                   </button>
                 </div>
