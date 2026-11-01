@@ -135,7 +135,7 @@ export default function Navbar() {
 
               {/* View Resume CTA */}
               <motion.a
-                href="https://drive.google.com/file/d/1I_yOQ82k2LqFINo5RuR_tXVEzzwAZkGx/view?usp=sharing"
+                href="https://drive.google.com/file/d/1mItKHLO9tA9iHIrT9Ho5qIeAHUC04m_m/view?usp=sharing"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.04, boxShadow: '0 0 24px rgba(6,182,212,0.45)' }}
@@ -251,7 +251,7 @@ export default function Navbar() {
               </a>
 
               <a
-                href="https://drive.google.com/file/d/1I_yOQ82k2LqFINo5RuR_tXVEzzwAZkGx/view?usp=sharing"
+                href="https://drive.google.com/file/d/1mItKHLO9tA9iHIrT9Ho5qIeAHUC04m_m/view?usp=sharing"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary w-full justify-center text-xs py-2.5"

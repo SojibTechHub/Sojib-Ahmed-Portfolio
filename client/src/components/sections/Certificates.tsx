@@ -118,7 +118,7 @@ export default function Certificates() {
 
           <div className="mt-4 flex items-center justify-center">
             <a
-              href="https://drive.google.com/file/d/1I_yOQ82k2LqFINo5RuR_tXVEzzwAZkGx/view?usp=sharing"
+              href="https://drive.google.com/file/d/1mItKHLO9tA9iHIrT9Ho5qIeAHUC04m_m/view?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-[#06B6D4]/40 text-[#22D3EE] hover:text-white text-xs font-bold transition-all shadow-md cursor-pointer hover:scale-105"
