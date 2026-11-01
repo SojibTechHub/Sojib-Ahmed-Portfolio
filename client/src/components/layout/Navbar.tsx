@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Download, FileText, ArrowUpRight, Shield } from 'lucide-react';
+import { Menu, X, Download, FileText, ArrowUpRight, Shield, Mail } from 'lucide-react';
+import { FaGithub, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa6';
 
 const navLinks = [
   { label: 'Home', href: '#home' },
@@ -8,6 +9,7 @@ const navLinks = [
   { label: 'Skills', href: '#skills' },
   { label: 'Projects', href: '#projects' },
   { label: 'Services', href: '#services' },
+  { label: 'Certificates', href: '#certificates' },
   { label: 'Contact', href: '#contact' },
 ];
 
@@ -51,7 +53,7 @@ export default function Navbar() {
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className={`fixed top-0 left-0 right-0 z-[9000] transition-all duration-300 ${
           scrolled
-            ? 'bg-[#030712]/90 backdrop-blur-xl border-b border-[rgba(255,255,255,0.08)] shadow-xl shadow-black/40 py-2.5'
+            ? 'bg-[#030712]/92 backdrop-blur-xl border-b border-[rgba(255,255,255,0.08)] shadow-xl shadow-black/40 py-2.5'
             : 'bg-transparent py-4'
         }`}
       >
@@ -95,7 +97,7 @@ export default function Navbar() {
                   <button
                     key={link.label}
                     onClick={() => handleNavClick(link.href)}
-                    className={`relative px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 cursor-pointer ${
+                    className={`relative px-3 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 cursor-pointer ${
                       isActive
                         ? 'text-white'
                         : 'text-[#9CA3AF] hover:text-white hover:bg-white/5'
@@ -115,8 +117,53 @@ export default function Navbar() {
               })}
             </div>
 
-            {/* Right: Actions */}
-            <div className="flex items-center gap-2.5">
+            {/* Right: Quick Socials & Actions */}
+            <div className="flex items-center gap-2">
+              {/* Quick Social Buttons (Desktop) */}
+              <div className="hidden xl:flex items-center gap-1.5 mr-1">
+                <a
+                  href="https://github.com/SojibTechHub"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-8 h-8 rounded-xl bg-[#0B1120] hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-sm"
+                  title="GitHub: https://github.com/SojibTechHub"
+                  aria-label="GitHub Profile"
+                >
+                  <FaGithub size={14} />
+                </a>
+
+                <a
+                  href="https://www.linkedin.com/in/sojib-ahmed-shorif"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-8 h-8 rounded-xl bg-[#0B1120] hover:bg-[#0077B5]/20 border border-white/10 hover:border-[#0077B5]/40 text-gray-300 hover:text-[#38BDF8] flex items-center justify-center transition-all cursor-pointer shadow-sm"
+                  title="LinkedIn: sojib-ahmed-shorif"
+                  aria-label="LinkedIn Profile"
+                >
+                  <FaLinkedinIn size={13} />
+                </a>
+
+                <a
+                  href="mailto:sojibahmedshorif998@gmail.com"
+                  className="w-8 h-8 rounded-xl bg-[#0B1120] hover:bg-purple-500/20 border border-white/10 hover:border-purple-500/40 text-gray-300 hover:text-purple-300 flex items-center justify-center transition-all cursor-pointer shadow-sm"
+                  title="Email: sojibahmedshorif998@gmail.com"
+                  aria-label="Send Email"
+                >
+                  <Mail size={13} />
+                </a>
+
+                <a
+                  href="https://wa.me/8801942791004"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-8 h-8 rounded-xl bg-[#0B1120] hover:bg-emerald-500/20 border border-white/10 hover:border-emerald-500/40 text-gray-300 hover:text-emerald-400 flex items-center justify-center transition-all cursor-pointer shadow-sm"
+                  title="WhatsApp: +880 1942791004"
+                  aria-label="Chat on WhatsApp"
+                >
+                  <FaWhatsapp size={13} />
+                </a>
+              </div>
+
               {/* Admin CMS Direct Access */}
               <motion.a
                 href="/admin"
@@ -136,13 +183,13 @@ export default function Navbar() {
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.04, boxShadow: '0 0 24px rgba(6,182,212,0.45)' }}
                 whileTap={{ scale: 0.96 }}
-                className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white shadow-lg transition-all cursor-pointer"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white shadow-lg transition-all cursor-pointer"
                 style={{ background: 'linear-gradient(135deg, #7C3AED 0%, #06B6D4 100%)' }}
                 aria-label="View Resume"
               >
-                <FileText size={14} />
-                <span>View Resume</span>
-                <ArrowUpRight size={13} className="opacity-80" />
+                <FileText size={13} />
+                <span>Resume</span>
+                <ArrowUpRight size={12} className="opacity-80" />
               </motion.a>
 
               {/* Mobile Menu Toggle Button */}
@@ -169,9 +216,9 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-16 z-[8999] bg-[#030712]/98 backdrop-blur-2xl border-b border-[rgba(255,255,255,0.1)] p-6 shadow-2xl lg:hidden flex flex-col gap-3"
+            className="fixed inset-x-0 top-16 z-[8999] bg-[#030712]/98 backdrop-blur-2xl border-b border-[rgba(255,255,255,0.1)] p-5 shadow-2xl lg:hidden flex flex-col gap-3 max-h-[calc(100dvh-64px)] overflow-y-auto"
           >
-            <nav className="flex flex-col gap-2" role="list">
+            <nav className="flex flex-col gap-1.5" role="list">
               {navLinks.map((link) => {
                 const id = link.href.replace('#', '');
                 const isActive = activeSection === id;
@@ -179,7 +226,7 @@ export default function Navbar() {
                   <button
                     key={link.label}
                     onClick={() => handleNavClick(link.href)}
-                    className={`flex items-center justify-between p-3 rounded-xl text-sm font-semibold transition-all text-left ${
+                    className={`flex items-center justify-between p-2.5 rounded-xl text-sm font-semibold transition-all text-left ${
                       isActive
                         ? 'bg-[#7C3AED]/15 text-[#06B6D4] border border-[#7C3AED]/30'
                         : 'text-[#9CA3AF] hover:bg-white/5 hover:text-white'
@@ -192,7 +239,51 @@ export default function Navbar() {
               })}
             </nav>
 
-            <div className="pt-3 border-t border-[rgba(255,255,255,0.08)] flex flex-col gap-2">
+            {/* Social Channels Quick Row on Mobile */}
+            <div className="pt-3 border-t border-white/10">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-2">Connect Directly:</div>
+              <div className="grid grid-cols-4 gap-2">
+                <a
+                  href="https://github.com/SojibTechHub"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 hover:text-white flex flex-col items-center gap-1 text-[10px] font-semibold"
+                >
+                  <FaGithub size={16} />
+                  <span>GitHub</span>
+                </a>
+
+                <a
+                  href="https://www.linkedin.com/in/sojib-ahmed-shorif"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-2.5 rounded-xl bg-[#0077B5]/15 hover:bg-[#0077B5]/25 border border-[#0077B5]/30 text-[#38BDF8] flex flex-col items-center gap-1 text-[10px] font-semibold"
+                >
+                  <FaLinkedinIn size={15} />
+                  <span>LinkedIn</span>
+                </a>
+
+                <a
+                  href="mailto:sojibahmedshorif998@gmail.com"
+                  className="p-2.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 flex flex-col items-center gap-1 text-[10px] font-semibold"
+                >
+                  <Mail size={15} />
+                  <span>Email</span>
+                </a>
+
+                <a
+                  href="https://wa.me/8801942791004"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-2.5 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/30 text-[#4ADE80] flex flex-col items-center gap-1 text-[10px] font-semibold"
+                >
+                  <FaWhatsapp size={15} />
+                  <span>WhatsApp</span>
+                </a>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-[rgba(255,255,255,0.08)] flex flex-col gap-2">
               <a
                 href="/admin"
                 className="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-bold hover:bg-purple-500/25 transition-all cursor-pointer"
@@ -206,10 +297,10 @@ export default function Navbar() {
                 href="https://drive.google.com/file/d/1I_yOQ82k2LqFINo5RuR_tXVEzzwAZkGx/view?usp=sharing"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-primary w-full justify-center text-xs py-3"
+                className="btn-primary w-full justify-center text-xs py-2.5"
                 onClick={() => setMenuOpen(false)}
               >
-                <Download size={15} />
+                <Download size={14} />
                 <span>Download Resume</span>
               </a>
             </div>

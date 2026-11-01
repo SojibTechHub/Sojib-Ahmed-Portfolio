@@ -15,8 +15,9 @@ const certificateSchema = new mongoose.Schema({
   color: { type: String, default: '#06B6D4' },
   image: { type: String, default: '/certificates/certificate.png' },
   featured: { type: Boolean, default: true },
+  category: { type: String, default: 'ph-certification' }, // 'internship' | 'ph-certification'
+  sectorLabel: { type: String, default: '' },
   order: { type: Number, default: 0 },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Certificate', certificateSchema);
-

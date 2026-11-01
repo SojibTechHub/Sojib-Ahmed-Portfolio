@@ -24,6 +24,8 @@ const ensureSeeded = async () => {
         color: c.color || '#06B6D4',
         image: c.image || '/certificates/certificate.png',
         featured: c.featured ?? true,
+        category: c.category || 'ph-certification',
+        sectorLabel: c.sectorLabel || '',
         order: index + 1,
       }));
       await Certificate.insertMany(seeded);
@@ -80,6 +82,8 @@ router.post('/', authMiddleware, async (req, res) => {
       color,
       image,
       featured,
+      category,
+      sectorLabel,
       order,
     } = req.body;
 
@@ -102,6 +106,8 @@ router.post('/', authMiddleware, async (req, res) => {
       color: color || '#06B6D4',
       image: image || '/certificates/certificate.png',
       featured: featured !== undefined ? !!featured : true,
+      category: category || (issuer.toLowerCase().includes('hero') ? 'ph-certification' : 'internship'),
+      sectorLabel: sectorLabel || '',
       order: order !== undefined ? Number(order) : 99,
     });
 
@@ -128,6 +134,8 @@ router.put('/:id', authMiddleware, async (req, res) => {
       color,
       image,
       featured,
+      category,
+      sectorLabel,
       order,
     } = req.body;
 
@@ -138,27 +146,28 @@ router.put('/:id', authMiddleware, async (req, res) => {
       ...(badgeText !== undefined && { badgeText }),
       ...(date !== undefined && { date }),
       ...(duration !== undefined && { duration }),
-      ...(skills !== undefined && {
-        skills: Array.isArray(skills) ? skills : skills.split(',').map(s => s.trim()),
-      }),
+      ...(skills !== undefined && { skills: Array.isArray(skills) ? skills : skills.split(',').map(s => s.trim()) }),
       ...(verifyUrl !== undefined && { verifyUrl }),
       ...(downloadUrl !== undefined && { downloadUrl }),
       ...(credentialId !== undefined && { credentialId }),
       ...(color !== undefined && { color }),
       ...(image !== undefined && { image }),
-      ...(featured !== undefined && { featured: !!featured }),
+      ...(featured !== undefined && { featured }),
+      ...(category !== undefined && { category }),
+      ...(sectorLabel !== undefined && { sectorLabel }),
       ...(order !== undefined && { order: Number(order) }),
     };
 
     let cert = null;
-    try {
+    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
       cert = await Certificate.findByIdAndUpdate(req.params.id, updateData, { new: true, runValidators: true });
-    } catch {
+    }
+    if (!cert) {
       cert = await Certificate.findOneAndUpdate({ customId: req.params.id }, updateData, { new: true });
     }
 
     if (!cert) {
-      return res.status(404).json({ success: false, message: 'Certificate not found' });
+      return res.status(404).json({ success: false, message: 'Certificate not found to update' });
     }
 
     res.json({ success: true, data: cert, message: 'Certificate updated successfully' });
@@ -170,14 +179,15 @@ router.put('/:id', authMiddleware, async (req, res) => {
 // DELETE /api/certificates/:id (Admin only)
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
-    let cert = null;
-    try {
-      cert = await Certificate.findByIdAndDelete(req.params.id);
-    } catch {
-      cert = await Certificate.findOneAndDelete({ customId: req.params.id });
+    let deleted = null;
+    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      deleted = await Certificate.findByIdAndDelete(req.params.id);
+    }
+    if (!deleted) {
+      deleted = await Certificate.findOneAndDelete({ customId: req.params.id });
     }
 
-    if (!cert) {
+    if (!deleted) {
       return res.status(404).json({ success: false, message: 'Certificate not found' });
     }
 
@@ -187,5 +197,34 @@ router.delete('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-module.exports = router;
+// POST /api/certificates/reset (Admin only - reset to defaults)
+router.post('/reset', authMiddleware, async (req, res) => {
+  try {
+    await Certificate.deleteMany({});
+    const seeded = defaultCertificates.map((c, index) => ({
+      customId: c.id,
+      title: c.title,
+      issuer: c.issuer,
+      issuerLogo: c.issuerLogo || '📜',
+      badgeText: c.badgeText,
+      date: c.date,
+      duration: c.duration,
+      skills: c.skills || [],
+      verifyUrl: c.verifyUrl,
+      downloadUrl: c.downloadUrl || c.verifyUrl,
+      credentialId: c.credentialId,
+      color: c.color || '#06B6D4',
+      image: c.image || '/certificates/certificate.png',
+      featured: c.featured ?? true,
+      category: c.category || 'ph-certification',
+      sectorLabel: c.sectorLabel || '',
+      order: index + 1,
+    }));
+    await Certificate.insertMany(seeded);
+    res.json({ success: true, data: seeded, message: 'Certificates reset to authentic defaults' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
 
+module.exports = router;

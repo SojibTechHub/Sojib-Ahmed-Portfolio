@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Workstation3DScene from './Workstation3DScene';
 import SojibOSDesktop from './SojibOSDesktop';
-import { Sparkles, Monitor, Layers, Volume2, VolumeX, Shield, Terminal, ArrowDown } from 'lucide-react';
+import { Sparkles, Monitor, Layers, Volume2, VolumeX, Shield, Terminal, ArrowDown, Mail } from 'lucide-react';
+import { FaGithub, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa6';
 
 interface WorkstationHeroProps {
   onSwitchToClassic?: () => void;
@@ -22,7 +23,6 @@ export default function WorkstationHero({ onSwitchToClassic }: WorkstationHeroPr
     audioRef.current = audio;
 
     audio.onended = () => {
-      // Loop backup
       audio.currentTime = 0;
       audio.play().catch(() => {});
     };
@@ -68,8 +68,8 @@ export default function WorkstationHero({ onSwitchToClassic }: WorkstationHeroPr
       {/* Top Floating Master Control HUD */}
       <div className="relative z-30 max-w-7xl mx-auto w-full mb-3 sm:mb-4 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
         
-        {/* Brand / Profile Header */}
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+        {/* Brand / Profile Header with Quick Social Links */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full md:w-auto">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-[#7C3AED] via-[#06B6D4] to-[#10B981] p-[2px] shadow-lg flex-shrink-0">
               <div className="w-full h-full bg-[#050B17] rounded-[14px] flex items-center justify-center font-black text-xs sm:text-sm text-transparent bg-clip-text bg-gradient-to-r from-[#A78BFA] to-[#22D3EE]">
@@ -94,16 +94,61 @@ export default function WorkstationHero({ onSwitchToClassic }: WorkstationHeroPr
             </div>
           </div>
 
-          {/* CMS Admin Link on mobile */}
-          <a
-            href="/admin"
-            target="_blank"
-            rel="noreferrer"
-            className="md:hidden p-2 rounded-xl bg-[#090D1A] hover:bg-purple-500/20 text-gray-400 hover:text-purple-300 border border-white/10 transition-all"
-            title="Admin CMS"
-          >
-            <Shield size={15} />
-          </a>
+          {/* Quick Connect Social Badges (GitHub, LinkedIn, Email, WhatsApp) */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <a
+              href="https://github.com/SojibTechHub"
+              target="_blank"
+              rel="noreferrer"
+              className="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-gray-200 hover:text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all shadow-sm group"
+              title="GitHub: https://github.com/SojibTechHub"
+            >
+              <FaGithub size={13} className="text-white group-hover:scale-110 transition-transform" />
+              <span>GitHub</span>
+            </a>
+
+            <a
+              href="https://www.linkedin.com/in/sojib-ahmed-shorif"
+              target="_blank"
+              rel="noreferrer"
+              className="px-2.5 py-1.5 rounded-xl bg-[#0077B5]/15 hover:bg-[#0077B5]/25 border border-[#0077B5]/30 text-[#38BDF8] hover:text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all shadow-sm group"
+              title="LinkedIn: sojib-ahmed-shorif"
+            >
+              <FaLinkedinIn size={12} className="group-hover:scale-110 transition-transform" />
+              <span>LinkedIn</span>
+            </a>
+
+            <a
+              href="mailto:sojibahmedshorif998@gmail.com"
+              className="px-2.5 py-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 hover:text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all shadow-sm group"
+              title="Email: sojibahmedshorif998@gmail.com"
+            >
+              <Mail size={12} className="group-hover:scale-110 transition-transform" />
+              <span>Email</span>
+            </a>
+
+            <a
+              href="https://wa.me/8801942791004"
+              target="_blank"
+              rel="noreferrer"
+              className="px-2.5 py-1.5 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/30 text-[#4ADE80] hover:text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all shadow-sm group"
+              title="WhatsApp: +880 1942791004"
+            >
+              <FaWhatsapp size={12} className="group-hover:scale-110 transition-transform" />
+              <span>WhatsApp</span>
+            </a>
+
+            {/* CMS Admin Link on mobile */}
+            <a
+              href="/admin"
+              target="_blank"
+              rel="noreferrer"
+              className="md:hidden p-1.5 rounded-xl bg-[#090D1A] hover:bg-purple-500/20 text-gray-400 hover:text-purple-300 border border-white/10 transition-all"
+              title="Admin CMS"
+            >
+              <Shield size={14} />
+            </a>
+          </div>
         </div>
 
         {/* Master Action & Mode Switcher Controls */}

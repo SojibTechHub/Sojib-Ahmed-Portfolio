@@ -68,6 +68,8 @@ interface CertificateItem {
   color: string;
   image?: string;
   featured?: boolean;
+  category?: 'internship' | 'ph-certification';
+  sectorLabel?: string;
   order?: number;
 }
 
@@ -170,6 +172,7 @@ export default function AdminPage() {
   });
 
   // Certificate Modal State
+  const [certSector, setCertSector] = useState<'all' | 'internship' | 'ph-certification'>('all');
   const [isCertModalOpen, setIsCertModalOpen] = useState(false);
   const [editingCert, setEditingCert] = useState<CertificateItem | null>(null);
   const [certForm, setCertForm] = useState({
@@ -186,6 +189,8 @@ export default function AdminPage() {
     color: '#06B6D4',
     image: '/certificates/certificate.png',
     featured: true,
+    category: 'ph-certification' as 'internship' | 'ph-certification',
+    sectorLabel: '',
   });
 
   // Skill Modal State
@@ -559,6 +564,8 @@ export default function AdminPage() {
         color: cert.color || '#06B6D4',
         image: cert.image || '/certificates/certificate.png',
         featured: cert.featured ?? true,
+        category: (cert.category || (cert.issuer.toLowerCase().includes('hero') ? 'ph-certification' : 'internship')) as any,
+        sectorLabel: cert.sectorLabel || '',
       });
     } else {
       setEditingCert(null);
@@ -576,6 +583,8 @@ export default function AdminPage() {
         color: '#06B6D4',
         image: '/certificates/certificate.png',
         featured: true,
+        category: 'ph-certification',
+        sectorLabel: '',
       });
     }
     setIsCertModalOpen(true);
@@ -868,12 +877,18 @@ export default function AdminPage() {
     return matchCat && matchSearch;
   });
 
-  // Filtered Certificates List
+  // Filtered Certificates List (Filtered by Search and Sector)
   const filteredCertificates = certificates.filter((c) => {
-    return c.title.toLowerCase().includes(certSearch.toLowerCase()) ||
+    const isIntern = c.category === 'internship' || (c.id && (c.id.includes('flyrank') || c.id.includes('datheon'))) || (c.issuer && (c.issuer.toLowerCase().includes('flyrank') || c.issuer.toLowerCase().includes('datheon')));
+    const isPH = c.category === 'ph-certification' || (c.id && c.id.includes('ph-')) || (c.issuer && c.issuer.toLowerCase().includes('hero'));
+    const matchSector = certSector === 'all' || 
+      (certSector === 'internship' && isIntern) || 
+      (certSector === 'ph-certification' && isPH);
+    const matchSearch = c.title.toLowerCase().includes(certSearch.toLowerCase()) ||
            c.issuer.toLowerCase().includes(certSearch.toLowerCase()) ||
            c.badgeText.toLowerCase().includes(certSearch.toLowerCase()) ||
            c.credentialId.toLowerCase().includes(certSearch.toLowerCase());
+    return matchSector && matchSearch;
   });
 
   // Filtered Skills List
@@ -1342,16 +1357,59 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Search */}
-              <div className="relative max-w-sm">
-                <Search size={14} className="absolute left-3 top-3 text-gray-500" />
-                <input
-                  type="text"
-                  value={certSearch}
-                  onChange={(e) => setCertSearch(e.target.value)}
-                  placeholder="Search credentials, issuer, or ID..."
-                  className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#090D1A] border border-white/10 text-xs text-white placeholder-gray-500 outline-none focus:border-[#EC4899]"
-                />
+              {/* Sector Tabs & Search */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <button
+                    onClick={() => setCertSector('all')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      certSector === 'all'
+                        ? 'bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] text-white shadow-md'
+                        : 'bg-[#090D1A] text-gray-400 hover:text-white border border-white/10'
+                    }`}
+                  >
+                    All Credentials ({certificates.length})
+                  </button>
+
+                  <button
+                    onClick={() => setCertSector('internship')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                      certSector === 'internship'
+                        ? 'bg-gradient-to-r from-[#06B6D4] to-[#10B981] text-white shadow-md'
+                        : 'bg-[#090D1A] text-gray-400 hover:text-white border border-white/10'
+                    }`}
+                  >
+                    <span>💼 Industry Internships & Offers</span>
+                    <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-white/20 font-mono">
+                      {certificates.filter(c => c.category === 'internship' || c.issuer?.toLowerCase().includes('flyrank') || c.issuer?.toLowerCase().includes('datheon')).length}
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => setCertSector('ph-certification')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                      certSector === 'ph-certification'
+                        ? 'bg-gradient-to-r from-[#EC4899] to-[#7C3AED] text-white shadow-md'
+                        : 'bg-[#090D1A] text-gray-400 hover:text-white border border-white/10'
+                    }`}
+                  >
+                    <span>🎓 Programming Hero Credentials</span>
+                    <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-white/20 font-mono">
+                      {certificates.filter(c => c.category === 'ph-certification' || c.issuer?.toLowerCase().includes('hero')).length}
+                    </span>
+                  </button>
+                </div>
+
+                <div className="relative max-w-xs w-full">
+                  <Search size={14} className="absolute left-3 top-2.5 text-gray-500" />
+                  <input
+                    type="text"
+                    value={certSearch}
+                    onChange={(e) => setCertSearch(e.target.value)}
+                    placeholder="Search credentials, issuer, or ID..."
+                    className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#090D1A] border border-white/10 text-xs text-white placeholder-gray-500 outline-none focus:border-[#EC4899]"
+                  />
+                </div>
               </div>
 
               {/* Credentials Grid */}
@@ -1375,9 +1433,18 @@ export default function AdminPage() {
                             <Award size={32} style={{ color: cert.color || '#06B6D4' }} />
                           </div>
                         )}
-                        <div className="absolute top-2.5 left-2.5">
+                        <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
                           <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-[#030712]/90 backdrop-blur-md text-[#EC4899] uppercase border border-white/10">
                             {cert.issuer}
+                          </span>
+                          <span className={`px-1.5 py-0.5 rounded text-[8px] font-bold uppercase backdrop-blur-md border ${
+                            (cert.category === 'internship' || cert.issuer?.toLowerCase().includes('flyrank') || cert.issuer?.toLowerCase().includes('datheon'))
+                              ? 'bg-[#06B6D4]/30 text-[#06B6D4] border-[#06B6D4]/50'
+                              : 'bg-[#EC4899]/30 text-[#F472B6] border-[#EC4899]/50'
+                          }`}>
+                            {(cert.category === 'internship' || cert.issuer?.toLowerCase().includes('flyrank') || cert.issuer?.toLowerCase().includes('datheon'))
+                              ? '💼 Internship'
+                              : '🎓 PH'}
                           </span>
                         </div>
                       </div>
@@ -2177,6 +2244,126 @@ export default function AdminPage() {
               </div>
 
               <form onSubmit={handleSaveCert} className="space-y-4">
+                {/* Sector / Category Picker & Quick Templates */}
+                <div className="p-3.5 rounded-xl bg-black/40 border border-white/10 space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <label className="text-xs font-bold text-gray-300 uppercase tracking-wide">
+                      Credential Sector / Category *
+                    </label>
+                    <select
+                      value={certForm.category}
+                      onChange={(e) => setCertForm({ ...certForm, category: e.target.value as any })}
+                      className="px-3 py-1.5 rounded-lg bg-[#030712] border border-white/20 text-xs text-white font-semibold outline-none focus:border-[#EC4899]"
+                    >
+                      <option value="internship">💼 Sector 1: Industry Internship & Official Offer Letter</option>
+                      <option value="ph-certification">🎓 Sector 2: Programming Hero Certification & Recommendation</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">
+                      ⚡ Quick Autofill Template:
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setCertForm({
+                          title: 'Full Stack Web Development Appointment',
+                          issuer: 'FlyRank',
+                          issuerLogo: '🚀',
+                          badgeText: 'Official Offer of Appointment',
+                          date: '2026 Cohort',
+                          duration: 'Engineering Appointment & Offer Letter',
+                          skills: 'Full Stack MERN, Next.js 15, REST APIs, Architecture, Deployment',
+                          verifyUrl: 'https://drive.google.com/file/d/10ONRQsFH14NB1RvG7aJIltzSm6YGXqcy/view?usp=sharing',
+                          downloadUrl: 'https://drive.google.com/file/d/10ONRQsFH14NB1RvG7aJIltzSm6YGXqcy/view?usp=sharing',
+                          credentialId: 'FLYRANK-2026-ENG-SOJIB',
+                          color: '#06B6D4',
+                          image: '/images/github_featured_banner.jpg',
+                          featured: true,
+                          category: 'internship',
+                          sectorLabel: 'Industry Appointment & Offer Letter',
+                        })}
+                        className="px-2 py-1 rounded bg-[#06B6D4]/15 hover:bg-[#06B6D4]/25 text-[#06B6D4] text-[10px] font-bold border border-[#06B6D4]/30 cursor-pointer"
+                      >
+                        🚀 FlyRank
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setCertForm({
+                          title: 'Full Stack Engineering Internship',
+                          issuer: 'Datheon AI Systems',
+                          issuerLogo: '⚡',
+                          badgeText: 'Verified Industry Internship',
+                          date: '2026 Verified Record',
+                          duration: 'Industry Full-Stack Engineering Internship',
+                          skills: 'Full Stack Architecture, React 19, Node.js APIs, MongoDB Atlas, Cloud',
+                          verifyUrl: 'https://datheon.in/verify?id=DT-2026-33B1M',
+                          downloadUrl: 'https://datheon.in/verify?id=DT-2026-33B1M',
+                          credentialId: 'DT-2026-33B1M',
+                          color: '#10B981',
+                          image: '/images/linkedin_featured_banner.jpg',
+                          featured: true,
+                          category: 'internship',
+                          sectorLabel: 'Industry Engineering Internship',
+                        })}
+                        className="px-2 py-1 rounded bg-[#10B981]/15 hover:bg-[#10B981]/25 text-[#10B981] text-[10px] font-bold border border-[#10B981]/30 cursor-pointer"
+                      >
+                        ⚡ Datheon AI
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setCertForm({
+                          title: 'Official Letter of Recommendation',
+                          issuer: 'Programming Hero',
+                          issuerLogo: '📜',
+                          badgeText: 'Executive Recommendation (FoodFlow)',
+                          date: '7 October, 2026',
+                          duration: 'Endgame Program & FoodFlow Team Project',
+                          skills: 'FoodFlow Ecosystem, Team Code Rangers vs 6, Full Stack Architecture, Executive Endorsement',
+                          verifyUrl: 'https://drive.google.com/file/d/1TLfBdunMKD2_PCyJOru01juczImQD6I2/view?usp=sharing',
+                          downloadUrl: 'https://drive.google.com/file/d/1TLfBdunMKD2_PCyJOru01juczImQD6I2/view?usp=sharing',
+                          credentialId: 'RID: PH-R 1190',
+                          color: '#EC4899',
+                          image: '/certificates/recommendation_letter.png',
+                          featured: true,
+                          category: 'ph-certification',
+                          sectorLabel: 'Programming Hero Recommendation',
+                        })}
+                        className="px-2 py-1 rounded bg-[#EC4899]/15 hover:bg-[#EC4899]/25 text-[#EC4899] text-[10px] font-bold border border-[#EC4899]/30 cursor-pointer"
+                      >
+                        📜 PH Recommendation
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setCertForm({
+                          title: 'Complete Web Development Course',
+                          issuer: 'Programming Hero',
+                          issuerLogo: '🏆',
+                          badgeText: 'Certificate of Excellence (Batch 13)',
+                          date: 'Batch 13 · 2026',
+                          duration: 'Full-Stack Engineering Specialization',
+                          skills: 'MERN Stack, JavaScript (ES6+), React.js, Node.js, Express.js, MongoDB Atlas, TypeScript',
+                          verifyUrl: 'https://drive.google.com/file/d/1xthcbztqypL5RCzst-gNL4bg4eMNFWyK/view?usp=sharing',
+                          downloadUrl: 'https://drive.google.com/file/d/1xthcbztqypL5RCzst-gNL4bg4eMNFWyK/view?usp=sharing',
+                          credentialId: 'PH-BATCH13-2026-SOJIB',
+                          color: '#7C3AED',
+                          image: '/certificates/certificate.png',
+                          featured: true,
+                          category: 'ph-certification',
+                          sectorLabel: 'Programming Hero Course Certification',
+                        })}
+                        className="px-2 py-1 rounded bg-[#7C3AED]/15 hover:bg-[#7C3AED]/25 text-[#A78BFA] text-[10px] font-bold border border-[#7C3AED]/30 cursor-pointer"
+                      >
+                        🏆 PH Course (Batch 13)
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-semibold text-gray-400 mb-1">Credential Title *</label>

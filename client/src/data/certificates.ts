@@ -17,9 +17,14 @@ export interface Certificate {
   color: string;
   image?: string;
   featured?: boolean;
+  category: 'internship' | 'ph-certification';
+  sectorLabel?: string;
 }
 
 export const certificates: Certificate[] = [
+  // ============================================
+  // SECTOR 1: INDUSTRY APPOINTMENTS & INTERNSHIPS
+  // ============================================
   {
     id: 'flyrank-offer-letter',
     title: 'Full Stack Web Development Appointment',
@@ -35,38 +40,8 @@ export const certificates: Certificate[] = [
     color: '#06B6D4',
     image: '/images/github_featured_banner.jpg',
     featured: true,
-  },
-  {
-    id: 'ph-recommendation-letter',
-    title: 'Official Letter of Recommendation',
-    issuer: 'Programming Hero',
-    issuerLogo: '📜',
-    badgeText: 'Executive Recommendation (FoodFlow)',
-    date: '7 October, 2026',
-    duration: 'Endgame Program & FoodFlow Team Project',
-    skills: ['FoodFlow Ecosystem', 'Team Code Rangers vs 6', 'Full Stack Architecture', 'Executive Endorsement'],
-    verifyUrl: 'https://drive.google.com/file/d/1TLfBdunMKD2_PCyJOru01juczImQD6I2/view?usp=sharing',
-    downloadUrl: 'https://drive.google.com/file/d/1TLfBdunMKD2_PCyJOru01juczImQD6I2/view?usp=sharing',
-    credentialId: 'RID: PH-R 1190',
-    color: '#EC4899',
-    image: '/certificates/recommendation_letter.png',
-    featured: true,
-  },
-  {
-    id: 'ph-complete-web-dev',
-    title: 'Complete Web Development Course',
-    issuer: 'Programming Hero',
-    issuerLogo: '🏆',
-    badgeText: 'Certificate of Excellence (Batch 13)',
-    date: 'Batch 13 · 2026',
-    duration: 'Full-Stack Engineering Specialization',
-    skills: ['MERN Stack', 'JavaScript (ES6+)', 'React.js', 'Node.js', 'Express.js', 'MongoDB Atlas', 'TypeScript'],
-    verifyUrl: 'https://drive.google.com/file/d/1xthcbztqypL5RCzst-gNL4bg4eMNFWyK/view?usp=sharing',
-    downloadUrl: 'https://drive.google.com/file/d/1xthcbztqypL5RCzst-gNL4bg4eMNFWyK/view?usp=sharing',
-    credentialId: 'PH-BATCH13-2026-SOJIB',
-    color: '#7C3AED',
-    image: '/certificates/certificate.png',
-    featured: true,
+    category: 'internship',
+    sectorLabel: 'Industry Appointment & Offer Letter',
   },
   {
     id: 'datheon-internship',
@@ -83,5 +58,47 @@ export const certificates: Certificate[] = [
     color: '#10B981',
     image: '/images/linkedin_featured_banner.jpg',
     featured: true,
+    category: 'internship',
+    sectorLabel: 'Industry Engineering Internship',
+  },
+
+  // ============================================
+  // SECTOR 2: PROGRAMMING HERO CREDENTIALS
+  // ============================================
+  {
+    id: 'ph-recommendation-letter',
+    title: 'Official Letter of Recommendation',
+    issuer: 'Programming Hero',
+    issuerLogo: '📜',
+    badgeText: 'Executive Recommendation (FoodFlow)',
+    date: '7 October, 2026',
+    duration: 'Endgame Program & FoodFlow Team Project',
+    skills: ['FoodFlow Ecosystem', 'Team Code Rangers vs 6', 'Full Stack Architecture', 'Executive Endorsement'],
+    verifyUrl: 'https://drive.google.com/file/d/1TLfBdunMKD2_PCyJOru01juczImQD6I2/view?usp=sharing',
+    downloadUrl: 'https://drive.google.com/file/d/1TLfBdunMKD2_PCyJOru01juczImQD6I2/view?usp=sharing',
+    credentialId: 'RID: PH-R 1190',
+    color: '#EC4899',
+    image: '/certificates/recommendation_letter.png',
+    featured: true,
+    category: 'ph-certification',
+    sectorLabel: 'Programming Hero Recommendation',
+  },
+  {
+    id: 'ph-complete-web-dev',
+    title: 'Complete Web Development Course',
+    issuer: 'Programming Hero',
+    issuerLogo: '🏆',
+    badgeText: 'Certificate of Excellence (Batch 13)',
+    date: 'Batch 13 · 2026',
+    duration: 'Full-Stack Engineering Specialization',
+    skills: ['MERN Stack', 'JavaScript (ES6+)', 'React.js', 'Node.js', 'Express.js', 'MongoDB Atlas', 'TypeScript'],
+    verifyUrl: 'https://drive.google.com/file/d/1xthcbztqypL5RCzst-gNL4bg4eMNFWyK/view?usp=sharing',
+    downloadUrl: 'https://drive.google.com/file/d/1xthcbztqypL5RCzst-gNL4bg4eMNFWyK/view?usp=sharing',
+    credentialId: 'PH-BATCH13-2026-SOJIB',
+    color: '#7C3AED',
+    image: '/certificates/certificate.png',
+    featured: true,
+    category: 'ph-certification',
+    sectorLabel: 'Programming Hero Course Certification',
   },
 ];

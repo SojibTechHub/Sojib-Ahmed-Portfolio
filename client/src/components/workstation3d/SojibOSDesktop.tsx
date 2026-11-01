@@ -7,7 +7,7 @@ import {
   Search, Cpu, Wrench, Bot, Send, Layers, Code, Server,
   Download, FileText, Sparkles, ChevronRight, Briefcase, MapPin, GraduationCap
 } from 'lucide-react';
-import { FaGithub } from 'react-icons/fa6';
+import { FaGithub, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
 import { skillCategories, allSkillsList } from '../../data/skills';
 import { getSkillRealIcon } from '../sections/Skills';
@@ -92,6 +92,20 @@ export default function SojibOSDesktop({ onZoomOut, onScrollToClassic }: SojibOS
 
         {/* System Tray (Clock, Sound, Admin shortcut) */}
         <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+          <div className="hidden lg:flex items-center gap-2 border-r border-white/10 pr-2">
+            <a href="https://github.com/SojibTechHub" target="_blank" rel="noreferrer" title="GitHub: SojibTechHub" className="text-gray-400 hover:text-white transition-colors">
+              <FaGithub size={13} />
+            </a>
+            <a href="https://www.linkedin.com/in/sojib-ahmed-shorif" target="_blank" rel="noreferrer" title="LinkedIn: sojib-ahmed-shorif" className="text-gray-400 hover:text-[#38BDF8] transition-colors">
+              <FaLinkedinIn size={12} />
+            </a>
+            <a href="mailto:sojibahmedshorif998@gmail.com" title="Email Sojib" className="text-gray-400 hover:text-purple-300 transition-colors">
+              <Mail size={12} />
+            </a>
+            <a href="https://wa.me/8801942791004" target="_blank" rel="noreferrer" title="WhatsApp: +880 1942791004" className="text-gray-400 hover:text-[#4ADE80] transition-colors">
+              <FaWhatsapp size={12} />
+            </a>
+          </div>
           <button
             onClick={() => setSoundEnabled(!soundEnabled)}
             className="p-1 rounded text-gray-400 hover:text-white transition-colors cursor-pointer"
@@ -1061,6 +1075,8 @@ function OSServicesApp({ onNavigate }: { onNavigate?: (app: AppId) => void }) {
 // APP 6: CERTIFICATES & OFFICIAL CREDENTIALS
 // -------------------------------------------------------------
 function OSCertificatesApp({ onNavigate }: { onNavigate?: (app: AppId) => void }) {
+  const [sectorTab, setSectorTab] = useState<'all' | 'internship' | 'ph'>('all');
+
   const flyRankDriveLink = 'https://drive.google.com/file/d/10ONRQsFH14NB1RvG7aJIltzSm6YGXqcy/view?usp=sharing';
   const flyRankEmbedLink = 'https://drive.google.com/file/d/10ONRQsFH14NB1RvG7aJIltzSm6YGXqcy/preview';
   const phRecommendationLink = 'https://drive.google.com/file/d/1TLfBdunMKD2_PCyJOru01juczImQD6I2/view?usp=sharing';
@@ -1069,185 +1085,271 @@ function OSCertificatesApp({ onNavigate }: { onNavigate?: (app: AppId) => void }
 
   return (
     <div className="space-y-4 max-w-4xl pb-4">
-      {/* 1. Featured FlyRank Official Offer Letter Card */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-[#030712] border border-[#06B6D4]/40 space-y-4 shadow-xl">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-[#06B6D4]/30 to-[#7C3AED]/20 border border-[#06B6D4]/50 flex items-center justify-center text-[#06B6D4] shadow-md flex-shrink-0">
-              <Award size={24} />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h4 className="font-bold text-sm text-white uppercase tracking-tight">
-                  FlyRank — Offer of Appointment
-                </h4>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  Verified Record
-                </span>
+      {/* Sector Selection Tabs */}
+      <div className="flex flex-wrap items-center gap-2 pb-2 border-b border-white/10">
+        <button
+          onClick={() => setSectorTab('all')}
+          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            sectorTab === 'all'
+              ? 'bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] text-white shadow-md'
+              : 'bg-white/5 text-gray-400 hover:text-white border border-white/10'
+          }`}
+        >
+          All Credentials (4)
+        </button>
+
+        <button
+          onClick={() => setSectorTab('internship')}
+          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+            sectorTab === 'internship'
+              ? 'bg-gradient-to-r from-[#06B6D4] to-[#10B981] text-white shadow-md'
+              : 'bg-white/5 text-gray-400 hover:text-white border border-white/10'
+          }`}
+        >
+          <Briefcase size={12} />
+          <span>Industry Internships (2)</span>
+        </button>
+
+        <button
+          onClick={() => setSectorTab('ph')}
+          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+            sectorTab === 'ph'
+              ? 'bg-gradient-to-r from-[#EC4899] to-[#7C3AED] text-white shadow-md'
+              : 'bg-white/5 text-gray-400 hover:text-white border border-white/10'
+          }`}
+        >
+          <GraduationCap size={13} />
+          <span>Programming Hero (2)</span>
+        </button>
+      </div>
+
+      {/* ======================================================== */}
+      {/* SECTOR 1: INDUSTRY APPOINTMENTS & INTERNSHIPS (2 ITEMS) */}
+      {/* ======================================================== */}
+      {(sectorTab === 'all' || sectorTab === 'internship') && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 pt-1 text-xs font-extrabold text-[#06B6D4] uppercase tracking-wider">
+            <Briefcase size={13} />
+            <span>Sector 1: Industry Appointments & Engineering Internships</span>
+          </div>
+
+          {/* 1. FlyRank Official Offer Letter */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-[#030712] border border-[#06B6D4]/40 space-y-4 shadow-xl">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-[#06B6D4]/30 to-[#7C3AED]/20 border border-[#06B6D4]/50 flex items-center justify-center text-[#06B6D4] shadow-md flex-shrink-0">
+                  <Award size={24} />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-bold text-sm text-white uppercase tracking-tight">
+                      FlyRank — Offer of Appointment
+                    </h4>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Verified Record
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    Official Engineering Appointment Letter · Position: <strong className="text-white">Full Stack Web Development Intern</strong>
+                  </p>
+                </div>
               </div>
-              <p className="text-xs text-gray-400 mt-0.5">
-                Official Engineering Appointment Letter · Position: <strong className="text-white">Full Stack Web Development Intern</strong>
-              </p>
+
+              <div className="flex items-center gap-2">
+                <a
+                  href={flyRankDriveLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-3 py-1.5 rounded-lg bg-[#06B6D4]/20 hover:bg-[#06B6D4]/30 border border-[#06B6D4]/40 text-[#06B6D4] text-xs font-semibold flex items-center gap-1.5 transition-all"
+                >
+                  <ExternalLink size={12} />
+                  <span>Drive Viewer</span>
+                </a>
+                <a
+                  href={flyRankDriveLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white text-xs font-semibold border border-white/10 flex items-center gap-1.5 transition-all"
+                >
+                  <Download size={12} />
+                  <span>PDF</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Embedded Interactive PDF Document Viewer */}
+            <div className="relative w-full h-[300px] rounded-xl overflow-hidden border border-white/10 bg-black/60 shadow-inner">
+              <iframe
+                src={flyRankEmbedLink}
+                title="FlyRank Offer Letter"
+                className="w-full h-full border-0"
+                allow="autoplay"
+              />
+            </div>
+
+            {/* Credential Details Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <div className="p-2.5 rounded-lg bg-white/5 border border-white/5">
+                <span className="text-gray-400 block text-[10px]">Candidate:</span>
+                <span className="font-semibold text-white">Sojib Ahmed</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-white/5 border border-white/5">
+                <span className="text-gray-400 block text-[10px]">Organization:</span>
+                <span className="font-semibold text-[#06B6D4]">FlyRank</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-white/5 border border-white/5">
+                <span className="text-gray-400 block text-[10px]">Role:</span>
+                <span className="font-semibold text-white">Full Stack Web Developer</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-white/5 border border-white/5">
+                <span className="text-gray-400 block text-[10px]">Credential ID:</span>
+                <span className="font-mono text-[#10B981] font-bold">FLYRANK-2026-ENG-SOJIB</span>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <a
-              href={flyRankDriveLink}
-              target="_blank"
-              rel="noreferrer"
-              className="px-3 py-1.5 rounded-lg bg-[#06B6D4]/20 hover:bg-[#06B6D4]/30 border border-[#06B6D4]/40 text-[#06B6D4] text-xs font-semibold flex items-center gap-1.5 transition-all"
-            >
-              <ExternalLink size={12} />
-              <span>Drive Viewer</span>
-            </a>
-            <a
-              href={flyRankDriveLink}
-              target="_blank"
-              rel="noreferrer"
-              className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white text-xs font-semibold border border-white/10 flex items-center gap-1.5 transition-all"
-            >
-              <Download size={12} />
-              <span>PDF</span>
-            </a>
-          </div>
-        </div>
-
-        {/* Embedded Interactive PDF Document Viewer */}
-        <div className="relative w-full h-[320px] rounded-xl overflow-hidden border border-white/10 bg-black/60 shadow-inner">
-          <iframe
-            src={flyRankEmbedLink}
-            title="FlyRank Offer Letter"
-            className="w-full h-full border-0"
-            allow="autoplay"
-          />
-        </div>
-
-        {/* Credential Details Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-          <div className="p-2.5 rounded-lg bg-white/5 border border-white/5">
-            <span className="text-gray-400 block text-[10px]">Candidate:</span>
-            <span className="font-semibold text-white">Sojib Ahmed</span>
-          </div>
-          <div className="p-2.5 rounded-lg bg-white/5 border border-white/5">
-            <span className="text-gray-400 block text-[10px]">Organization:</span>
-            <span className="font-semibold text-[#06B6D4]">FlyRank</span>
-          </div>
-          <div className="p-2.5 rounded-lg bg-white/5 border border-white/5">
-            <span className="text-gray-400 block text-[10px]">Role:</span>
-            <span className="font-semibold text-white">Full Stack Web Developer</span>
-          </div>
-          <div className="p-2.5 rounded-lg bg-white/5 border border-white/5">
-            <span className="text-gray-400 block text-[10px]">Credential ID:</span>
-            <span className="font-mono text-[#10B981] font-bold">FLYRANK-2026-ENG-SOJIB</span>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. Programming Hero Official Letter of Recommendation (LOR) */}
-      <div className="p-4 rounded-xl bg-[#030712] border border-[#EC4899]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md hover:border-[#EC4899]/60 transition-all">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#EC4899]/20 border border-[#EC4899]/40 flex items-center justify-center text-[#F472B6] flex-shrink-0">
-            <FileText size={20} />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h5 className="font-bold text-xs text-white">
-                Official Letter of Recommendation — Programming Hero
-              </h5>
-              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#EC4899]/20 text-[#F472B6] border border-[#EC4899]/30">
-                Endgame Program
-              </span>
+          {/* 2. Datheon AI Systems Full Stack Engineering Internship */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-[#030712] border border-[#10B981]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md hover:border-[#10B981]/60 transition-all">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-xl bg-[#10B981]/20 border border-[#10B981]/40 flex items-center justify-center text-[#34D399] flex-shrink-0">
+                <Award size={22} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h5 className="font-bold text-xs sm:text-sm text-white">
+                    Full Stack Engineering Internship — Datheon AI Systems
+                  </h5>
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    Verified Record
+                  </span>
+                </div>
+                <p className="text-[11px] text-gray-400 mt-0.5">
+                  Production Full-Stack Architecture, REST APIs & Distributed Databases · ID: <span className="font-mono text-emerald-400 font-bold">DT-2026-33B1M</span>
+                </p>
+              </div>
             </div>
-            <p className="text-[11px] text-gray-400 mt-0.5">
-              FoodFlow Project & Code Rangers vs 6 Team Endorsement by CEO Jhankar Mahbub · ID: <span className="font-mono text-pink-300 font-bold">RID: PH-R 1190</span>
-            </p>
-          </div>
-        </div>
 
-        <a
-          href={phRecommendationLink}
-          target="_blank"
-          rel="noreferrer"
-          className="px-3 py-1.5 rounded-lg bg-[#EC4899]/20 hover:bg-[#EC4899]/30 border border-[#EC4899]/40 text-pink-300 text-xs font-semibold flex items-center gap-1.5 transition-all flex-shrink-0"
-        >
-          <ExternalLink size={12} />
-          <span>Verify Recommendation</span>
-        </a>
-      </div>
-
-      {/* 3. Programming Hero Full-Stack Web Development Course */}
-      <div className="p-4 rounded-xl bg-[#030712] border border-[#7C3AED]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md hover:border-[#7C3AED]/60 transition-all">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#7C3AED]/20 border border-[#7C3AED]/40 flex items-center justify-center text-[#A78BFA] flex-shrink-0">
-            <GraduationCap size={20} />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h5 className="font-bold text-xs text-white">
-                Complete Web Development Course — Programming Hero
-              </h5>
-              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                Batch 13
-              </span>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <a
+                href={datheonVerifyLink}
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-lg bg-[#10B981]/20 hover:bg-[#10B981]/30 border border-[#10B981]/40 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition-all"
+              >
+                <ExternalLink size={12} />
+                <span>Verify on Datheon</span>
+              </a>
             </div>
-            <p className="text-[11px] text-gray-400 mt-0.5">
-              Full-Stack Engineering Specialization (MERN Stack, React 19, Node.js, Express, MongoDB Atlas, TypeScript) · ID: <span className="font-mono text-purple-300 font-bold">PH-BATCH13-2026-SOJIB</span>
-            </p>
           </div>
         </div>
+      )}
 
-        <a
-          href={phCertLink}
-          target="_blank"
-          rel="noreferrer"
-          className="px-3 py-1.5 rounded-lg bg-[#7C3AED]/20 hover:bg-[#7C3AED]/30 border border-[#7C3AED]/40 text-purple-300 text-xs font-semibold flex items-center gap-1.5 transition-all flex-shrink-0"
-        >
-          <ExternalLink size={12} />
-          <span>Verify Certificate</span>
-        </a>
-      </div>
-
-      {/* 4. Datheon AI Systems Full Stack Engineering Internship */}
-      <div className="p-4 rounded-xl bg-[#030712] border border-[#10B981]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md hover:border-[#10B981]/60 transition-all">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#10B981]/20 border border-[#10B981]/40 flex items-center justify-center text-[#34D399] flex-shrink-0">
-            <Award size={20} />
+      {/* ======================================================== */}
+      {/* SECTOR 2: PROGRAMMING HERO CREDENTIALS (2 ITEMS) */}
+      {/* ======================================================== */}
+      {(sectorTab === 'all' || sectorTab === 'ph') && (
+        <div className="space-y-3 pt-2">
+          <div className="flex items-center gap-2 pt-1 text-xs font-extrabold text-[#EC4899] uppercase tracking-wider">
+            <GraduationCap size={14} />
+            <span>Sector 2: Programming Hero Certifications & Recommendations</span>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h5 className="font-bold text-xs text-white">
-                Full Stack Engineering Internship — Datheon AI Systems
-              </h5>
-              <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                Verified Record
-              </span>
+
+          {/* 3. Programming Hero Official Letter of Recommendation (LOR) */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-[#030712] border border-[#EC4899]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md hover:border-[#EC4899]/60 transition-all">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-xl bg-[#EC4899]/20 border border-[#EC4899]/40 flex items-center justify-center text-[#F472B6] flex-shrink-0">
+                <FileText size={22} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h5 className="font-bold text-xs sm:text-sm text-white">
+                    Official Letter of Recommendation — Programming Hero
+                  </h5>
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#EC4899]/20 text-[#F472B6] border border-[#EC4899]/30">
+                    Endgame Program
+                  </span>
+                </div>
+                <p className="text-[11px] text-gray-400 mt-0.5">
+                  FoodFlow Project & Code Rangers vs 6 Team Endorsement by CEO Jhankar Mahbub · ID: <span className="font-mono text-pink-300 font-bold">RID: PH-R 1190</span>
+                </p>
+              </div>
             </div>
-            <p className="text-[11px] text-gray-400 mt-0.5">
-              Production Full-Stack Architecture, REST APIs & Distributed Databases · ID: <span className="font-mono text-emerald-400 font-bold">DT-2026-33B1M</span>
-            </p>
+
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <a
+                href={phRecommendationLink}
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-lg bg-[#EC4899]/20 hover:bg-[#EC4899]/30 border border-[#EC4899]/40 text-pink-300 text-xs font-semibold flex items-center gap-1.5 transition-all"
+              >
+                <ExternalLink size={12} />
+                <span>Verify LOR (Drive)</span>
+              </a>
+              <a
+                href="/certificates/recommendation_letter.png"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white text-xs font-semibold border border-white/10 flex items-center gap-1.5 transition-all"
+              >
+                <Download size={12} />
+                <span>View Image</span>
+              </a>
+            </div>
+          </div>
+
+          {/* 4. Programming Hero Full-Stack Web Development Course */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-[#030712] border border-[#7C3AED]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md hover:border-[#7C3AED]/60 transition-all">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-xl bg-[#7C3AED]/20 border border-[#7C3AED]/40 flex items-center justify-center text-[#A78BFA] flex-shrink-0">
+                <GraduationCap size={22} />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h5 className="font-bold text-xs sm:text-sm text-white">
+                    Complete Web Development Course — Programming Hero
+                  </h5>
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                    Batch 13
+                  </span>
+                </div>
+                <p className="text-[11px] text-gray-400 mt-0.5">
+                  Full-Stack Engineering Specialization (MERN Stack, React 19, Node.js, Express, MongoDB Atlas, TypeScript) · ID: <span className="font-mono text-purple-300 font-bold">PH-BATCH13-2026-SOJIB</span>
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <a
+                href={phCertLink}
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-lg bg-[#7C3AED]/20 hover:bg-[#7C3AED]/30 border border-[#7C3AED]/40 text-purple-300 text-xs font-semibold flex items-center gap-1.5 transition-all"
+              >
+                <ExternalLink size={12} />
+                <span>Verify Certificate</span>
+              </a>
+              <a
+                href="/certificates/certificate.png"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white text-xs font-semibold border border-white/10 flex items-center gap-1.5 transition-all"
+              >
+                <Download size={12} />
+                <span>View Image</span>
+              </a>
+            </div>
           </div>
         </div>
-
-        <a
-          href={datheonVerifyLink}
-          target="_blank"
-          rel="noreferrer"
-          className="px-3 py-1.5 rounded-lg bg-[#10B981]/20 hover:bg-[#10B981]/30 border border-[#10B981]/40 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition-all flex-shrink-0"
-        >
-          <ExternalLink size={12} />
-          <span>Verify Record</span>
-        </a>
-      </div>
+      )}
 
       {onNavigate && (
-        <div className="flex justify-end pt-1">
+        <div className="flex justify-end pt-2">
           <button
             onClick={() => onNavigate('contact')}
-            className="px-3.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold text-gray-300 hover:text-white border border-white/10 flex items-center gap-1.5 transition-all cursor-pointer"
+            className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-gray-300 hover:text-white border border-white/10 flex items-center gap-1.5 transition-all cursor-pointer"
           >
-            <Mail size={12} className="text-[#EC4899]" />
+            <Mail size={13} className="text-[#EC4899]" />
             <span>Contact for Employment or Reference Verification</span>
           </button>
         </div>
