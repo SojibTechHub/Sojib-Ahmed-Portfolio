@@ -6,7 +6,7 @@ import { certificates as defaultCertificates, type Certificate } from '../../dat
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-type SectorTab = 'all' | 'internship' | 'ph-certification';
+type SectorTab = 'internship' | 'ph-certification';
 
 export default function Certificates() {
   const [certList, setCertList] = useState<Certificate[]>(defaultCertificates);
@@ -160,24 +160,13 @@ export default function Certificates() {
                 {phCerts.length}
               </span>
             </button>
-
-            <button
-              onClick={() => setActiveTab('all')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
-                activeTab === 'all'
-                  ? 'bg-white/15 text-white border border-white/30'
-                  : 'text-gray-500 hover:text-gray-300'
-              }`}
-            >
-              <span>Show Both Sectors (4)</span>
-            </button>
           </div>
         </motion.div>
 
         {/* ======================================================== */}
         {/* SECTOR 1: INDUSTRY INTERNSHIPS & APPOINTMENTS (ONLY 2) */}
         {/* ======================================================== */}
-        {(activeTab === 'all' || activeTab === 'internship') && (
+        {activeTab === 'internship' && (
           <div className="mb-14">
             <div className="flex items-center gap-3 mb-6 pb-3 border-b border-white/10">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#06B6D4]/30 to-[#10B981]/20 border border-[#06B6D4]/40 flex items-center justify-center text-[#06B6D4] shadow-md">
@@ -207,7 +196,7 @@ export default function Certificates() {
         {/* ======================================================== */}
         {/* SECTOR 2: PROGRAMMING HERO CERTIFICATIONS (ONLY 2) */}
         {/* ======================================================== */}
-        {(activeTab === 'all' || activeTab === 'ph-certification') && (
+        {activeTab === 'ph-certification' && (
           <div>
             <div className="flex items-center gap-3 mb-6 pb-3 border-b border-white/10">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#EC4899]/30 to-[#7C3AED]/20 border border-[#EC4899]/40 flex items-center justify-center text-[#EC4899] shadow-md">

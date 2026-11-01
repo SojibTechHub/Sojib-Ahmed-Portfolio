@@ -5,7 +5,7 @@ const authMiddleware = require('../middleware/auth');
 const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'sojib_portfolio_jwt_secret_2026_secure';
-const MASTER_EMAIL = process.env.ADMIN_EMAIL || 'sojibahmedshorif25@gmail.com';
+const MASTER_EMAIL = process.env.ADMIN_EMAIL || 'sojibahmedshorif998@gmail.com';
 const MASTER_PASS = process.env.ADMIN_PASSWORD || 'Sojibboss@321946##';
 const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || bcrypt.hashSync(MASTER_PASS, 10);
 
@@ -13,21 +13,23 @@ const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH || bcrypt.hashSync(M
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    if (!email || !email.trim()) {
+      return res.status(400).json({ success: false, message: 'Admin email is required' });
+    }
     if (!password) {
       return res.status(400).json({ success: false, message: 'Password is required' });
     }
 
-    // If email is provided, verify email match
-    if (email && email.trim()) {
-      const cleanEmail = email.trim().toLowerCase();
-      const validEmails = [
-        MASTER_EMAIL.toLowerCase(),
-        'sojibahmedshorif25@gmail.com',
-        'sojibahmedshorif998@gmail.com',
-      ];
-      if (!validEmails.includes(cleanEmail)) {
-        return res.status(401).json({ success: false, message: 'Invalid admin email address' });
-      }
+    const cleanEmail = email.trim().toLowerCase();
+    const validEmails = [
+      MASTER_EMAIL.toLowerCase(),
+      'sojibahmedshorif998@gmail.com',
+      'sojibahmedshorif25@gmail.com',
+      'admin@sojib.dev',
+      'admin'
+    ];
+    if (!validEmails.includes(cleanEmail)) {
+      return res.status(401).json({ success: false, message: 'Invalid admin email address. Use sojibahmedshorif998@gmail.com' });
     }
 
     let isValid = false;

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { MapPin, Code2, Brain, Heart, Rocket, CheckCircle2 } from 'lucide-react';
+import { MapPin, Code2, Brain, Heart, Rocket, CheckCircle2, FileText, Mail } from 'lucide-react';
+import { FaGithub, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa6';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -84,6 +85,58 @@ export default function About() {
                   <span className="text-sm font-semibold text-[#10B981]">Available for Hire</span>
                 </div>
               </motion.div>
+            </div>
+
+            {/* Quick Connect & Resume Links Directly Under Profile Picture */}
+            <div className="flex items-center justify-center gap-2 flex-wrap mb-6">
+              <a
+                href="https://github.com/SojibTechHub"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-gray-200 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm hover:scale-105"
+                title="GitHub"
+              >
+                <FaGithub size={13} />
+                <span>GitHub</span>
+              </a>
+              <a
+                href="https://www.linkedin.com/in/sojib-ahmed-shorif"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-xl bg-[#0077B5]/15 hover:bg-[#0077B5]/25 border border-[#0077B5]/35 text-[#38BDF8] hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm hover:scale-105"
+                title="LinkedIn"
+              >
+                <FaLinkedinIn size={12} />
+                <span>LinkedIn</span>
+              </a>
+              <a
+                href="mailto:sojibahmedshorif998@gmail.com"
+                className="px-3 py-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/35 text-purple-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm hover:scale-105"
+                title="Email"
+              >
+                <Mail size={12} />
+                <span>Email</span>
+              </a>
+              <a
+                href="https://wa.me/8801942791004"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/35 text-[#4ADE80] hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm hover:scale-105"
+                title="WhatsApp"
+              >
+                <FaWhatsapp size={13} />
+                <span>WhatsApp</span>
+              </a>
+              <a
+                href="https://drive.google.com/file/d/1I_yOQ82k2LqFINo5RuR_tXVEzzwAZkGx/view?usp=sharing"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#06B6D4]/20 to-[#10B981]/20 hover:from-[#06B6D4]/35 hover:to-[#10B981]/35 border border-[#06B6D4]/40 text-[#22D3EE] hover:text-white text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm hover:scale-105"
+                title="Google Drive Resume"
+              >
+                <FileText size={13} />
+                <span>Resume</span>
+              </a>
             </div>
 
             {/* Quick info */}

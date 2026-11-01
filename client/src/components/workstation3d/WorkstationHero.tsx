@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Workstation3DScene from './Workstation3DScene';
 import SojibOSDesktop from './SojibOSDesktop';
-import { Sparkles, Monitor, Layers, Volume2, VolumeX, Shield, Terminal, ArrowDown, Mail } from 'lucide-react';
+import { Sparkles, Monitor, Layers, Volume2, VolumeX, Shield, Terminal, ArrowDown, Mail, FileText } from 'lucide-react';
 import { FaGithub, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa6';
 
 interface WorkstationHeroProps {
@@ -68,17 +68,25 @@ export default function WorkstationHero({ onSwitchToClassic }: WorkstationHeroPr
       {/* Top Floating Master Control HUD */}
       <div className="relative z-30 max-w-7xl mx-auto w-full mb-3 sm:mb-4 flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
         
-        {/* Brand / Profile Header with Quick Social Links */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full md:w-auto">
+        {/* Brand / Profile Card with Sojib's Real Photo & Links Placed Directly Beneath His Picture */}
+        <div className="flex flex-col gap-2.5 w-full md:w-auto">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-[#7C3AED] via-[#06B6D4] to-[#10B981] p-[2px] shadow-lg flex-shrink-0">
-              <div className="w-full h-full bg-[#050B17] rounded-[14px] flex items-center justify-center font-black text-xs sm:text-sm text-transparent bg-clip-text bg-gradient-to-r from-[#A78BFA] to-[#22D3EE]">
-                SA
+            <div className="relative group flex-shrink-0">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl p-[2px] bg-gradient-to-tr from-[#7C3AED] via-[#06B6D4] to-[#10B981] shadow-lg shadow-[#06B6D4]/25">
+                <div className="w-full h-full rounded-[14px] overflow-hidden bg-[#050B17]">
+                  <img
+                    src="/images/hero.jpg"
+                    alt="Sojib Ahmed - Full Stack Developer"
+                    className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
               </div>
+              <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#10B981] border-2 border-[#030712] shadow-sm animate-pulse" />
             </div>
+
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-sm sm:text-base font-black uppercase tracking-tight text-white leading-none">
+                <h1 className="text-base sm:text-lg font-black uppercase tracking-tight text-white leading-none">
                   Sojib Ahmed
                 </h1>
                 <span className="px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/30 flex items-center gap-1">
@@ -86,24 +94,24 @@ export default function WorkstationHero({ onSwitchToClassic }: WorkstationHeroPr
                   Available for Hire
                 </span>
               </div>
-              <p className="text-[11px] sm:text-xs text-gray-400 mt-0.5 flex items-center gap-1.5">
+              <p className="text-xs sm:text-[13px] text-gray-400 mt-1 flex items-center gap-1.5 font-medium">
                 <span className="text-[#06B6D4] font-semibold">Full Stack Developer</span>
-                <span>·</span>
-                <span className="hidden xs:inline">Interactive 3D Workstation Studio</span>
+                <span className="text-gray-600">·</span>
+                <span className="text-gray-300">Production Systems Architect</span>
               </p>
             </div>
           </div>
 
-          {/* Quick Connect Social Badges (GitHub, LinkedIn, Email, WhatsApp) */}
-          <div className="flex items-center gap-1.5 flex-wrap">
+          {/* Quick Connect Links DIRECTLY UNDERNEATH Picture (GitHub, LinkedIn, Email, WhatsApp, Resume) */}
+          <div className="flex items-center gap-2 flex-wrap pt-0.5">
             <a
               href="https://github.com/SojibTechHub"
               target="_blank"
               rel="noreferrer"
-              className="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-gray-200 hover:text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all shadow-sm group"
-              title="GitHub: https://github.com/SojibTechHub"
+              className="px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-gray-200 hover:text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all shadow-sm hover:scale-105 cursor-pointer"
+              title="GitHub Profile"
             >
-              <FaGithub size={13} className="text-white group-hover:scale-110 transition-transform" />
+              <FaGithub size={13} className="text-white" />
               <span>GitHub</span>
             </a>
 
@@ -111,19 +119,19 @@ export default function WorkstationHero({ onSwitchToClassic }: WorkstationHeroPr
               href="https://www.linkedin.com/in/sojib-ahmed-shorif"
               target="_blank"
               rel="noreferrer"
-              className="px-2.5 py-1.5 rounded-xl bg-[#0077B5]/15 hover:bg-[#0077B5]/25 border border-[#0077B5]/30 text-[#38BDF8] hover:text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all shadow-sm group"
-              title="LinkedIn: sojib-ahmed-shorif"
+              className="px-2.5 py-1.5 rounded-xl bg-[#0077B5]/15 hover:bg-[#0077B5]/25 border border-[#0077B5]/35 text-[#38BDF8] hover:text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all shadow-sm hover:scale-105 cursor-pointer"
+              title="LinkedIn Profile"
             >
-              <FaLinkedinIn size={12} className="group-hover:scale-110 transition-transform" />
+              <FaLinkedinIn size={12} />
               <span>LinkedIn</span>
             </a>
 
             <a
               href="mailto:sojibahmedshorif998@gmail.com"
-              className="px-2.5 py-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 hover:text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all shadow-sm group"
+              className="px-2.5 py-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/35 text-purple-300 hover:text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all shadow-sm hover:scale-105 cursor-pointer"
               title="Email: sojibahmedshorif998@gmail.com"
             >
-              <Mail size={12} className="group-hover:scale-110 transition-transform" />
+              <Mail size={12} />
               <span>Email</span>
             </a>
 
@@ -131,22 +139,33 @@ export default function WorkstationHero({ onSwitchToClassic }: WorkstationHeroPr
               href="https://wa.me/8801942791004"
               target="_blank"
               rel="noreferrer"
-              className="px-2.5 py-1.5 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/30 text-[#4ADE80] hover:text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all shadow-sm group"
-              title="WhatsApp: +880 1942791004"
+              className="px-2.5 py-1.5 rounded-xl bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/35 text-[#4ADE80] hover:text-white text-[11px] font-semibold flex items-center gap-1.5 transition-all shadow-sm hover:scale-105 cursor-pointer"
+              title="WhatsApp: +8801942791004"
             >
-              <FaWhatsapp size={12} className="group-hover:scale-110 transition-transform" />
+              <FaWhatsapp size={13} />
               <span>WhatsApp</span>
             </a>
 
-            {/* CMS Admin Link on mobile */}
+            <a
+              href="https://drive.google.com/file/d/1I_yOQ82k2LqFINo5RuR_tXVEzzwAZkGx/view?usp=sharing"
+              target="_blank"
+              rel="noreferrer"
+              className="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-[#06B6D4]/20 to-[#10B981]/20 hover:from-[#06B6D4]/35 hover:to-[#10B981]/35 border border-[#06B6D4]/40 text-[#22D3EE] hover:text-white text-[11px] font-bold flex items-center gap-1.5 transition-all shadow-sm hover:scale-105 cursor-pointer"
+              title="View & Download Official Full-Stack Resume"
+            >
+              <FileText size={12} />
+              <span>Resume</span>
+            </a>
+
+            {/* CMS Admin Link */}
             <a
               href="/admin"
               target="_blank"
               rel="noreferrer"
-              className="md:hidden p-1.5 rounded-xl bg-[#090D1A] hover:bg-purple-500/20 text-gray-400 hover:text-purple-300 border border-white/10 transition-all"
-              title="Admin CMS"
+              className="p-1.5 rounded-xl bg-[#090D1A] hover:bg-purple-500/20 text-gray-400 hover:text-purple-300 border border-white/10 transition-all hover:scale-105"
+              title="Admin CMS Dashboard"
             >
-              <Shield size={14} />
+              <Shield size={13} />
             </a>
           </div>
         </div>

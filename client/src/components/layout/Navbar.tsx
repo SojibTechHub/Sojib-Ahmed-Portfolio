@@ -69,12 +69,13 @@ export default function Navbar() {
               whileTap={{ scale: 0.98 }}
               aria-label="Sojib Ahmed - Home"
             >
-              <div className="relative w-10 h-10 rounded-xl p-[1px] bg-gradient-to-tr from-[#7C3AED] via-[#06B6D4] to-[#10B981] shadow-md shadow-[rgba(124,58,237,0.3)] flex-shrink-0">
-                <div className="w-full h-full bg-[#050508] rounded-[11px] flex items-center justify-center relative overflow-hidden group-hover:bg-[#0B1120] transition-colors">
-                  <span className="font-black text-sm bg-gradient-to-r from-[#A78BFA] via-[#22D3EE] to-[#34D399] bg-clip-text text-transparent">
-                    SA
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative w-10 h-10 rounded-xl p-[1.5px] bg-gradient-to-tr from-[#7C3AED] via-[#06B6D4] to-[#10B981] shadow-md shadow-[rgba(124,58,237,0.3)] flex-shrink-0">
+                <div className="w-full h-full bg-[#050508] rounded-[10px] overflow-hidden flex items-center justify-center relative">
+                  <img
+                    src="/images/hero.jpg"
+                    alt="Sojib Ahmed"
+                    className="w-full h-full object-cover object-top"
+                  />
                 </div>
               </div>
               <div className="flex flex-col justify-center">

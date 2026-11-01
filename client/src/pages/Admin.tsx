@@ -2660,7 +2660,7 @@ export default function AdminPage() {
 // LOGIN FORM COMPONENT
 // ============================================================
 function AdminLoginForm({ onLoginSuccess }: { onLoginSuccess: (token: string) => void }) {
-  const [email, setEmail] = useState('sojibahmedshorif25@gmail.com');
+  const [email, setEmail] = useState(() => localStorage.getItem('admin_email') || 'sojibahmedshorif998@gmail.com');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -2670,7 +2670,26 @@ function AdminLoginForm({ onLoginSuccess }: { onLoginSuccess: (token: string) =>
     setLoading(true);
     setError('');
 
+    const cleanEmail = email.trim().toLowerCase();
     const cleanPassword = password.trim();
+
+    if (!cleanEmail) {
+      setError('Admin email address is required');
+      setLoading(false);
+      return;
+    }
+    if (!cleanPassword) {
+      setError('Admin master password is required');
+      setLoading(false);
+      return;
+    }
+
+    const isValidEmail = 
+      cleanEmail === 'sojibahmedshorif998@gmail.com' ||
+      cleanEmail === 'sojibahmedshorif25@gmail.com' ||
+      cleanEmail === 'admin@sojib.dev' ||
+      cleanEmail === 'admin';
+
     const isMasterPassword = 
       cleanPassword === 'Sojibboss@321946##' ||
       cleanPassword === 'Sojibboss@321646##' ||
@@ -2681,31 +2700,34 @@ function AdminLoginForm({ onLoginSuccess }: { onLoginSuccess: (token: string) =>
       const res = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), password: cleanPassword }),
+        body: JSON.stringify({ email: cleanEmail, password: cleanPassword }),
       });
 
       const data = await res.json();
       if (res.ok && data.token) {
+        localStorage.setItem('admin_email', cleanEmail);
         toast.success('Welcome back, Sojib Ahmed!');
         onLoginSuccess(data.token);
         return;
       }
 
-      if (isMasterPassword) {
+      if (isValidEmail && isMasterPassword) {
+        localStorage.setItem('admin_email', cleanEmail);
         const mockToken = 'mock_jwt_token_for_offline';
-        toast.success('Welcome back, Sojib Ahmed!');
+        toast.success('Welcome back, Sojib Ahmed! (Offline Mode)');
         onLoginSuccess(mockToken);
         return;
       }
 
       setError(data.message || 'Incorrect email or password');
     } catch {
-      if (isMasterPassword) {
+      if (isValidEmail && isMasterPassword) {
+        localStorage.setItem('admin_email', cleanEmail);
         const mockToken = 'mock_jwt_token_for_offline';
-        toast.success('Welcome back, Sojib Ahmed!');
+        toast.success('Welcome back, Sojib Ahmed! (Offline Mode)');
         onLoginSuccess(mockToken);
       } else {
-        setError('Incorrect email or password');
+        setError('Incorrect admin email or password');
       }
     } finally {
       setLoading(false);
@@ -2740,7 +2762,7 @@ function AdminLoginForm({ onLoginSuccess }: { onLoginSuccess: (token: string) =>
               type="email"
               value={email}
               onChange={(e) => { setEmail(e.target.value); setError(''); }}
-              placeholder="sojibahmedshorif25@gmail.com"
+              placeholder="sojibahmedshorif998@gmail.com"
               className="w-full px-4 py-3 rounded-xl bg-[#030712] border border-white/10 text-sm text-white placeholder-gray-500 outline-none focus:border-[#06B6D4] transition-all"
               required
             />
@@ -2754,7 +2776,7 @@ function AdminLoginForm({ onLoginSuccess }: { onLoginSuccess: (token: string) =>
               type="password"
               value={password}
               onChange={(e) => { setPassword(e.target.value); setError(''); }}
-              placeholder="Enter master password"
+              placeholder="Enter master password (Sojibboss@321946##)"
               className="w-full px-4 py-3 rounded-xl bg-[#030712] border border-white/10 text-sm text-white placeholder-gray-500 outline-none focus:border-[#06B6D4] transition-all"
               autoFocus
               required

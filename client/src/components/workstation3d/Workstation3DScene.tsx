@@ -31,31 +31,30 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick, onToggleZ
 
     if (zoomed) {
       if (isMobile) {
-        // Ultrawide monitor is 2.32m wide. Ensure visible width is >= 2.6m on any portrait phone
-        const dist = Math.max(3.2, 2.3 / Math.max(0.45, aspect));
+        const dist = Math.max(2.1, 1.45 / Math.max(0.48, aspect));
         return {
-          pos: { x: 0, y: 1.72, z: dist - 0.28 },
-          look: { x: 0, y: 1.72, z: -0.28 },
+          pos: { x: 0, y: 1.72, z: dist - 0.25 },
+          look: { x: 0, y: 1.72, z: -0.25 },
         };
       }
       return {
-        pos: { x: 0, y: 1.72, z: 1.25 },
-        look: { x: 0, y: 1.72, z: -0.28 },
+        pos: { x: 0, y: 1.72, z: 1.15 },
+        look: { x: 0, y: 1.72, z: -0.25 },
       };
     }
 
     if (isMobile) {
-      // Center camera directly at eye-level with the monitor, pull back dynamically based on aspect
-      const dist = Math.max(4.2, 3.2 / Math.max(0.45, aspect));
+      // Center camera directly with optimal distance so monitor and desk are prominently framed and clear
+      const dist = Math.max(3.1, 2.05 / Math.max(0.48, aspect));
       return {
-        pos: { x: 0, y: 1.70, z: dist - 0.28 },
-        look: { x: 0, y: 1.68, z: -0.28 },
+        pos: { x: 0, y: 1.70, z: dist - 0.25 },
+        look: { x: 0, y: 1.68, z: -0.25 },
       };
     }
 
     return {
-      pos: { x: 0.12, y: 1.95, z: 3.55 },
-      look: { x: 0, y: 1.55, z: -0.20 },
+      pos: { x: 0.05, y: 1.80, z: 2.85 },
+      look: { x: 0, y: 1.62, z: -0.22 },
     };
   };
 
@@ -73,7 +72,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick, onToggleZ
     const width = container.clientWidth;
     const height = container.clientHeight;
     const aspect = width / height;
-    const initialFov = aspect < 1.0 ? Math.min(65, Math.max(50, (50 / aspect) * 0.72)) : 45;
+    const initialFov = aspect < 1.0 ? Math.min(58, Math.max(46, (46 / aspect) * 0.68)) : 42;
     const camera = new THREE.PerspectiveCamera(initialFov, aspect, 0.1, 80);
     cameraRef.current = camera;
     
@@ -81,11 +80,11 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick, onToggleZ
     camera.position.set(initialTarget.pos.x, initialTarget.pos.y, initialTarget.pos.z);
     camera.lookAt(initialTarget.look.x, initialTarget.look.y, initialTarget.look.z);
 
-    // 3. Renderer Setup
+    // 3. Renderer Setup with High-DPI Sharpness
     const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
     rendererRef.current = renderer;
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.5));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFShadowMap;
     container.appendChild(renderer.domElement);
@@ -277,58 +276,63 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick, onToggleZ
     frameMesh.position.set(2.45, 2.45, -3.05);
     scene.add(frameMesh);
 
-    // Canvas inside frame (Ultra High-Res 1024x680 with 4 Verified Credentials)
+    // Canvas inside frame (Ultra High-Res 1600x1060 with 4 Verified Credentials)
     const certCanvas = document.createElement('canvas');
-    certCanvas.width = 1024;
-    certCanvas.height = 680;
+    certCanvas.width = 1600;
+    certCanvas.height = 1060;
     const cCtx = certCanvas.getContext('2d')!;
+    cCtx.imageSmoothingEnabled = true;
+    cCtx.imageSmoothingQuality = 'high';
     cCtx.fillStyle = '#060B17';
-    cCtx.fillRect(0, 0, 1024, 680);
+    cCtx.fillRect(0, 0, 1600, 1060);
     
     // Glowing gradient frame border
-    const cGrad = cCtx.createLinearGradient(0, 0, 1024, 680);
+    const cGrad = cCtx.createLinearGradient(0, 0, 1600, 1060);
     cGrad.addColorStop(0, '#7C3AED');
     cGrad.addColorStop(0.5, '#06B6D4');
     cGrad.addColorStop(1, '#10B981');
     cCtx.strokeStyle = cGrad;
-    cCtx.lineWidth = 10;
-    cCtx.strokeRect(18, 18, 988, 644);
+    cCtx.lineWidth = 14;
+    cCtx.strokeRect(20, 20, 1560, 1020);
 
     cCtx.fillStyle = '#FFFFFF';
-    cCtx.font = 'bold 54px sans-serif';
-    cCtx.fillText('SOJIB AHMED', 56, 100);
+    cCtx.font = 'bold 80px sans-serif';
+    cCtx.fillText('SOJIB AHMED', 80, 140);
 
     cCtx.fillStyle = '#06B6D4';
-    cCtx.font = 'bold 32px sans-serif';
-    cCtx.fillText('FULL STACK DEVELOPER', 56, 155);
+    cCtx.font = 'bold 44px sans-serif';
+    cCtx.fillText('FULL STACK DEVELOPER', 80, 215);
 
-    cCtx.fillStyle = 'rgba(6, 182, 212, 0.15)';
-    cCtx.fillRect(56, 185, 912, 48);
-    cCtx.strokeStyle = 'rgba(6, 182, 212, 0.4)';
-    cCtx.lineWidth = 2;
-    cCtx.strokeRect(56, 185, 912, 48);
+    cCtx.fillStyle = 'rgba(6, 182, 212, 0.18)';
+    cCtx.fillRect(80, 260, 1440, 72);
+    cCtx.strokeStyle = 'rgba(6, 182, 212, 0.6)';
+    cCtx.lineWidth = 3;
+    cCtx.strokeRect(80, 260, 1440, 72);
     cCtx.fillStyle = '#22D3EE';
-    cCtx.font = 'bold 22px monospace';
-    cCtx.fillText('★ 4 OFFICIALLY VERIFIED CREDENTIALS & INDUSTRY RECORDS ★', 76, 218);
+    cCtx.font = 'bold 30px monospace';
+    cCtx.fillText('★ 4 OFFICIALLY VERIFIED CREDENTIALS & INDUSTRY RECORDS ★', 110, 310);
 
-    cCtx.fillStyle = '#E2E8F0';
-    cCtx.font = '22px monospace';
-    cCtx.fillText('1. FlyRank — Full Stack Web Development Appointment', 56, 285);
-    cCtx.fillText('2. Programming Hero — Official Letter of Recommendation', 56, 335);
-    cCtx.fillText('3. Programming Hero — Complete Web Development Course', 56, 385);
-    cCtx.fillText('4. Datheon AI Systems — Full Stack Engineering Internship', 56, 435);
+    cCtx.fillStyle = '#F8FAFC';
+    cCtx.font = 'bold 32px monospace';
+    cCtx.fillText('1. FlyRank — Full Stack Web Development Appointment', 80, 405);
+    cCtx.fillText('2. Programming Hero — Official Letter of Recommendation', 80, 485);
+    cCtx.fillText('3. Programming Hero — Complete Web Development Course', 80, 565);
+    cCtx.fillText('4. Datheon AI Systems — Full Stack Engineering Internship', 80, 645);
 
     cCtx.fillStyle = '#94A3B8';
-    cCtx.font = '20px monospace';
-    cCtx.fillText('// Tech: React 19 · Next.js 16 · Node.js · Express · MongoDB · TypeScript', 56, 505);
+    cCtx.font = 'bold 28px monospace';
+    cCtx.fillText('// Tech: React 19 · Next.js 16 · Node.js · Express · MongoDB · TypeScript', 80, 755);
 
     cCtx.fillStyle = '#10B981';
-    cCtx.font = 'bold 26px sans-serif';
-    cCtx.fillText('● SYSTEM STATUS: PRODUCTION READY & AVAILABLE FOR HIRE', 56, 580);
+    cCtx.font = 'bold 38px sans-serif';
+    cCtx.fillText('● SYSTEM STATUS: PRODUCTION READY & AVAILABLE FOR HIRE', 80, 870);
 
     const certTex = new THREE.CanvasTexture(certCanvas);
     certTex.minFilter = THREE.LinearFilter;
     certTex.magFilter = THREE.LinearFilter;
+    if (renderer.capabilities) {
+      certTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    }
     const certMat = new THREE.MeshStandardMaterial({ map: certTex, roughness: 0.15 });
     const certPlane = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 1.0), certMat);
     certPlane.position.set(2.45, 2.45, -3.02);
@@ -426,136 +430,138 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick, onToggleZ
     monitorFrame.castShadow = true;
     scene.add(monitorFrame);
 
-    // Monitor Active Canvas Screen (2048x840 Ultra-High Definition with Maximum Clarity)
+    // Monitor Active Canvas Screen (2560x1080 Ultra-High Definition with Crystal-Clear Legibility)
     const screenGeo = new THREE.PlaneGeometry(2.22, 0.90);
     const screenCanvas = document.createElement('canvas');
-    screenCanvas.width = 2048;
-    screenCanvas.height = 840;
+    screenCanvas.width = 2560;
+    screenCanvas.height = 1080;
     const sCtx = screenCanvas.getContext('2d')!;
+    sCtx.imageSmoothingEnabled = true;
+    sCtx.imageSmoothingQuality = 'high';
 
     const drawScreen = () => {
       // Deep cyber dark background
       sCtx.fillStyle = '#030712';
-      sCtx.fillRect(0, 0, 2048, 840);
+      sCtx.fillRect(0, 0, 2560, 1080);
 
       // Top glowing neon bar
-      const grad = sCtx.createLinearGradient(0, 0, 2048, 0);
+      const grad = sCtx.createLinearGradient(0, 0, 2560, 0);
       grad.addColorStop(0, '#7C3AED');
       grad.addColorStop(0.5, '#06B6D4');
       grad.addColorStop(1, '#10B981');
       sCtx.fillStyle = grad;
-      sCtx.fillRect(0, 0, 2048, 14);
+      sCtx.fillRect(0, 0, 2560, 16);
 
       // Top OS Navigation / Window Controls Bar
       sCtx.fillStyle = '#080E20';
-      sCtx.fillRect(0, 14, 2048, 64);
-      sCtx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      sCtx.fillRect(0, 16, 2560, 80);
+      sCtx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
       sCtx.lineWidth = 1;
       sCtx.beginPath();
-      sCtx.moveTo(0, 78);
-      sCtx.lineTo(2048, 78);
+      sCtx.moveTo(0, 96);
+      sCtx.lineTo(2560, 96);
       sCtx.stroke();
 
       // Window dots (Traffic lights)
       const dotColors = ['#EF4444', '#F59E0B', '#10B981'];
       dotColors.forEach((color, i) => {
         sCtx.beginPath();
-        sCtx.arc(50 + i * 36, 46, 12, 0, Math.PI * 2);
+        sCtx.arc(65 + i * 44, 56, 14, 0, Math.PI * 2);
         sCtx.fillStyle = color;
         sCtx.fill();
       });
 
       // Window title
       sCtx.fillStyle = '#94A3B8';
-      sCtx.font = 'bold 24px monospace';
-      sCtx.fillText('sojib@workstation:~ (production-main)', 140, 54);
+      sCtx.font = 'bold 28px monospace';
+      sCtx.fillText('sojib@workstation:~ (production-main)', 185, 66);
 
       // Status Badge (Top Right)
-      sCtx.fillStyle = 'rgba(16, 185, 129, 0.2)';
-      sCtx.fillRect(1620, 24, 290, 44);
-      sCtx.strokeStyle = 'rgba(16, 185, 129, 0.6)';
+      sCtx.fillStyle = 'rgba(16, 185, 129, 0.22)';
+      sCtx.fillRect(2020, 28, 460, 56);
+      sCtx.strokeStyle = 'rgba(16, 185, 129, 0.7)';
       sCtx.lineWidth = 2;
-      sCtx.strokeRect(1620, 24, 290, 44);
+      sCtx.strokeRect(2020, 28, 460, 56);
       sCtx.fillStyle = '#10B981';
-      sCtx.font = 'bold 20px sans-serif';
-      sCtx.fillText('● AVAILABLE FOR HIRE', 1650, 52);
+      sCtx.font = 'bold 24px sans-serif';
+      sCtx.fillText('● AVAILABLE FOR HIRE', 2060, 65);
 
       // Main Branding Title (Centered, Huge, High Contrast, Shadowed for crystal clear legibility on all devices)
-      sCtx.shadowColor = 'rgba(6, 182, 212, 0.6)';
-      sCtx.shadowBlur = 14;
+      sCtx.shadowColor = 'rgba(6, 182, 212, 0.65)';
+      sCtx.shadowBlur = 18;
       sCtx.fillStyle = '#FFFFFF';
-      sCtx.font = 'bold 66px sans-serif';
+      sCtx.font = 'bold 84px sans-serif';
       sCtx.textAlign = 'center';
-      sCtx.fillText('SOJIB AHMED', 1024, 165);
+      sCtx.fillText('SOJIB AHMED', 1280, 210);
       sCtx.shadowBlur = 0;
 
       sCtx.fillStyle = '#38BDF8';
-      sCtx.font = 'bold 30px sans-serif';
-      sCtx.fillText('FULL STACK DEVELOPER · PRODUCTION SYSTEMS ARCHITECT', 1024, 214);
+      sCtx.font = 'bold 36px sans-serif';
+      sCtx.fillText('FULL STACK DEVELOPER · PRODUCTION SYSTEMS ARCHITECT', 1280, 272);
       sCtx.textAlign = 'left';
 
-      // Central Terminal Window (Safe 140px margins to prevent edge clipping on mobile)
+      // Central Terminal Window (Safe margins to prevent edge clipping on mobile)
       sCtx.fillStyle = '#080E1E';
-      sCtx.strokeStyle = 'rgba(6, 182, 212, 0.7)';
+      sCtx.strokeStyle = 'rgba(6, 182, 212, 0.75)';
       sCtx.lineWidth = 3;
       sCtx.beginPath();
-      sCtx.roundRect(140, 248, 1768, 412, 20);
+      sCtx.roundRect(140, 310, 2280, 560, 24);
       sCtx.fill();
       sCtx.stroke();
 
       // Terminal Header inside box
       sCtx.fillStyle = '#0C152E';
       sCtx.beginPath();
-      sCtx.roundRect(140, 248, 1768, 56, [20, 20, 0, 0]);
+      sCtx.roundRect(140, 310, 2280, 72, [24, 24, 0, 0]);
       sCtx.fill();
 
       sCtx.fillStyle = '#38BDF8';
-      sCtx.font = 'bold 24px monospace';
-      sCtx.fillText('$ git status --production-verified', 180, 285);
+      sCtx.font = 'bold 30px monospace';
+      sCtx.fillText('$ git status --production-verified', 190, 358);
 
       // Terminal Body Content (Crisp, High Contrast, Bold Fonts)
       sCtx.fillStyle = '#10B981';
-      sCtx.font = 'bold 26px monospace';
-      sCtx.fillText('✔ 10 Flagship Production Repositories Live:', 180, 348);
+      sCtx.font = 'bold 32px monospace';
+      sCtx.fillText('✔ 10 Flagship Production Repositories Live:', 190, 440);
 
       sCtx.fillStyle = '#FFFFFF';
-      sCtx.font = 'bold 23px monospace';
-      sCtx.fillText('● ShopX BD Enterprise   ● FoodFlow Logistics   ● SkillForge AI   ● StartupForge ATS', 200, 393);
-      sCtx.fillText('● TypeMarket Store      ● InvestProp AI        ● Issue Tracker   ● Pet Adoption API', 200, 438);
+      sCtx.font = 'bold 27px monospace';
+      sCtx.fillText('● ShopX BD Enterprise   ● FoodFlow Logistics   ● SkillForge AI   ● StartupForge ATS', 220, 498);
+      sCtx.fillText('● TypeMarket Store      ● InvestProp AI        ● Issue Tracker   ● Pet Adoption API', 220, 554);
 
       sCtx.fillStyle = '#C084FC';
-      sCtx.font = 'bold 26px monospace';
-      sCtx.fillText('✔ 4 Verified Credentials & Industry Records:', 180, 503);
+      sCtx.font = 'bold 32px monospace';
+      sCtx.fillText('✔ 4 Verified Credentials & Industry Records:', 190, 638);
 
       sCtx.fillStyle = '#FFFFFF';
-      sCtx.font = 'bold 23px monospace';
-      sCtx.fillText('★ FlyRank Appointment   ★ PH Recommendation   ★ PH Course Batch 13   ★ Datheon AI', 200, 548);
+      sCtx.font = 'bold 27px monospace';
+      sCtx.fillText('★ FlyRank Appointment   ★ PH Recommendation   ★ PH Course Batch 13   ★ Datheon AI', 220, 694);
 
       sCtx.fillStyle = '#38BDF8';
-      sCtx.font = 'bold 23px monospace';
-      sCtx.fillText('⚡ Tech Stack: React 19 • Next.js 16 • TypeScript • Node.js • Express • MongoDB Atlas', 180, 613);
+      sCtx.font = 'bold 28px monospace';
+      sCtx.fillText('⚡ Tech Stack: React 19 • Next.js 16 • TypeScript • Node.js • Express • MongoDB Atlas', 190, 780);
 
       // Bottom Clickable Interactive CTA Bar (Vibrant High-Contrast Button)
-      const ctaGrad = sCtx.createLinearGradient(140, 0, 1908, 0);
+      const ctaGrad = sCtx.createLinearGradient(140, 0, 2420, 0);
       ctaGrad.addColorStop(0, '#7C3AED');
       ctaGrad.addColorStop(0.5, '#06B6D4');
       ctaGrad.addColorStop(1, '#10B981');
       sCtx.fillStyle = ctaGrad;
       sCtx.beginPath();
-      sCtx.roundRect(140, 680, 1768, 115, 18);
+      sCtx.roundRect(140, 895, 2280, 145, 22);
       sCtx.fill();
 
       sCtx.fillStyle = '#FFFFFF';
-      sCtx.font = 'bold 38px sans-serif';
+      sCtx.font = 'bold 44px sans-serif';
       sCtx.textAlign = 'center';
-      sCtx.fillText('👉 CLICK OR TAP THIS MONITOR TO OPEN SOJIB OS (VIRTUAL DESKTOP) 🚀', 1024, 752);
+      sCtx.fillText('👉 CLICK OR TAP THIS MONITOR TO OPEN SOJIB OS (VIRTUAL DESKTOP) 🚀', 1280, 984);
       sCtx.textAlign = 'left';
     };
     drawScreen();
 
     const screenTexture = new THREE.CanvasTexture(screenCanvas);
     screenTexture.generateMipmaps = true;
-    screenTexture.minFilter = THREE.LinearMipmapLinearFilter;
+    screenTexture.minFilter = THREE.LinearFilter;
     screenTexture.magFilter = THREE.LinearFilter;
     if (renderer.capabilities) {
       screenTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
