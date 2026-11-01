@@ -17,7 +17,7 @@ const settingSchema = new mongoose.Schema({
   github: { type: String, default: 'https://github.com/SojibTechHub' },
   linkedin: { type: String, default: 'https://www.linkedin.com/in/sojib-ahmed-shorif' },
   facebook: { type: String, default: 'https://www.facebook.com/share/16G2SwmtSFk/' },
-  resumeUrl: { type: String, default: 'https://drive.google.com/file/d/10ONRQsFH14NB1RvG7aJIltzSm6YGXqcy/view?usp=sharing' },
+  resumeUrl: { type: String, default: 'https://drive.google.com/file/d/1I_yOQ82k2LqFINo5RuR_tXVEzzwAZkGx/view?usp=sharing' },
   yearsExperience: { type: String, default: '2+' },
   projectsCompleted: { type: String, default: '10+' },
   clientSatisfaction: { type: String, default: '100%' },

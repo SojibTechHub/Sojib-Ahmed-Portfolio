@@ -377,7 +377,7 @@ export default function AdminPage() {
     github: 'https://github.com/SojibTechHub',
     linkedin: 'https://www.linkedin.com/in/sojib-ahmed-shorif',
     facebook: 'https://www.facebook.com/share/16G2SwmtSFk/',
-    resumeUrl: 'https://drive.google.com/file/d/10ONRQsFH14NB1RvG7aJIltzSm6YGXqcy/view?usp=sharing',
+    resumeUrl: 'https://drive.google.com/file/d/1I_yOQ82k2LqFINo5RuR_tXVEzzwAZkGx/view?usp=sharing',
     yearsExperience: '2+',
     projectsCompleted: '10+',
     clientSatisfaction: '100%',

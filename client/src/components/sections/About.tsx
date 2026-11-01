@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { MapPin, Code2, Brain, Heart, Rocket, CheckCircle2 } from 'lucide-react';
+import { MapPin, Code2, Brain, Heart, Rocket, CheckCircle2, FileText, Download } from 'lucide-react';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -161,6 +161,28 @@ export default function About() {
                   </li>
                 ))}
               </ul>
+            </motion.div>
+
+            {/* Resume Direct Action CTA */}
+            <motion.div variants={fadeUp} className="pt-2 flex flex-wrap items-center gap-3">
+              <a
+                href="https://drive.google.com/file/d/1I_yOQ82k2LqFINo5RuR_tXVEzzwAZkGx/view?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary flex items-center gap-2 text-xs sm:text-sm py-3 px-6 shadow-xl"
+              >
+                <FileText size={16} />
+                <span>View Official Resume (Drive)</span>
+              </a>
+              <a
+                href="https://drive.google.com/file/d/1I_yOQ82k2LqFINo5RuR_tXVEzzwAZkGx/view?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary flex items-center gap-2 text-xs sm:text-sm py-3 px-5"
+              >
+                <Download size={15} />
+                <span>Download PDF</span>
+              </a>
             </motion.div>
           </motion.div>
         </div>

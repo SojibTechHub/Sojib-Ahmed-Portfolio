@@ -801,6 +801,15 @@ function OSAboutApp({ onNavigate }: { onNavigate?: (app: AppId) => void }) {
       <div className="flex flex-wrap gap-2 pt-1">
         {onNavigate && (
           <>
+            <a
+              href="https://drive.google.com/file/d/1I_yOQ82k2LqFINo5RuR_tXVEzzwAZkGx/view?usp=sharing"
+              target="_blank"
+              rel="noreferrer"
+              className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#7C3AED]/30 to-[#06B6D4]/30 hover:from-[#7C3AED]/45 hover:to-[#06B6D4]/45 border border-[#06B6D4]/50 text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-md"
+            >
+              <FileText size={13} className="text-[#06B6D4]" />
+              <span>View Resume (Drive) 📄</span>
+            </a>
             <button
               onClick={() => onNavigate('certificates')}
               className="px-4 py-2 rounded-xl bg-[#06B6D4]/20 hover:bg-[#06B6D4]/30 border border-[#06B6D4]/40 text-[#06B6D4] text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Workstation3DScene from './Workstation3DScene';
 import SojibOSDesktop from './SojibOSDesktop';
-import { Sparkles, Monitor, Layers, Volume2, VolumeX, Shield, Terminal, ArrowDown, Mail } from 'lucide-react';
+import { Sparkles, Monitor, Layers, Volume2, VolumeX, Shield, Terminal, ArrowDown, Mail, FileText } from 'lucide-react';
 import { FaGithub, FaLinkedinIn, FaWhatsapp } from 'react-icons/fa6';
 
 interface WorkstationHeroProps {
@@ -136,6 +136,17 @@ export default function WorkstationHero({ onSwitchToClassic }: WorkstationHeroPr
             >
               <FaWhatsapp size={12} className="group-hover:scale-110 transition-transform" />
               <span>WhatsApp</span>
+            </a>
+
+            <a
+              href="https://drive.google.com/file/d/1I_yOQ82k2LqFINo5RuR_tXVEzzwAZkGx/view?usp=sharing"
+              target="_blank"
+              rel="noreferrer"
+              className="px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-[#7C3AED]/25 to-[#06B6D4]/25 hover:from-[#7C3AED]/40 hover:to-[#06B6D4]/40 border border-[#06B6D4]/40 text-[#22D3EE] hover:text-white text-[11px] font-bold flex items-center gap-1.5 transition-all shadow-sm group"
+              title="View Official Resume (Google Drive)"
+            >
+              <FileText size={12} className="group-hover:scale-110 transition-transform" />
+              <span>Resume</span>
             </a>
 
             {/* CMS Admin Link on mobile */}
