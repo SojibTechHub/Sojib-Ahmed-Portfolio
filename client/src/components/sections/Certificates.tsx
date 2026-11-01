@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { ExternalLink, Download, Eye, X, Briefcase, GraduationCap, CheckCircle2 } from 'lucide-react';
+import { ExternalLink, Download, Eye, X, Briefcase, GraduationCap, CheckCircle2, FileText } from 'lucide-react';
 import { certificates as defaultCertificates, type Certificate } from '../../data/certificates';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -78,6 +78,19 @@ export default function Certificates() {
           <p className="section-subheading mx-auto text-center max-w-2xl text-gray-400">
             Separated into two distinct sectors: Verified <strong className="text-white">Industry Internships & Appointment Letters</strong> and official <strong className="text-white">Programming Hero Certifications & Endorsements</strong>.
           </p>
+
+          <div className="mt-4 flex items-center justify-center">
+            <a
+              href="https://drive.google.com/file/d/1I_yOQ82k2LqFINo5RuR_tXVEzzwAZkGx/view?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-[#06B6D4]/40 text-[#22D3EE] hover:text-white text-xs font-bold transition-all shadow-md cursor-pointer hover:scale-105"
+            >
+              <FileText size={14} />
+              <span>View Complete Full-Stack Engineering Resume (Drive)</span>
+              <ExternalLink size={12} className="opacity-80" />
+            </a>
+          </div>
 
           {/* Interactive Sector Filter Tabs */}
           <div className="flex flex-wrap items-center justify-center gap-2 mt-7">

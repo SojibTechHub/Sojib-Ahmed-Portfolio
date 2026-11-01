@@ -5,8 +5,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { Phone, MapPin, Clock, Send, CheckCircle2, ArrowRight, Copy, Check } from 'lucide-react';
-import { FaGithub, FaLinkedinIn, FaEnvelope } from 'react-icons/fa6';
+import { Phone, MapPin, Clock, Send, CheckCircle2, ArrowRight, Copy, Check, FileText, ArrowUpRight } from 'lucide-react';
+import { FaGithub, FaLinkedinIn, FaEnvelope, FaWhatsapp } from 'react-icons/fa6';
 
 const schema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -184,12 +184,38 @@ export default function Contact() {
               </div>
             </div>
 
+            {/* Official Resume Card */}
+            <div className="card p-4 bg-gradient-to-br from-[#7C3AED]/15 via-[#0B1120] to-[#06B6D4]/15 border border-[#06B6D4]/30 shadow-lg">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#7C3AED]/30 to-[#06B6D4]/30 border border-[#06B6D4]/40 flex items-center justify-center text-[#06B6D4] shadow-sm flex-shrink-0">
+                    <FileText size={18} />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-white">Full Stack Engineering Resume</div>
+                    <div className="text-[10px] text-gray-400 mt-0.5">Google Drive · Verified PDF</div>
+                  </div>
+                </div>
+
+                <a
+                  href="https://drive.google.com/file/d/1I_yOQ82k2LqFINo5RuR_tXVEzzwAZkGx/view?usp=sharing"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 rounded-lg bg-[#06B6D4]/20 hover:bg-[#06B6D4]/30 border border-[#06B6D4]/40 text-[#06B6D4] text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap shadow-sm hover:scale-105"
+                >
+                  <span>View Resume</span>
+                  <ArrowUpRight size={12} />
+                </a>
+              </div>
+            </div>
+
             {/* Social links */}
             <div className="flex gap-2">
               {[
                 { icon: FaGithub, href: 'https://github.com/SojibTechHub', label: 'GitHub' },
                 { icon: FaLinkedinIn, href: 'https://www.linkedin.com/in/sojib-ahmed-shorif', label: 'LinkedIn' },
                 { icon: FaEnvelope, href: 'mailto:sojibahmedshorif998@gmail.com', label: 'Email' },
+                { icon: FaWhatsapp, href: 'https://wa.me/8801942791004', label: 'WhatsApp' },
               ].map(({ icon: Icon, href, label }) => (
                 <motion.a
                   key={label}

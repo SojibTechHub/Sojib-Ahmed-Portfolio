@@ -117,52 +117,8 @@ export default function Navbar() {
               })}
             </div>
 
-            {/* Right: Quick Socials & Actions */}
-            <div className="flex items-center gap-2">
-              {/* Quick Social Buttons (Desktop) */}
-              <div className="hidden xl:flex items-center gap-1.5 mr-1">
-                <a
-                  href="https://github.com/SojibTechHub"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-8 h-8 rounded-xl bg-[#0B1120] hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white flex items-center justify-center transition-all cursor-pointer shadow-sm"
-                  title="GitHub: https://github.com/SojibTechHub"
-                  aria-label="GitHub Profile"
-                >
-                  <FaGithub size={14} />
-                </a>
-
-                <a
-                  href="https://www.linkedin.com/in/sojib-ahmed-shorif"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-8 h-8 rounded-xl bg-[#0B1120] hover:bg-[#0077B5]/20 border border-white/10 hover:border-[#0077B5]/40 text-gray-300 hover:text-[#38BDF8] flex items-center justify-center transition-all cursor-pointer shadow-sm"
-                  title="LinkedIn: sojib-ahmed-shorif"
-                  aria-label="LinkedIn Profile"
-                >
-                  <FaLinkedinIn size={13} />
-                </a>
-
-                <a
-                  href="mailto:sojibahmedshorif998@gmail.com"
-                  className="w-8 h-8 rounded-xl bg-[#0B1120] hover:bg-purple-500/20 border border-white/10 hover:border-purple-500/40 text-gray-300 hover:text-purple-300 flex items-center justify-center transition-all cursor-pointer shadow-sm"
-                  title="Email: sojibahmedshorif998@gmail.com"
-                  aria-label="Send Email"
-                >
-                  <Mail size={13} />
-                </a>
-
-                <a
-                  href="https://wa.me/8801942791004"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-8 h-8 rounded-xl bg-[#0B1120] hover:bg-emerald-500/20 border border-white/10 hover:border-emerald-500/40 text-gray-300 hover:text-emerald-400 flex items-center justify-center transition-all cursor-pointer shadow-sm"
-                  title="WhatsApp: +880 1942791004"
-                  aria-label="Chat on WhatsApp"
-                >
-                  <FaWhatsapp size={13} />
-                </a>
-              </div>
+            {/* Right: Actions */}
+            <div className="flex items-center gap-2.5">
 
               {/* Admin CMS Direct Access */}
               <motion.a
@@ -188,7 +144,7 @@ export default function Navbar() {
                 aria-label="View Resume"
               >
                 <FileText size={13} />
-                <span>Resume</span>
+                <span>View Resume</span>
                 <ArrowUpRight size={12} className="opacity-80" />
               </motion.a>
 
