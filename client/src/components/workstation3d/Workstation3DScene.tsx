@@ -30,18 +30,25 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick, onToggleZ
     const aspect = w / h;
 
     if (zoomed) {
+      if (isMobile) {
+        // Ultrawide monitor is 2.32m wide. Ensure visible width is >= 2.6m on any portrait phone
+        const dist = Math.max(3.2, 2.3 / Math.max(0.45, aspect));
+        return {
+          pos: { x: 0, y: 1.72, z: dist - 0.28 },
+          look: { x: 0, y: 1.72, z: -0.28 },
+        };
+      }
       return {
-        // Safe zoom distance on mobile so ultrawide monitor fits portrait viewport without edge clipping
-        pos: { x: 0, y: 1.72, z: isMobile ? 2.35 : 1.25 },
+        pos: { x: 0, y: 1.72, z: 1.25 },
         look: { x: 0, y: 1.72, z: -0.28 },
       };
     }
 
     if (isMobile) {
       // Center camera directly at eye-level with the monitor, pull back dynamically based on aspect
-      const zDist = aspect < 0.75 ? 4.5 : 3.8;
+      const dist = Math.max(4.2, 3.2 / Math.max(0.45, aspect));
       return {
-        pos: { x: 0, y: 1.70, z: zDist },
+        pos: { x: 0, y: 1.70, z: dist - 0.28 },
         look: { x: 0, y: 1.68, z: -0.28 },
       };
     }
@@ -66,7 +73,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick, onToggleZ
     const width = container.clientWidth;
     const height = container.clientHeight;
     const aspect = width / height;
-    const initialFov = aspect < 1.0 ? Math.min(62, Math.max(45, (45 / aspect) * 0.78)) : 45;
+    const initialFov = aspect < 1.0 ? Math.min(65, Math.max(50, (50 / aspect) * 0.72)) : 45;
     const camera = new THREE.PerspectiveCamera(initialFov, aspect, 0.1, 80);
     cameraRef.current = camera;
     
@@ -928,7 +935,7 @@ export default function Workstation3DScene({ isZoomed, onMonitorClick, onToggleZ
       camera.aspect = w / h;
 
       if (camera.aspect < 1.0) {
-        camera.fov = Math.min(62, Math.max(45, (45 / camera.aspect) * 0.78));
+        camera.fov = Math.min(65, Math.max(50, (50 / camera.aspect) * 0.72));
       } else {
         camera.fov = 45;
       }

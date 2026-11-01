@@ -475,7 +475,7 @@ export default function Projects() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.93, y: 20 }}
               transition={{ duration: 0.25, ease: 'easeOut' }}
-              className="relative w-full max-w-3xl max-h-[92vh] overflow-y-auto rounded-3xl bg-[#0a0f1d] border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.8)] text-left flex flex-col"
+              className="relative w-full max-w-3xl max-h-[calc(100dvh-24px)] overflow-y-auto rounded-2xl sm:rounded-3xl bg-[#0a0f1d] border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.8)] text-left flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close Button */}
@@ -611,22 +611,22 @@ export default function Projects() {
               </div>
 
               {/* Modal Action Footer Bar (Live Link & GitHub buttons) */}
-              <div className="p-5 sm:p-6 bg-black/50 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 mt-auto">
+              <div className="p-4 sm:p-6 bg-black/50 border-t border-white/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-auto">
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="px-4 py-2.5 rounded-xl text-xs font-semibold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all cursor-pointer"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs font-semibold text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all cursor-pointer text-center"
                 >
                   Close Window
                 </button>
 
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
                   {/* GitHub Repo Button */}
                   {selectedProject.githubUrl && (
                     <a
                       href={selectedProject.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#131c2e] hover:bg-[#1e2a42] border border-white/20 hover:border-[#06B6D4]/50 transition-all shadow-md"
+                      className="flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#131c2e] hover:bg-[#1e2a42] border border-white/20 hover:border-[#06B6D4]/50 transition-all shadow-md text-center"
                     >
                       <FaGithub size={16} />
                       <span>GitHub Repository</span>
@@ -639,7 +639,7 @@ export default function Projects() {
                       href={selectedProject.docsUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
+                      className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all text-center"
                     >
                       <FaGithub size={14} />
                       <span>{selectedProject.category === 'backend' ? 'Client Repo' : 'Server Repo'}</span>
@@ -652,7 +652,7 @@ export default function Projects() {
                       href={selectedProject.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-extrabold text-white shadow-[0_0_25px_rgba(6,182,212,0.4)] hover:shadow-[0_0_35px_rgba(6,182,212,0.6)] transition-all hover:scale-105"
+                      className="flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 rounded-xl text-xs font-extrabold text-white shadow-[0_0_25px_rgba(6,182,212,0.4)] hover:shadow-[0_0_35px_rgba(6,182,212,0.6)] transition-all hover:scale-105 text-center"
                       style={{
                         background: 'linear-gradient(135deg, #7C3AED 0%, #06B6D4 100%)',
                       }}
