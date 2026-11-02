@@ -265,11 +265,17 @@ export default function Projects() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-surface)] via-transparent to-transparent opacity-90 pointer-events-none" />
 
-                    {/* Category pill & year on image */}
+                    {/* Category pill & demo accounts badge on image */}
                     <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5">
                       <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/75 backdrop-blur-md text-[#06B6D4] border border-[#06B6D4]/40 shadow">
                         {project.category === 'full-stack' ? 'Full Stack' : project.category === 'frontend' ? 'Frontend' : 'Backend'}
                       </span>
+                      {project.credentials && (
+                        <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold bg-[#10B981]/25 backdrop-blur-md text-[#10B981] border border-[#10B981]/50 shadow">
+                          <Key size={10} />
+                          <span>Demo Accounts</span>
+                        </span>
+                      )}
                     </div>
 
                     <div className="absolute top-3 right-3 z-10">

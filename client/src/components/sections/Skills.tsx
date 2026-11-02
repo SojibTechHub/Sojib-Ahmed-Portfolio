@@ -277,11 +277,6 @@ export default function Skills() {
                   <p className="text-xs text-[var(--color-text-secondary)] leading-snug line-clamp-2">
                     {skill.description}
                   </p>
-                  {skill.repoProof && (
-                    <div className="text-[10px] text-gray-500 mt-1 truncate font-mono">
-                      📁 {skill.repoProof}
-                    </div>
-                  )}
                 </div>
               </motion.div>
             ))}

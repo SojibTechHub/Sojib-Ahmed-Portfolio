@@ -27,7 +27,7 @@ export default {
         },
       },
       fontFamily: {
-        display: ['Cabinet Grotesk', 'Clash Display', 'Inter', 'sans-serif'],
+        display: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
         body: ['Inter', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
       },

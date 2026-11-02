@@ -168,7 +168,7 @@ export default function Footer() {
         {/* Bottom bar with Back to Top button & Admin link */}
         <div className="mt-12 pt-6 border-t border-[rgba(255,255,255,0.08)] flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-[#6B7280]">
-            Â© {new Date().getFullYear()} Sojib Ahmed. All rights reserved.
+&copy; {new Date().getFullYear()} Sojib Ahmed. All rights reserved.
           </p>
 
           <div className="flex items-center gap-4">

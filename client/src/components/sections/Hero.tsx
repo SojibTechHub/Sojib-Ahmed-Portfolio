@@ -6,9 +6,9 @@ import { FaGithub, FaLinkedinIn, FaEnvelope } from 'react-icons/fa6';
 const terminalLines = [
   { prompt: '$', command: 'whoami', output: 'Sojib Ahmed', delay: 500 },
   { prompt: '$', command: 'role', output: 'Full Stack Developer', delay: 1200 },
-  { prompt: '$', command: 'location', output: 'Rangpur, Bangladesh ðŸŒ', delay: 2000 },
-  { prompt: '$', command: 'status', output: 'Building something awesome... ðŸš€', delay: 2800 },
-  { prompt: '$', command: 'available', output: 'true // Full-time | Freelance | Remote âœ…', delay: 3600 },
+  { prompt: '$', command: 'location', output: 'Rangpur, Bangladesh 🌍', delay: 2000 },
+  { prompt: '$', command: 'status', output: 'Building something awesome... 🚀', delay: 2800 },
+  { prompt: '$', command: 'available', output: 'true // Full-time | Freelance | Remote ✅', delay: 3600 },
 ];
 
 function TerminalWindow() {
@@ -227,7 +227,7 @@ export default function Hero() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <p className="text-base sm:text-lg text-[var(--color-text-secondary)] mb-2 font-medium">
-                Hey, I'm ðŸ‘‹
+                Hey, I'm 👋
               </p>
               <h1 className="text-[clamp(36px,6.5vw,84px)] font-black leading-none tracking-tight text-[var(--color-text-primary)] mb-4 sm:mb-6">
                 Sojib Ahmed
@@ -305,7 +305,7 @@ export default function Hero() {
               </motion.button>
 
               <motion.a
-                href="https://drive.google.com/file/d/1mItKHLO9tA9iHIrT9Ho5qIeAHUC04m_m/view?usp=sharing"
+                href="/resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.03 }}

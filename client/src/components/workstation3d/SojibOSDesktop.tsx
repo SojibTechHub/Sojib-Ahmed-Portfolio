@@ -802,13 +802,13 @@ function OSAboutApp({ onNavigate }: { onNavigate?: (app: AppId) => void }) {
         {onNavigate && (
           <>
             <a
-              href="https://drive.google.com/file/d/1mItKHLO9tA9iHIrT9Ho5qIeAHUC04m_m/view?usp=sharing"
+              href="/resume.pdf"
               target="_blank"
               rel="noreferrer"
               className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#7C3AED]/30 to-[#06B6D4]/30 hover:from-[#7C3AED]/45 hover:to-[#06B6D4]/45 border border-[#06B6D4]/50 text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-md"
             >
               <FileText size={13} className="text-[#06B6D4]" />
-              <span>View Resume (Drive) 📄</span>
+              <span>View Resume (PDF) 📄</span>
             </a>
             <button
               onClick={() => onNavigate('certificates')}

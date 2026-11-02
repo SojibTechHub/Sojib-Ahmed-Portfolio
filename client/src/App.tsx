@@ -5,6 +5,7 @@ import LoadingScreen from './components/LoadingScreen';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import ScrollProgress from './components/layout/ScrollProgress';
+import FloatingRecruiterBar from './components/layout/FloatingRecruiterBar';
 import ChatBot from './components/chatbot/ChatBot';
 import Home from './pages/Home';
 import AdminPage from './pages/Admin';
@@ -26,6 +27,9 @@ function AppContent({ theme }: { theme: string }) {
       
       {/* Navigation - only on public portfolio */}
       {!isAdmin && <Navbar />}
+
+      {/* Floating Recruiter Dock - only on public portfolio */}
+      {!isAdmin && <FloatingRecruiterBar />}
       
       {/* Routes */}
       <main id="main-content">

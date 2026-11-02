@@ -23,16 +23,16 @@ export default function FinalCTA() {
           {/* Badge */}
           <div className="section-badge mx-auto w-fit mb-6">
             <div className="status-dot" />
-            Open to Opportunities
+            Let's Collaborate
           </div>
 
           {/* Heading */}
           <h2 className="text-[clamp(32px,5vw,60px)] font-black leading-tight tracking-tight text-[var(--color-text-primary)] mb-6">
-            <span className="gradient-text">Open to Opportunities</span>
+            Ready to Build Something <span className="gradient-text">High-Impact?</span>
           </h2>
 
           <p className="text-lg text-[var(--color-text-secondary)] max-w-2xl mx-auto mb-10 leading-relaxed">
-            Have a project, idea, or opportunity? I'd love to hear about it and explore how we can work together to create something truly remarkable.
+            Whether you're hiring a dedicated Full-Stack Engineer for your engineering team or need an architect to scale your web systems — let's connect and create something remarkable.
           </p>
 
           {/* CTAs */}

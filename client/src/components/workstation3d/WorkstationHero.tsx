@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Workstation3DScene from './Workstation3DScene';
 import SojibOSDesktop from './SojibOSDesktop';
-import { Sparkles, Monitor, Layers, Volume2, VolumeX, Shield, Terminal, ArrowDown } from 'lucide-react';
+import { Sparkles, Monitor, Layers, Volume2, VolumeX, Terminal, ArrowDown, Download } from 'lucide-react';
 
 interface WorkstationHeroProps {
   onSwitchToClassic?: () => void;
@@ -153,15 +153,16 @@ export default function WorkstationHero({ onSwitchToClassic }: WorkstationHeroPr
             <span>Classic View ↓</span>
           </button>
 
-          {/* CMS Admin Link on desktop */}
+          {/* Direct Resume Download & View for Recruiters */}
           <a
-            href="/admin"
+            href="/resume.pdf"
             target="_blank"
-            rel="noreferrer"
-            className="hidden md:inline-flex p-2 rounded-xl bg-[#090D1A] hover:bg-purple-500/20 text-gray-400 hover:text-purple-300 border border-white/10 transition-all"
-            title="Admin CMS"
+            rel="noopener noreferrer"
+            className="hidden md:inline-flex px-3.5 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-[#7C3AED]/30 to-[#06B6D4]/30 hover:from-[#7C3AED]/50 hover:to-[#06B6D4]/50 text-white border border-[#06B6D4]/40 text-xs font-bold transition-all items-center gap-1.5 shadow-sm hover:scale-105"
+            title="View Official Resume (PDF)"
           >
-            <Shield size={16} />
+            <Download size={13} className="text-[#06B6D4]" />
+            <span>Resume (PDF)</span>
           </a>
         </div>
       </div>

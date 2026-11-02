@@ -1,17 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
 
 @import "tailwindcss";
 
 @layer base {
   :root {
-    --color-bg: #030712; /* Deep dark background */
-    --color-surface: #0B1120; /* Solid dark card color */
-    --color-surface-2: #0B1120;
-    --color-text-primary: #F3F4F6; /* Light gray text */
-    --color-text-secondary: #9CA3AF;
-    --color-text-muted: #4B5563;
+    --color-bg: #080B11; /* Sleek Obsidian theme */
+    --color-surface: #0E1422; /* High-contrast card surface */
+    --color-surface-2: #141C2E;
+    --color-text-primary: #F8FAFC; /* Crisp readable light text */
+    --color-text-secondary: #94A3B8; /* Modern muted slate text */
+    --color-text-muted: #64748B;
     
-    --color-border: rgba(255, 255, 255, 0.05); /* Subtle border */
+    --color-border: rgba(255, 255, 255, 0.08); /* Clean modern micro-border */
     
     --color-violet: #06B6D4; /* Switched primary accent to cyan to match reference */
     --color-cyan: #06B6D4;
@@ -73,9 +73,14 @@ body {
 
 /* ===== TYPOGRAPHY ===== */
 .font-display {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
   font-weight: 800;
-  letter-spacing: 0.03em;
+  letter-spacing: -0.025em;
+}
+
+h1, h2, h3, .section-heading {
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  letter-spacing: -0.025em;
 }
 
 .font-mono {

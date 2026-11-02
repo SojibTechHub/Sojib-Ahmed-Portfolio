@@ -198,7 +198,7 @@ export default function Contact() {
                 </div>
 
                 <a
-                  href="https://drive.google.com/file/d/1mItKHLO9tA9iHIrT9Ho5qIeAHUC04m_m/view?usp=sharing"
+                  href="/resume.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-3 py-1.5 rounded-lg bg-[#06B6D4]/20 hover:bg-[#06B6D4]/30 border border-[#06B6D4]/40 text-[#06B6D4] text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap shadow-sm hover:scale-105"

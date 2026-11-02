@@ -126,7 +126,7 @@ export default function About() {
 
                 {/* Official Full-Stack Resume */}
                 <a
-                  href="https://drive.google.com/file/d/1mItKHLO9tA9iHIrT9Ho5qIeAHUC04m_m/view?usp=sharing"
+                  href="/resume.pdf"
                   target="_blank"
                   rel="noreferrer"
                   className="group flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-[#06B6D4]/20 to-[#10B981]/20 hover:from-[#06B6D4]/30 hover:to-[#10B981]/30 border border-[#06B6D4]/40 hover:border-[#10B981]/60 text-[#22D3EE] hover:text-white text-xs font-bold transition-all shadow-md hover:scale-[1.02] cursor-pointer"
